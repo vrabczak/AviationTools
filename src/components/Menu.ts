@@ -63,12 +63,14 @@ export class Menu {
       <div class="menu">
         <div class="menu-header">
           <h1>✈️ Aviation Tools</h1>
-          <button class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
-            ${this.getThemeIcon()}
-          </button>
-          <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">
-            <span class="hamburger"></span>
-          </button>
+          <div class="menu-actions">
+            <button class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+              ${this.getThemeIcon()}
+            </button>
+            <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">
+              <span class="hamburger"></span>
+            </button>
+          </div>
         </div>
         <nav class="menu-nav">
           <div class="menu-section">
