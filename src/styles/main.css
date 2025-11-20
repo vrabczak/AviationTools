@@ -80,10 +80,10 @@ html, body {
   overflow: hidden;
 }
 
-#menu-container {
-  width: var(--menu-width);
-  flex-shrink: 0;
-  background: var(--bg);
+  #menu-container {
+    width: var(--menu-width);
+    flex-shrink: 0;
+    background: var(--bg);
   border-right: 1px solid var(--border);
   overflow-y: auto;
   transition: transform 0.3s ease;
@@ -162,7 +162,7 @@ small {
   #app {
     flex-direction: column;
   }
-  
+
   #menu-container {
     width: 100%;
     height: auto;
@@ -171,7 +171,15 @@ small {
     max-height: 60px;
     overflow: visible;
   }
-  
+
+  #menu-container.menu-open {
+    max-height: none;
+  }
+
+  #app.menu-open #tool-container {
+    display: none;
+  }
+
   #tool-container {
     padding: var(--spacing-md);
   }
