@@ -45,11 +45,13 @@ export class AltitudeCorrection implements ITool {
           <h3>Result:</h3>
           <div class="result-value">
             <span class="label">Corrected Altitude:</span>
-            <span id="corrected-alt" class="value">-</span> ft
+            <span id="corrected-alt" class="value">-</span>
+            <span class="unit">ft</span>
           </div>
           <div class="result-value">
             <span class="label">Correction:</span>
-            <span id="correction-value" class="value">-</span> ft
+            <span id="correction-value" class="value">-</span>
+            <span class="unit">ft</span>
           </div>
           <div class="result-info">
             <p id="result-interpretation"></p>

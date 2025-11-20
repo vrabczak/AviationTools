@@ -40,7 +40,8 @@ export class TurnCalculator implements ITool {
           <div class="result-grid">
             <div class="result-value">
               <span class="label">Turn Radius:</span>
-              <span id="turn-radius" class="value">-</span> m
+              <span id="turn-radius" class="value">-</span>
+              <span class="unit">m</span>
             </div>
             <div class="result-value">
               <span class="label">360° Turn Time:</span>
@@ -48,7 +49,8 @@ export class TurnCalculator implements ITool {
             </div>
             <div class="result-value">
               <span class="label">Turn Rate:</span>
-              <span id="turn-rate" class="value">-</span> °/sec
+              <span id="turn-rate" class="value">-</span>
+              <span class="unit">°/sec</span>
             </div>
           </div>
           <div class="result-info">
