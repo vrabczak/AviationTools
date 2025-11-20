@@ -42,6 +42,18 @@ export class Menu {
     }
   }
 
+  private setMenuOpenState(isOpen: boolean): void {
+    const menu = this.container.querySelector('.menu');
+
+    if (isOpen) {
+      menu?.classList.add('menu-open');
+      this.container.classList.add('menu-open');
+    } else {
+      menu?.classList.remove('menu-open');
+      this.container.classList.remove('menu-open');
+    }
+  }
+
   private getThemeIcon(): string {
     if (this.currentTheme === 'dark') {
       // Sun icon for switching to light mode
@@ -99,10 +111,15 @@ export class Menu {
     `;
 
     this.attachEventListeners();
-    
+
+    // Default to open menu on mobile for immediate visibility
+    if (window.innerWidth <= 600) {
+      this.setMenuOpenState(true);
+    }
+
     // Select first tool by default
     if (tools.length > 0) {
-      this.selectTool(tools[0].id);
+      this.selectTool(tools[0].id, false);
     }
   }
 
@@ -126,14 +143,15 @@ export class Menu {
 
     // Mobile menu toggle
     const menuToggle = this.container.querySelector('#menu-toggle');
-    const menu = this.container.querySelector('.menu');
-    
+
     menuToggle?.addEventListener('click', () => {
-      menu?.classList.toggle('menu-open');
+      const menu = this.container.querySelector('.menu');
+      const isOpen = menu?.classList.contains('menu-open');
+      this.setMenuOpenState(!isOpen);
     });
   }
 
-  private selectTool(toolId: string): void {
+  private selectTool(toolId: string, closeMenu: boolean = true): void {
     const tool = ToolRegistry.getToolById(toolId);
     if (!tool) return;
 
@@ -148,8 +166,9 @@ export class Menu {
     });
 
     // Close mobile menu after selection
-    const menu = this.container.querySelector('.menu');
-    menu?.classList.remove('menu-open');
+    if (closeMenu) {
+      this.setMenuOpenState(false);
+    }
 
     // Notify parent
     this.onToolSelect(tool);
