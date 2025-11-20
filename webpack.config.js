@@ -12,6 +12,7 @@ module.exports = (env, argv) => {
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist'),
       clean: true,
+      publicPath: process.env.PUBLIC_PATH || '/',
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map',
     devServer: {
