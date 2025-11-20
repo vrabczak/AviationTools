@@ -119,11 +119,13 @@
 .result-value {
   display: flex;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
   padding: var(--spacing-md);
-  background: white;
+  background: var(--bg);
   border-radius: var(--border-radius);
+  border: 1px solid var(--border);
 }
 
 .result-value .label {
@@ -138,6 +140,11 @@
   font-family: var(--font-mono);
 }
 
+.result-value .unit {
+  color: var(--text-light);
+  font-weight: 600;
+}
+
 .result-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -148,9 +155,10 @@
 .result-info {
   margin-top: var(--spacing-md);
   padding: var(--spacing-md);
-  background: white;
+  background: var(--bg);
   border-radius: var(--border-radius);
   border-left: 4px solid var(--primary);
+  border: 1px solid var(--border);
 }
 
 .result-info p {
@@ -179,26 +187,29 @@
 
 /* Responsive */
 
-/* Mobile phones */
-@media (max-width: 600px) {
-  .tool-content {
-    padding: var(--spacing-md);
-  }
-  
+/* Tablets - keep results readable when space is constrained */
+@media (max-width: 1024px) {
   .result-value {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-xs);
   }
-  
+
   .result-value .value {
     font-size: 1.25rem;
   }
-  
+}
+
+/* Mobile phones */
+@media (max-width: 600px) {
+  .tool-content {
+    padding: var(--spacing-md);
+  }
+
   .result-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .input-group input[type="number"] {
     font-size: 16px; /* Prevent zoom on iOS */
   }
