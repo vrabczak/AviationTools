@@ -175,11 +175,7 @@ small {
   #menu-container.menu-open {
     max-height: none;
   }
-
-  #app.menu-open #tool-container {
-    display: none;
-  }
-
+  
   #tool-container {
     padding: var(--spacing-md);
   }

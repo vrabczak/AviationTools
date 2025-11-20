@@ -44,16 +44,13 @@ export class Menu {
 
   private setMenuOpenState(isOpen: boolean): void {
     const menu = this.container.querySelector('.menu');
-    const app = document.getElementById('app');
 
     if (isOpen) {
       menu?.classList.add('menu-open');
       this.container.classList.add('menu-open');
-      app?.classList.add('menu-open');
     } else {
       menu?.classList.remove('menu-open');
       this.container.classList.remove('menu-open');
-      app?.classList.remove('menu-open');
     }
   }
 
