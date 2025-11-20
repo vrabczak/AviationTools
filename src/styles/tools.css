@@ -1,0 +1,240 @@
+/* Tool Styles */
+
+.tool-content {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--bg);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.tool-description {
+  color: var(--text-light);
+  font-size: 0.9375rem;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-md);
+  background: var(--bg-gray);
+  border-left: 3px solid var(--primary-light);
+  border-radius: var(--border-radius);
+}
+
+/* Input Groups */
+.input-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.input-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+  color: var(--text);
+  font-size: 0.9375rem;
+}
+
+.input-group input[type="number"] {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--border);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-family: var(--font-sans);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-group input[type="number"]:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-group input[type="number"]:invalid {
+  border-color: var(--danger);
+}
+
+.input-group small {
+  display: block;
+  margin-top: var(--spacing-xs);
+  color: var(--text-light);
+  font-size: 0.8125rem;
+}
+
+/* Buttons */
+.btn-primary {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  background: var(--text-light);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Results */
+.result {
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--bg-gray);
+  border-radius: var(--border-radius);
+  border: 2px solid var(--border);
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result h3 {
+  color: var(--text);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.125rem;
+}
+
+.result-value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: white;
+  border-radius: var(--border-radius);
+}
+
+.result-value .label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.result-value .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--font-mono);
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.result-info {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: white;
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--primary);
+}
+
+.result-info p {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9375rem;
+}
+
+.result-info.success {
+  background: rgba(16, 185, 129, 0.1);
+  border-left-color: var(--success);
+}
+
+.result-info.success p {
+  color: var(--success);
+}
+
+.result-info.warning {
+  background: rgba(245, 158, 11, 0.1);
+  border-left-color: var(--warning);
+}
+
+.result-info.warning p {
+  color: #d97706;
+}
+
+/* Responsive */
+
+/* Mobile phones */
+@media (max-width: 600px) {
+  .tool-content {
+    padding: var(--spacing-md);
+  }
+  
+  .result-value {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .result-value .value {
+    font-size: 1.25rem;
+  }
+  
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .input-group input[type="number"] {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* iPad Mini - optimize for touch and comfortable reading */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .tool-content {
+    max-width: 680px;
+    padding: var(--spacing-xl);
+  }
+  
+  .input-group input[type="number"] {
+    padding: var(--spacing-lg);
+    font-size: 1.125rem;
+    min-height: 48px; /* Touch-friendly */
+  }
+  
+  .btn-primary {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: 1.125rem;
+    min-height: 48px; /* Touch-friendly */
+  }
+  
+  .result-value .value {
+    font-size: 1.75rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+}
+
+/* Desktop - maximize space */
+@media (min-width: 1025px) {
+  .tool-content {
+    max-width: 900px;
+  }
+}
