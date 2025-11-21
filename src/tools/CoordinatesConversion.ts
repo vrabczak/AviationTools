@@ -1,5 +1,5 @@
 import { ITool } from './ITool';
-import mgrs from 'mgrs';
+import * as mgrs from 'mgrs';
 
 type CoordinateFormat = 'dd' | 'dm' | 'dms' | 'mgrs';
 
@@ -293,6 +293,13 @@ export class CoordinatesConversion implements ITool {
 
   private getSignFromDirection(direction: string, isLat: boolean, degrees: number): number {
     const normalized = direction.toUpperCase();
+    const allowed = isLat ? ['N', 'S'] : ['E', 'W'];
+
+    if (normalized && !allowed.includes(normalized)) {
+      const coordLabel = isLat ? 'latitude' : 'longitude';
+      throw new Error(`Use ${allowed.join(' or ')} for ${coordLabel} directions.`);
+    }
+
     if (normalized === 'S' || normalized === 'W') return -1;
     if (normalized === 'N' || normalized === 'E') return 1;
     return degrees < 0 ? -1 : 1;
