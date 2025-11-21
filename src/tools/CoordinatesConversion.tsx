@@ -318,7 +318,7 @@ export class CoordinatesConversion implements ITool {
     const degrees = Math.floor(abs);
     const minutes = (abs - degrees) * 60;
     const direction = this.getDirection(value, isLat);
-    return `${degrees}° ${minutes.toFixed(3)}' ${direction}`;
+    return `${degrees}°${minutes.toFixed(3)}'${direction}`;
   }
 
   private formatDms(value: number, isLat: boolean): string {
@@ -328,7 +328,7 @@ export class CoordinatesConversion implements ITool {
     const minutes = Math.floor(totalMinutes);
     const seconds = (totalMinutes - minutes) * 60;
     const direction = this.getDirection(value, isLat);
-    return `${degrees}° ${minutes}' ${seconds.toFixed(1)}" ${direction}`;
+    return `${degrees}°${minutes}'${seconds.toFixed(1)}"${direction}`;
   }
 
   private getDirection(value: number, isLat: boolean): 'N' | 'S' | 'E' | 'W' {

@@ -80,10 +80,10 @@ html, body {
   overflow: hidden;
 }
 
-  #menu-container {
-    width: var(--menu-width);
-    flex-shrink: 0;
-    background: var(--bg);
+#menu-container {
+  width: var(--menu-width);
+  flex-shrink: 0;
+  background: var(--bg);
   border-right: 1px solid var(--border);
   overflow-y: auto;
   transition: transform 0.3s ease;
@@ -158,14 +158,14 @@ small {
 /* Responsive Design */
 
 /* Mobile phones (portrait) - hide menu by default */
-@media (max-width: 600px) {
+@media (max-width: 740px) {
   #app {
     flex-direction: column;
   }
 
   #menu-container {
     width: 100%;
-    height: auto;
+    height: 100%;
     border-right: none;
     border-bottom: 1px solid var(--border);
     max-height: 60px;
