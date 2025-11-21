@@ -264,7 +264,8 @@ export class CoordinatesConversion implements ITool {
     const ddText = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
     const dmText = `${this.formatDegreesMinutes(lat, true)}, ${this.formatDegreesMinutes(lon, false)}`;
     const dmsText = `${this.formatDms(lat, true)}, ${this.formatDms(lon, false)}`;
-    const mgrsText = mgrs.forward([lon, lat], 5);
+    const mgrsRaw = mgrs.forward([lon, lat], 5);
+    const mgrsText = this.formatMgrs(mgrsRaw);
 
     if (ddField) ddField.textContent = ddText;
     if (dmField) dmField.textContent = dmText;
@@ -336,5 +337,26 @@ export class CoordinatesConversion implements ITool {
       return value >= 0 ? 'N' : 'S';
     }
     return value >= 0 ? 'E' : 'W';
+  }
+
+  private formatMgrs(mgrsString: string): string {
+    // MGRS format for 5-digit precision: GridZone + GridBand + 100kmSquare + 5 digits easting + 5 digits northing
+    // Example: "33UXQ0123456789" -> "33UXQ 01234 56789"
+    
+    // Find where the grid part ends (letters) and digits begin
+    const match = mgrsString.match(/^([A-Z\d]+[A-Z])([\d]+)$/);
+    
+    if (!match) {
+      return mgrsString;
+    }
+    
+    const [, gridPart, digits] = match;
+    
+    // For 5-digit precision, we have 10 digits total (5 easting + 5 northing)
+    const halfLength = digits.length / 2;
+    const easting = digits.slice(0, halfLength);
+    const northing = digits.slice(halfLength);
+    
+    return `${gridPart} ${easting} ${northing}`;
   }
 }
