@@ -187,21 +187,22 @@
   .menu-actions {
     gap: var(--spacing-xs);
   }
-  
+
+  .menu {
+    height: auto;
+  }
+
   .menu-nav,
   .menu-footer {
     display: none;
   }
-  
+
   .menu.menu-open {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-    max-height: 100vh;
-    overflow-y: auto;
+    position: relative;
+    z-index: 2;
+    max-height: none;
+    overflow: visible;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
   }
   
   .menu.menu-open .menu-nav,
