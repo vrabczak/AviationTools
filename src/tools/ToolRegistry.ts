@@ -1,6 +1,7 @@
 import { ITool } from './ITool';
 import { AltitudeCorrection } from './AltitudeCorrection';
 import { TurnCalculator } from './TurnCalculator';
+import { CoordinatesConversion } from './CoordinatesConversion';
 
 /**
  * Central registry for all aviation tools
@@ -10,6 +11,7 @@ export class ToolRegistry {
   private static tools: ITool[] = [
     new AltitudeCorrection(),
     new TurnCalculator(),
+    new CoordinatesConversion(),
   ];
 
   /**
