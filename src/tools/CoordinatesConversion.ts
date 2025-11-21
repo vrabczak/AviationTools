@@ -222,6 +222,12 @@ export class CoordinatesConversion implements ITool {
     }
 
     const direction = prefixDir || suffixDir || '';
+
+    if (expectSeconds && !direction) {
+      const coordLabel = isLat ? 'latitude' : 'longitude';
+      throw new Error(`Please include N/S or E/W for the ${coordLabel} DMS value.`);
+    }
+
     const sign = this.getSignFromDirection(direction, isLat, degrees);
 
     return sign * (Math.abs(degrees) + minutes / 60 + seconds / 3600);
