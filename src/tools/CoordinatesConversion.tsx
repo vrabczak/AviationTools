@@ -1,4 +1,5 @@
 import { ITool } from './ITool';
+import { jsx } from '../jsx-runtime';
 import * as mgrs from 'mgrs';
 
 type CoordinateFormat = 'dd' | 'dm' | 'dms' | 'mgrs';
@@ -19,7 +20,7 @@ export class CoordinatesConversion implements ITool {
   render(container: HTMLElement): void {
     this.container = container;
 
-    container.innerHTML = `
+    const content = (
       <div class="tool-content">
         <h2>Coordinates Conversion</h2>
         <p class="tool-description">
@@ -70,8 +71,9 @@ export class CoordinatesConversion implements ITool {
           </div>
         </div>
       </div>
-    `;
+    );
 
+    container.appendChild(content as Node);
     this.renderInputFields('dd');
     this.attachEventListeners();
   }
@@ -122,8 +124,8 @@ export class CoordinatesConversion implements ITool {
         helper: 'Enter degrees and decimal minutes with hemisphere (e.g., 48° 51.502\' N).'
       },
       dms: {
-        lat: '48° 51\' 8.9" N',
-        lon: '2° 17\' 40.1" E',
+        lat: '48° 51\' 8.9&quot; N',
+        lon: '2° 17\' 40.1&quot; E',
         helper: 'Enter degrees, minutes, seconds with hemisphere (e.g., 48° 51\' 8.9\" N).'
       },
       mgrs: { lat: '', lon: '', helper: '' }

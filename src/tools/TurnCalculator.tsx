@@ -1,4 +1,5 @@
 import { ITool } from './ITool';
+import { jsx } from '../jsx-runtime';
 
 /**
  * Turn Calculator Tool
@@ -14,7 +15,7 @@ export class TurnCalculator implements ITool {
   render(container: HTMLElement): void {
     this.container = container;
     
-    container.innerHTML = `
+    const content = (
       <div class="tool-content">
         <h2>Turn Calculator</h2>
         <p class="tool-description">
@@ -58,8 +59,9 @@ export class TurnCalculator implements ITool {
           </div>
         </div>
       </div>
-    `;
+    );
 
+    container.appendChild(content as Node);
     this.attachEventListeners();
   }
 
