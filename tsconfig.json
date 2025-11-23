@@ -2,9 +2,9 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
-    "lib": ["ES2020", "DOM"],
+    "lib": ["ES2020", "DOM", "WebWorker"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -21,6 +21,6 @@
     "jsxFactory": "jsx",
     "jsxFragmentFactory": "Fragment"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "public/service-worker.ts"],
   "exclude": ["node_modules", "dist"]
 }
