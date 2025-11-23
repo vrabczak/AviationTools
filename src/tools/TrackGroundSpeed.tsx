@@ -19,7 +19,7 @@ export class TrackGroundSpeed implements ITool {
       <div class="tool-content">
         <h2>Track / Ground Speed</h2>
         <p class="tool-description">
-          Determine your expected track and groundspeed by combining true/magnetic heading,
+          Determine your expected track and ground speed by combining true/magnetic heading,
           true airspeed, and reported wind. Use consistent references for directions (all true
           or all magnetic).
         </p>
@@ -56,7 +56,7 @@ export class TrackGroundSpeed implements ITool {
               <span class="unit">°</span>
             </div>
             <div class="result-value">
-              <span class="label">Groundspeed</span>
+              <span class="label">Ground Speed</span>
               <span id="ground-speed" class="value">-</span>
               <span class="unit">kt</span>
             </div>
