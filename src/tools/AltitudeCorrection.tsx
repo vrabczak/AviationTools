@@ -21,18 +21,18 @@ export class AltitudeCorrection implements ITool {
         <p class="tool-description">
           Calculate temperature-corrected altitude for approach procedures. Cold temperatures cause
           the aircraft to be lower than indicated, warm temperatures cause it to be higher.
-          Critical for minimum descent altitudes and decision heights.
+          Critical for Decision Altitude and Minimum Descent Altitude.
         </p>
         
         <div class="input-group">
-          <label for="decision-alt">Decision Altitude / MDA (ft):</label>
-          <input type="number" id="decision-alt" placeholder="e.g., 500" step="10" />
-          <small>Altitude you want to correct (e.g., decision altitude, minimum altitude)</small>
+          <label for="decision-alt">DA / MDA (ft):</label>
+          <input type="number" id="decision-alt" placeholder="e.g., 1700" step="10" />
+          <small>Altitude you want to correct (e.g., Decision Altitude, Minimum Descent Altitude)</small>
         </div>
         
         <div class="input-group">
           <label for="airport-alt">Airport Elevation (ft):</label>
-          <input type="number" id="airport-alt" placeholder="e.g., 1000" step="10" />
+          <input type="number" id="airport-alt" placeholder="e.g., 1500" step="10" />
         </div>
         
         <div class="input-group">
@@ -117,16 +117,13 @@ export class AltitudeCorrection implements ITool {
       correctionSpan.textContent = `${correctionSign}${Math.round(correction).toLocaleString()}`;
 
       // Interpretation based on temperature
-      if (correction < -50) {
+      if (correction < 0) {
         interpretationP.textContent = `Cold temperature! You will be LOWER than indicated altitude. Add ${Math.abs(Math.round(correction))} ft to your decision altitude to maintain safe terrain clearance.`;
         interpretationP.className = 'result-info warning';
-      } else if (correction > 50) {
+      } else {
         interpretationP.textContent = `Warm temperature. You will be HIGHER than indicated altitude by ${Math.round(correction)} ft. Correction usually not applied for warmer temperatures.`;
         interpretationP.className = 'result-info';
-      } else {
-        interpretationP.textContent = 'Temperature is close to standard. Minimal correction needed.';
-        interpretationP.className = 'result-info success';
-      }
+      } 
     }
   }
 

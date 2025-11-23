@@ -173,6 +173,42 @@ describe('CoordinatesConversion', () => {
       
       expect(() => (tool as any).parseDegreesMinutes(false)).toThrow(/Use E or W for longitude directions/);
     });
+
+    it('should parse DM without any symbols (just spaces)', () => {
+      const latInput = container.querySelector('#lat-input') as HTMLInputElement;
+      const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
+      
+      latInput.value = "48 51.502 N";
+      lonInput.value = "2 17.669 E";
+      
+      const result = (tool as any).parseDegreesMinutes(false);
+      expect(result.lat).toBeCloseTo(48.85837, 4);
+      expect(result.lon).toBeCloseTo(2.29448, 4);
+    });
+
+    it('should parse DM with minute mark but no degree symbol', () => {
+      const latInput = container.querySelector('#lat-input') as HTMLInputElement;
+      const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
+      
+      latInput.value = "48 51.502' N";
+      lonInput.value = "2 17.669' E";
+      
+      const result = (tool as any).parseDegreesMinutes(false);
+      expect(result.lat).toBeCloseTo(48.85837, 4);
+      expect(result.lon).toBeCloseTo(2.29448, 4);
+    });
+
+    it('should parse DM with degree symbol but no minute mark', () => {
+      const latInput = container.querySelector('#lat-input') as HTMLInputElement;
+      const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
+      
+      latInput.value = "33° 52.128 S";
+      lonInput.value = "151° 12.558 W";
+      
+      const result = (tool as any).parseDegreesMinutes(false);
+      expect(result.lat).toBeCloseTo(-33.8688, 4);
+      expect(result.lon).toBeCloseTo(-151.2093, 4);
+    });
   });
 
   describe('Degrees + Minutes + Seconds (DMS) Parsing', () => {
@@ -186,8 +222,8 @@ describe('CoordinatesConversion', () => {
       const latInput = container.querySelector('#lat-input') as HTMLInputElement;
       const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
       
-      latInput.value = '48° 51 30.1 N';
-      lonInput.value = '2° 17 40.1 E';
+      latInput.value = '48° 51\' 30.1\" N';
+      lonInput.value = '2° 17\' 40.1\" E';
       
       const result = (tool as any).parseDegreesMinutes(true);
       expect(result.lat).toBeCloseTo(48.85836, 4);
@@ -198,8 +234,8 @@ describe('CoordinatesConversion', () => {
       const latInput = container.querySelector('#lat-input') as HTMLInputElement;
       const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
       
-      latInput.value = '40° 26 46 N';
-      lonInput.value = '79° 58 56 W';
+      latInput.value = '40° 26\' 46\" N';
+      lonInput.value = '79° 58\' 56\" W';
       
       const result = (tool as any).parseDegreesMinutes(true);
       expect(result.lat).toBeCloseTo(40.44611, 4);
@@ -210,8 +246,8 @@ describe('CoordinatesConversion', () => {
       const latInput = container.querySelector('#lat-input') as HTMLInputElement;
       const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
       
-      latInput.value = '48° 51 N';
-      lonInput.value = '2° 17 E';
+      latInput.value = '48° 51\' N';
+      lonInput.value = '2° 17\' E';
       
       expect(() => (tool as any).parseDegreesMinutes(true)).toThrow('Please include seconds for DMS coordinates');
     });
@@ -220,8 +256,8 @@ describe('CoordinatesConversion', () => {
       const latInput = container.querySelector('#lat-input') as HTMLInputElement;
       const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
       
-      latInput.value = '48° 51 30.1';
-      lonInput.value = '2° 17 40.1 E';
+      latInput.value = '48° 51\' 30.1"';
+      lonInput.value = '2° 17\' 40.1" E';
       
       expect(() => (tool as any).parseDegreesMinutes(true)).toThrow(/Please include N\/S or E\/W for the latitude DMS value/);
     });
@@ -230,10 +266,58 @@ describe('CoordinatesConversion', () => {
       const latInput = container.querySelector('#lat-input') as HTMLInputElement;
       const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
       
-      latInput.value = '48° 51 65 N';
-      lonInput.value = '2° 17 40 E';
+      latInput.value = '48° 51\' 65" N';
+      lonInput.value = '2° 17\' 40 E';
       
       expect(() => (tool as any).parseDegreesMinutes(true)).toThrow('Minutes and seconds must be between 0 and 59');
+    });
+
+    it('should parse DMS without any symbols (just spaces)', () => {
+      const latInput = container.querySelector('#lat-input') as HTMLInputElement;
+      const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
+      
+      latInput.value = '48 51 30.1 N';
+      lonInput.value = '2 17 40.1 E';
+      
+      const result = (tool as any).parseDegreesMinutes(true);
+      expect(result.lat).toBeCloseTo(48.85836, 4);
+      expect(result.lon).toBeCloseTo(2.29447, 4);
+    });
+
+    it('should parse DMS with partial symbols (degree only)', () => {
+      const latInput = container.querySelector('#lat-input') as HTMLInputElement;
+      const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
+      
+      latInput.value = '48° 51 30.1 N';
+      lonInput.value = '2° 17 40.1 E';
+      
+      const result = (tool as any).parseDegreesMinutes(true);
+      expect(result.lat).toBeCloseTo(48.85836, 4);
+      expect(result.lon).toBeCloseTo(2.29447, 4);
+    });
+
+    it('should parse DMS with partial symbols (minute and second marks)', () => {
+      const latInput = container.querySelector('#lat-input') as HTMLInputElement;
+      const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
+      
+      latInput.value = '48 51\' 30.1" N';
+      lonInput.value = '2 17\' 40.1" E';
+      
+      const result = (tool as any).parseDegreesMinutes(true);
+      expect(result.lat).toBeCloseTo(48.85836, 4);
+      expect(result.lon).toBeCloseTo(2.29447, 4);
+    });
+
+    it('should parse DMS with mixed symbols', () => {
+      const latInput = container.querySelector('#lat-input') as HTMLInputElement;
+      const lonInput = container.querySelector('#lon-input') as HTMLInputElement;
+      
+      latInput.value = '40° 26 46" N';
+      lonInput.value = '79 58\' 56 W';
+      
+      const result = (tool as any).parseDegreesMinutes(true);
+      expect(result.lat).toBeCloseTo(40.44611, 4);
+      expect(result.lon).toBeCloseTo(-79.98222, 4);
     });
   });
 

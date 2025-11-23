@@ -105,8 +105,8 @@ export class CoordinatesConversion implements ITool {
       inputsContainer.innerHTML = `
         <div class="input-group">
           <label for="mgrs-input">MGRS Coordinate</label>
-          <input type="text" id="mgrs-input" placeholder="33UXP0406551" />
-          <small>Enter a 5-digit precision MGRS coordinate (e.g., 33UXP0406551).</small>
+          <input type="text" id="mgrs-input" placeholder="33UVR59664936" />
+          <small>Enter a 5-digit precision MGRS coordinate (e.g., 33UVR59664936).</small>
         </div>
       `;
       return;
@@ -114,19 +114,19 @@ export class CoordinatesConversion implements ITool {
 
     const placeholders: Record<CoordinateFormat, { lat: string; lon: string; helper: string }> = {
       dd: {
-        lat: '48.85837',
-        lon: '2.29448',
+        lat: '50.0952147',
+        lon: '14.4360100',
         helper: 'Enter latitude and longitude in decimal degrees. North/East positive, South/West negative.'
       },
       dm: {
-        lat: "48° 51.502' N",
-        lon: "2° 17.669' E",
-        helper: 'Enter degrees and decimal minutes with hemisphere (e.g., 48° 51.502\' N).'
+        lat: "50° 5.712' N",
+        lon: "14° 26.160' E",
+        helper: 'Enter degrees and decimal minutes with hemisphere (e.g., 50° 50° 5.712\' N).'
       },
       dms: {
-        lat: '48° 51\' 8.9&quot; N',
-        lon: '2° 17\' 40.1&quot; E',
-        helper: 'Enter degrees, minutes, seconds with hemisphere (e.g., 48° 51\' 8.9\" N).'
+        lat: '50° 5\' 42.8&quot; N',
+        lon: '14° 26\' 9.6&quot; E',
+        helper: 'Enter degrees, minutes, seconds with hemisphere (e.g., 50° 5\' 42.8\" N).'
       },
       mgrs: { lat: '', lon: '', helper: '' }
     };
@@ -199,7 +199,9 @@ export class CoordinatesConversion implements ITool {
   private parseCoordinateString(value: string, expectSeconds: boolean, isLat: boolean): number {
     const trimmed = value.trim().toUpperCase();
 
-    const match = trimmed.match(/^(N|S|E|W)?\s*(-?\d+(?:\.\d+)?)\s*[°\s]\s*(\d+(?:\.\d+)?)(?:['\s]\s*(\d+(?:\.\d+)?))?\s*(N|S|E|W)?$/);
+    // Regex to match: [direction] degrees [°] minutes ['] [seconds ["]] [direction]
+    // Supports various combinations of degree/minute/second symbols
+    const match = trimmed.match(/^(N|S|E|W)?\s*(-?\d+(?:\.\d+)?)\s*°?\s*(\d+(?:\.\d+)?)\s*'?\s*(?:(\d+(?:\.\d+)?)\s*"?)?\s*(N|S|E|W)?$/);
 
     if (!match) {
       const formatLabel = expectSeconds ? 'DMS' : 'DM';
