@@ -2,9 +2,14 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { InjectManifest } = require('workbox-webpack-plugin');
+const packageJson = require('./package.json');
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
+  const homepagePath = packageJson.homepage
+    ? `${new URL(packageJson.homepage).pathname.replace(/\/$/, '')}/`
+    : '/';
+  const publicPath = process.env.PUBLIC_PATH || (isProduction ? homepagePath : '/');
 
   return {
     entry: './src/index.ts',
@@ -12,7 +17,7 @@ module.exports = (env, argv) => {
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist'),
       clean: true,
-      publicPath: process.env.PUBLIC_PATH || '/',
+      publicPath,
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map',
     devServer: {
