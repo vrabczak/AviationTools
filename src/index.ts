@@ -34,8 +34,10 @@ function initApp(): void {
 // Register service worker for offline support (production only)
 if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
   window.addEventListener('load', () => {
+    const serviceWorkerUrl = new URL('service-worker.js', window.location.href);
+
     navigator.serviceWorker
-      .register('/service-worker.js')
+      .register(serviceWorkerUrl)
       .then(registration => {
         console.log('Service Worker registered:', registration);
       })

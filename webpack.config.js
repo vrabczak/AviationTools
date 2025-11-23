@@ -54,13 +54,14 @@ module.exports = (env, argv) => {
           { from: 'public/manifest.json', to: 'manifest.json' },
         ],
       }),
-      // Uncomment when service worker is implemented
-      // ...(isProduction ? [
-      //   new InjectManifest({
-      //     swSrc: './public/service-worker.ts',
-      //     swDest: 'service-worker.js',
-      //   }),
-      // ] : []),
+      ...(isProduction
+        ? [
+            new InjectManifest({
+              swSrc: './public/service-worker.ts',
+              swDest: 'service-worker.js',
+            }),
+          ]
+        : []),
     ],
   };
 };
