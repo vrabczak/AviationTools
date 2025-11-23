@@ -141,8 +141,7 @@ export class HeadCrossWind implements ITool {
     interpretationContainer.textContent =
       crosswindFrom === 'none'
         ? 'Aligned winds provide minimal drift. Expect little to no crab angle required.'
-        : `Expect to crab into the wind approximately ${(Math.atan2(Math.abs(crosswind), forwardWindForAngle) * 180) / Math.PI
-          .toFixed(0)}° to counter a crosswind from the ${crosswindFrom}.`;
+        : `Expect to crab into the wind approximately ${((Math.atan2(Math.abs(crosswind), forwardWindForAngle) * 180) / Math.PI).toFixed(0)}° to counter a crosswind from the ${crosswindFrom}.`;
 
     resultDiv.classList.remove('hidden');
   }

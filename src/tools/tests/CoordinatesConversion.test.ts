@@ -287,42 +287,42 @@ describe('CoordinatesConversion', () => {
   describe('Coordinate Formatting', () => {
     it('should format positive latitude as degrees and minutes', () => {
       const result = (tool as any).formatDegreesMinutes(48.85837, true);
-      expect(result).toMatch(/48° 51\.502' N/);
+      expect(result).toMatch(/48°51\.502'N/);
     });
 
     it('should format negative latitude as degrees and minutes', () => {
       const result = (tool as any).formatDegreesMinutes(-33.8688, true);
-      expect(result).toMatch(/33° 52\.128' S/);
+      expect(result).toMatch(/33°52\.128'S/);
     });
 
     it('should format positive longitude as degrees and minutes', () => {
       const result = (tool as any).formatDegreesMinutes(2.29448, false);
-      expect(result).toMatch(/2° 17\.669' E/);
+      expect(result).toMatch(/2°17\.669'E/);
     });
 
     it('should format negative longitude as degrees and minutes', () => {
       const result = (tool as any).formatDegreesMinutes(-151.2093, false);
-      expect(result).toMatch(/151° 12\.558' W/);
+      expect(result).toMatch(/151°12\.558'W/);
     });
 
     it('should format latitude as DMS', () => {
       const result = (tool as any).formatDms(48.85837, true);
-      expect(result).toMatch(/48° 51' 30\.1" N/);
+      expect(result).toMatch(/48°51'30\.1"N/);
     });
 
     it('should format longitude as DMS', () => {
       const result = (tool as any).formatDms(2.29448, false);
-      expect(result).toMatch(/2° 17' 40\.1" E/);
+      expect(result).toMatch(/2°17'40\.1"E/);
     });
 
     it('should format zero latitude correctly', () => {
       const result = (tool as any).formatDms(0, true);
-      expect(result).toMatch(/0° 0' 0\.0" N/);
+      expect(result).toMatch(/0°0'0\.0"N/);
     });
 
     it('should format zero longitude correctly', () => {
       const result = (tool as any).formatDms(0, false);
-      expect(result).toMatch(/0° 0' 0\.0" E/);
+      expect(result).toMatch(/0°0'0\.0"E/);
     });
   });
 
