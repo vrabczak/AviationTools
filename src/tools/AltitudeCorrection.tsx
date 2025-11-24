@@ -96,6 +96,11 @@ export class AltitudeCorrection implements ITool {
       return;
     }
 
+    if (airportAlt >= decisionAlt) {
+      alert('Airport elevation must be lower than DA/MDA');
+      return;
+    }
+
     // Calculate temperature-corrected altitude
     const { correctedAltitude, correction } = this.calculateTemperatureCorrection(
       decisionAlt,
@@ -117,11 +122,14 @@ export class AltitudeCorrection implements ITool {
       correctionSpan.textContent = `${correctionSign}${Math.round(correction).toLocaleString()}`;
 
       // Interpretation based on temperature
-      if (correction < 0) {
-        interpretationP.textContent = `Cold temperature! You will be LOWER than indicated altitude. Add ${Math.abs(Math.round(correction))} ft to your decision altitude to maintain safe terrain clearance.`;
+      if (correction > 0) {
+        interpretationP.textContent = `Cold temperature! You will be LOWER than indicated altitude. Add ${Math.round(correction)} ft to your decision altitude to maintain safe terrain clearance.`;
         interpretationP.className = 'result-info warning';
+      } else if (correction < 0) {
+        interpretationP.textContent = `Warm temperature. You will be HIGHER than indicated altitude by ${Math.abs(Math.round(correction))} ft. Correction usually not applied for warmer temperatures.`;
+        interpretationP.className = 'result-info';
       } else {
-        interpretationP.textContent = `Warm temperature. You will be HIGHER than indicated altitude by ${Math.round(correction)} ft. Correction usually not applied for warmer temperatures.`;
+        interpretationP.textContent = `Temperature matches ISA. No correction needed.`;
         interpretationP.className = 'result-info';
       } 
     }
@@ -142,10 +150,11 @@ export class AltitudeCorrection implements ITool {
     const tempDeviation = temperature - isaTemp;
     
     // Temperature correction formula: 
-    // Correction = Height × (Actual Temp - ISA Temp) / (ISA Temp in Kelvin)
+    // Correction = Height × (ISA Temp - Actual Temp) / (ISA Temp in Kelvin)
     // Using simplified ICAO formula: 4% correction per 10°C deviation
+    // Negative sign inverts so cold temps (negative deviation) give positive correction
     const isaKelvin = isaTemp + 273.15;
-    const correction = (heightAboveAirport * tempDeviation) / isaKelvin;
+    const correction = -(heightAboveAirport * tempDeviation) / isaKelvin;
     
     // Corrected altitude (add correction when cold, subtract when warm)
     // But typically we add to the minimum to ensure terrain clearance

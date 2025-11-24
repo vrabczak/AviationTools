@@ -8,9 +8,9 @@ describe('AltitudeCorrection', () => {
       // Decision altitude 1500ft, airport at 1000ft, cold temp -15°C
       const result = (tool as any).calculateTemperatureCorrection(1500, 1000, -15);
       
-      // Cold temperature should result in negative correction (aircraft lower than indicated)
-      expect(result.correction).toBeLessThan(0);
-      expect(result.correctedAltitude).toBeLessThan(1500);
+      // Cold temperature should result in positive correction (need to fly higher)
+      expect(result.correction).toBeGreaterThan(0);
+      expect(result.correctedAltitude).toBeGreaterThan(1500);
     });
 
     it('should calculate correction for warm temperature scenario', () => {
@@ -18,9 +18,9 @@ describe('AltitudeCorrection', () => {
       // Decision altitude 1500ft, airport at 1000ft, warm temp 25°C
       const result = (tool as any).calculateTemperatureCorrection(1500, 1000, 25);
       
-      // Warm temperature should result in positive correction (aircraft higher than indicated)
-      expect(result.correction).toBeGreaterThan(0);
-      expect(result.correctedAltitude).toBeGreaterThan(1500);
+      // Warm temperature should result in negative correction (aircraft higher than indicated)
+      expect(result.correction).toBeLessThan(0);
+      expect(result.correctedAltitude).toBeLessThan(1500);
     });
 
     it('should calculate minimal correction for standard temperature', () => {
@@ -39,8 +39,8 @@ describe('AltitudeCorrection', () => {
       expect(result.correctedAltitude).toBeDefined();
       expect(result.correction).toBeDefined();
       expect(isFinite(result.correctedAltitude)).toBe(true);
-      // Cold temperature should give negative correction
-      expect(result.correction).toBeLessThan(0);
+      // Cold temperature should give positive correction
+      expect(result.correction).toBeGreaterThan(0);
     });
 
     it('should calculate larger correction for greater height above airport', () => {
@@ -59,8 +59,8 @@ describe('AltitudeCorrection', () => {
       const tool = new AltitudeCorrection();
       const result = (tool as any).calculateTemperatureCorrection(1000, 500, -30);
       
-      expect(result.correction).toBeLessThan(-50);
-      expect(result.correctedAltitude).toBeLessThan(1000);
+      expect(result.correction).toBeGreaterThan(50);
+      expect(result.correctedAltitude).toBeGreaterThan(1000);
     });
 
     it('should handle high altitude airport', () => {

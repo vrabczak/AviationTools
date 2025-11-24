@@ -287,10 +287,62 @@ export class CoordinatesConversion implements ITool {
         const target = this.container?.querySelector(`#${targetId}`);
         const text = target?.textContent;
         if (!text) return;
-        navigator.clipboard.writeText(text).catch(() => alert('Unable to copy to clipboard.'));
+        
+        const btnElement = button as HTMLButtonElement;
+        const originalText = btnElement.textContent;
+        
+        // Try modern clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text)
+            .then(() => this.showCopySuccess(btnElement, originalText))
+            .catch(() => this.fallbackCopy(text, btnElement, originalText));
+        } else {
+          // Fallback for older browsers and iOS/iPad
+          this.fallbackCopy(text, btnElement, originalText);
+        }
       };
       (button as HTMLButtonElement).onclick = handler;
     });
+  }
+
+  private fallbackCopy(text: string, button: HTMLButtonElement, originalText: string | null): void {
+    // Create a temporary textarea element
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '-9999px';
+    textarea.setAttribute('readonly', '');
+    document.body.appendChild(textarea);
+    
+    // Select and copy the text
+    textarea.select();
+    textarea.setSelectionRange(0, 99999); // For mobile devices
+    
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        this.showCopySuccess(button, originalText);
+      } else {
+        alert('Unable to copy to clipboard.');
+      }
+    } catch (error) {
+      alert('Unable to copy to clipboard.');
+    } finally {
+      document.body.removeChild(textarea);
+    }
+  }
+
+  private showCopySuccess(button: HTMLButtonElement, originalText: string | null): void {
+    button.textContent = 'Copied!';
+    button.style.backgroundColor = '#10b981';
+    button.style.color = '#ffffff';
+    
+    setTimeout(() => {
+      button.textContent = originalText || 'Copy';
+      button.style.backgroundColor = '';
+      button.style.color = '';
+    }, 2000);
   }
 
   private validateRange(lat: number, lon: number): void {

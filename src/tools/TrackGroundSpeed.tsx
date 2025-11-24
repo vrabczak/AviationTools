@@ -118,10 +118,10 @@ export class TrackGroundSpeed implements ITool {
       windSpeed
     );
 
-    this.displayResults(groundTrack, groundSpeed, tas);
+    this.displayResults(groundTrack, groundSpeed, tas, normalizedHeading);
   }
 
-  private displayResults(groundTrack: number, groundSpeed: number, tas: number): void {
+  private displayResults(groundTrack: number, groundSpeed: number, tas: number, heading: number): void {
     const resultDiv = this.container?.querySelector('#ground-result');
     const trackSpan = this.container?.querySelector('#ground-track');
     const speedSpan = this.container?.querySelector('#ground-speed');
@@ -137,7 +137,17 @@ export class TrackGroundSpeed implements ITool {
 
     const speedChange = groundSpeed - tas;
     const changeLabel = speedChange > 0 ? 'tailwind component increasing' : speedChange < 0 ? 'headwind component reducing' : 'little change to';
-    interpretationContainer.textContent = `Groundspeed is ${Math.abs(speedChange).toFixed(1)} kt ${speedChange === 0 ? 'different from' : speedChange > 0 ? 'faster than' : 'slower than'} TAS with a ${changeLabel} your airspeed.`;
+    
+    // Calculate Wind Correction Angle (WCA)
+    let wca = groundTrack - heading;
+    // Normalize WCA to range -180 to +180
+    if (wca > 180) wca -= 360;
+    if (wca < -180) wca += 360;
+    
+    const wcaDirection = wca > 0 ? 'right' : wca < 0 ? 'left' : 'no';
+    const wcaText = wca !== 0 ? ` Wind Correction Angle: ${Math.abs(wca).toFixed(1)}° ${wcaDirection}.` : '';
+    
+    interpretationContainer.textContent = `Groundspeed is ${Math.abs(speedChange).toFixed(1)} kt ${speedChange === 0 ? 'different from' : speedChange > 0 ? 'faster than' : 'slower than'} TAS with a ${changeLabel} your airspeed.${wcaText}`;
   }
 
   private calculateGroundVector(
