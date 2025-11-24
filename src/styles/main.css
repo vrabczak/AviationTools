@@ -76,7 +76,8 @@ html, body {
 /* App Layout */
 #app {
   display: flex;
-  height: 100vh;
+  height: 100vh; /* Fallback for older browsers */
+  height: 100dvh; /* Use dynamic viewport height to account for browser UI on mobile/tablets */
   overflow: hidden;
 }
 
