@@ -4,6 +4,7 @@ import { TurnCalculator } from './TurnCalculator';
 import { CoordinatesConversion } from './CoordinatesConversion';
 import { HeadCrossWind } from './HeadCrossWind';
 import { TrackGroundSpeed } from './TrackGroundSpeed';
+import { ApproachTable } from './ApproachTable';
 
 /**
  * Central registry for all aviation tools
@@ -16,6 +17,7 @@ export class ToolRegistry {
     new CoordinatesConversion(),
     new HeadCrossWind(),
     new TrackGroundSpeed(),
+    new ApproachTable(),
   ];
 
   /**
