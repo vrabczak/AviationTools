@@ -146,15 +146,11 @@ export class AltitudeCorrection implements ITool {
     // ISA temperature at airport elevation (15°C at sea level, -2°C per 1000ft)
     const isaTemp = 15 - (airportAltitude / 1000) * 2;
     
-    // Temperature deviation from ISA
-    const tempDeviation = temperature - isaTemp;
-    
-    // Temperature correction formula: 
-    // Correction = Height × (ISA Temp - Actual Temp) / (ISA Temp in Kelvin)
-    // Using simplified ICAO formula: 4% correction per 10°C deviation
-    // Negative sign inverts so cold temps (negative deviation) give positive correction
-    const isaKelvin = isaTemp + 273.15;
-    const correction = -(heightAboveAirport * tempDeviation) / isaKelvin;
+    // ICAO cold temperature correction formula:
+    // Correction = Height × (ISA Temp - Actual Temp) / (273 + Actual Temp)
+    // This gives positive correction for cold temps (aircraft is lower than indicated)
+    const actualTempKelvin = temperature + 273;
+    const correction = (heightAboveAirport * (isaTemp - temperature)) / actualTempKelvin;
     
     // Corrected altitude (add correction when cold, subtract when warm)
     // But typically we add to the minimum to ensure terrain clearance

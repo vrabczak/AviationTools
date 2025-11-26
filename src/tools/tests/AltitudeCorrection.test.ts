@@ -6,34 +6,44 @@ describe('AltitudeCorrection', () => {
     it('should calculate correction for cold temperature scenario', () => {
       const tool = new AltitudeCorrection();
       // Decision altitude 1500ft, airport at 1000ft, cold temp -15°C
+      // ISA at 1000ft = 15 - 2 = 13°C
+      // Correction = 500 × (13 - (-15)) / (273 + (-15)) = 500 × 28 / 258 ≈ 54ft
       const result = (tool as any).calculateTemperatureCorrection(1500, 1000, -15);
       
       // Cold temperature should result in positive correction (need to fly higher)
       expect(result.correction).toBeGreaterThan(0);
+      expect(result.correction).toBeCloseTo(54.3, 0);
       expect(result.correctedAltitude).toBeGreaterThan(1500);
     });
 
     it('should calculate correction for warm temperature scenario', () => {
       const tool = new AltitudeCorrection();
       // Decision altitude 1500ft, airport at 1000ft, warm temp 25°C
+      // ISA at 1000ft = 13°C, so 25°C is 12°C above ISA
+      // Correction = 500 × (13 - 25) / (273 + 25) = 500 × (-12) / 298 ≈ -20ft
       const result = (tool as any).calculateTemperatureCorrection(1500, 1000, 25);
       
       // Warm temperature should result in negative correction (aircraft higher than indicated)
       expect(result.correction).toBeLessThan(0);
+      expect(result.correction).toBeCloseTo(-20.1, 0);
       expect(result.correctedAltitude).toBeLessThan(1500);
     });
 
-    it('should calculate minimal correction for standard temperature', () => {
+    it('should calculate zero correction at ISA temperature', () => {
       const tool = new AltitudeCorrection();
-      const result = (tool as any).calculateTemperatureCorrection(1000, 1000, 15);
+      // At sea level (0ft), ISA = 15°C
+      // Height = 500ft, Correction = 500 × (15 - 15) / 288 = 0
+      const result = (tool as any).calculateTemperatureCorrection(500, 0, 15);
       
-      // At sea level with standard temperature (15°C), correction should be near zero
-      expect(Math.abs(result.correction)).toBeLessThan(10);
+      // At ISA temperature, correction should be zero
+      expect(result.correction).toBeCloseTo(0, 5);
     });
 
     it('should handle sea level airport correctly', () => {
       const tool = new AltitudeCorrection();
       // Decision altitude 500ft above sea level airport (0ft), cold temp -10°C
+      // ISA at 0ft = 15°C
+      // Correction = 500 × (15 - (-10)) / (273 + (-10)) = 500 × 25 / 263 ≈ 47.5ft
       const result = (tool as any).calculateTemperatureCorrection(500, 0, -10);
       
       expect(result.correctedAltitude).toBeDefined();
@@ -41,6 +51,7 @@ describe('AltitudeCorrection', () => {
       expect(isFinite(result.correctedAltitude)).toBe(true);
       // Cold temperature should give positive correction
       expect(result.correction).toBeGreaterThan(0);
+      expect(result.correction).toBeCloseTo(47.5, 0);
     });
 
     it('should calculate larger correction for greater height above airport', () => {
@@ -57,9 +68,13 @@ describe('AltitudeCorrection', () => {
 
     it('should handle very cold temperature (-30°C)', () => {
       const tool = new AltitudeCorrection();
+      // DA 1000ft, airport 500ft, temp -30°C
+      // ISA at 500ft = 15 - 1 = 14°C
+      // Correction = 500 × (14 - (-30)) / (273 + (-30)) = 500 × 44 / 243 ≈ 90.5ft
       const result = (tool as any).calculateTemperatureCorrection(1000, 500, -30);
       
       expect(result.correction).toBeGreaterThan(50);
+      expect(result.correction).toBeCloseTo(90.5, 0);
       expect(result.correctedAltitude).toBeGreaterThan(1000);
     });
 
@@ -79,8 +94,8 @@ describe('AltitudeCorrection', () => {
       // ISA at 2000ft = 15 - (2000/1000 * 2) = 11°C
       const result1 = (tool as any).calculateTemperatureCorrection(decisionAlt, airportAlt, 11);
       
-      // At ISA temperature, correction should be minimal
-      expect(Math.abs(result1.correction)).toBeLessThan(10);
+      // At ISA temperature, correction should be zero
+      expect(result1.correction).toBeCloseTo(0, 5);
     });
   });
 
