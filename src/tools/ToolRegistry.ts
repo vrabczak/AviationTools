@@ -17,13 +17,13 @@ export class ToolRegistry {
   private static tools: ITool[] = [
     new AltitudeCorrection(),
     new TurnCalculator(),
-    new CoordinatesConversion(),
     new HeadCrossWind(),
     new TrackGroundSpeed(),
     new ApproachTable(),
-    new SpeedConversion(),
+    new CoordinatesConversion(),
     new DistanceConversion(),
     new FuelConversion(),
+    new SpeedConversion(),
   ];
 
   /**
