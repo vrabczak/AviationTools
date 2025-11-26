@@ -1,10 +1,11 @@
 import { ITool } from './ITool';
 import { AltitudeCorrection } from './AltitudeCorrection';
 import { TurnCalculator } from './TurnCalculator';
-import { CoordinatesConversion } from './CoordinatesConversion';
 import { HeadCrossWind } from './HeadCrossWind';
 import { TrackGroundSpeed } from './TrackGroundSpeed';
 import { ApproachTable } from './ApproachTable';
+import { CoordinatesConversion } from './CoordinatesConversion';
+import { SpeedConversion } from './SpeedConversion';
 
 /**
  * Central registry for all aviation tools
@@ -18,6 +19,7 @@ export class ToolRegistry {
     new HeadCrossWind(),
     new TrackGroundSpeed(),
     new ApproachTable(),
+    new SpeedConversion(),
   ];
 
   /**
