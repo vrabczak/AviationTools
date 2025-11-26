@@ -3,12 +3,12 @@ import { jsx } from '../jsx-runtime';
 
 /**
  * Approach Table Tool
- * Generates a table showing distance, altitude, and height above TDZ for approach
+ * Generates a table showing distance, altitude, and height above Target Altitude for approach
  */
 export class ApproachTable implements ITool {
   id = 'approach-table';
   name = 'Approach Table';
-  description = 'Generate approach table with distances, altitudes, and heights above TDZ';
+  description = 'Generate approach table with distances, altitudes, and heights above Target Altitude';
 
   private container: HTMLElement | null = null;
 
@@ -19,20 +19,26 @@ export class ApproachTable implements ITool {
       <div class="tool-content">
         <h2>Approach Table</h2>
         <p class="tool-description">
-          Generate a table showing distance to touchdown zone (TDZ), altitude, and height above TDZ
+          Generate a table showing distance to Target Altitude, Altitude Above and Height Above
           for a given glide slope angle. Useful for approach planning and monitoring.
         </p>
         
         <div class="input-group">
-          <label for="tdz-altitude">Touch Down Zone Altitude (ft):</label>
-          <input type="number" id="tdz-altitude" placeholder="e.g., 1500" step="1" />
-          <small>Altitude of the touchdown zone in feet</small>
+          <label for="target-altitude">Target Altitude (ft):</label>
+          <input type="number" id="target-altitude" placeholder="e.g., 1500" step="1" />
+          <small>Target Altitude in feet</small>
         </div>
         
         <div class="input-group">
           <label for="slope-angle">Glide Slope Angle (°):</label>
           <input type="number" id="slope-angle" placeholder="3" step="0.1" value="3" />
           <small>Approach slope angle in degrees (default: 3°)</small>
+        </div>
+        
+        <div class="input-group">
+          <label for="ground-speed">Ground Speed (kt):</label>
+          <input type="number" id="ground-speed" placeholder="e.g., 100" step="1" min="1" />
+          <small>Ground speed in knots (optional, for vertical speed calculation)</small>
         </div>
         
         <button id="generate-table" class="btn-primary">Generate Table</button>
@@ -64,25 +70,28 @@ export class ApproachTable implements ITool {
   }
 
   private generateTable(): void {
-    const tdzAltitude = parseFloat(
-      (this.container?.querySelector('#tdz-altitude') as HTMLInputElement)?.value
+    const targetAltitude = parseFloat(
+      (this.container?.querySelector('#target-altitude') as HTMLInputElement)?.value
     );
     const slopeAngle = parseFloat(
       (this.container?.querySelector('#slope-angle') as HTMLInputElement)?.value
     );
+    const groundSpeed = parseFloat(
+      (this.container?.querySelector('#ground-speed') as HTMLInputElement)?.value
+    );
 
-    if (isNaN(tdzAltitude)) {
-      alert('Please enter a valid TDZ altitude');
+    if (isNaN(targetAltitude)) {
+      alert('Please enter a valid Target Altitude');
       return;
     }
 
-    if (isNaN(slopeAngle) || slopeAngle <= 0 || slopeAngle > 60) {
+    if (isNaN(slopeAngle) || slopeAngle < 0 || slopeAngle > 60) {
       alert('Please enter a valid slope angle (0-60°)');
       return;
     }
 
     // Generate table data
-    const tableData = this.calculateApproachTable(tdzAltitude, slopeAngle);
+    const tableData = this.calculateApproachTable(targetAltitude, slopeAngle);
 
     // Display result
     const resultDiv = this.container?.querySelector('#approach-result');
@@ -100,8 +109,7 @@ export class ApproachTable implements ITool {
           <table class="approach-table">
             <thead>
               <tr>
-                <th>Distance (NM)</th>
-                <th>Distance (km)</th>
+                <th>Distance (NM / km)</th>
                 <th>Altitude (ft)</th>
                 <th>Height (ft)</th>
               </tr>
@@ -109,16 +117,18 @@ export class ApproachTable implements ITool {
             <tbody>
               {tableData.map(row => (
                 <tr>
-                  <td>{row.distanceNM}</td>
-                  <td>{row.distanceKm.toFixed(2)}</td>
-                  <td>{Math.round(row.altitude).toLocaleString()}</td>
-                  <td>{Math.round(row.heightAboveTDZ).toLocaleString()}</td>
+                  <td>{row.distanceNM} / {row.distanceKM}</td>
+                  <td>{Math.round(row.altitudeAbove).toLocaleString()}</td>
+                  <td>{Math.round(row.heightAbove).toLocaleString()}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           <div class="result-info">
-            <p>Glide slope: {slopeAngle}° | TDZ elevation: {tdzAltitude.toLocaleString()} ft</p>
+            <p>Glide slope: {slopeAngle}° | Target Altitude: {targetAltitude.toLocaleString()} ft</p>
+            {!isNaN(groundSpeed) && groundSpeed > 0 && (
+              <p>Target Vertical Speed: {Math.round(groundSpeed * Math.tan(slopeAngle * Math.PI / 180) * 101.27)} ft/min</p>
+            )}
           </div>
         </div>
       );
@@ -128,31 +138,31 @@ export class ApproachTable implements ITool {
   }
 
   private calculateApproachTable(
-    tdzAltitude: number,
+    targetAltitude: number,
     slopeAngle: number
-  ): Array<{ distanceNM: number; distanceKm: number; altitude: number; heightAboveTDZ: number }> {
-    const NM_TO_KM = 1.852;
+  ): Array<{ distanceNM: number; distanceKM: string; altitudeAbove: number; heightAbove: number }> {
     const NM_TO_FEET = 6076.12; // 1 NM = 6076.12 feet
+    const NM_TO_KM = 1.852; // 1 NM = 1.852 km
     
     const results = [];
     
     // Calculate for 1-10 NM
     for (let distanceNM = 1; distanceNM <= 10; distanceNM++) {
-      const distanceKm = distanceNM * NM_TO_KM;
       const distanceFeet = distanceNM * NM_TO_FEET;
+      const distanceKM = (distanceNM * NM_TO_KM).toFixed(1);
       
-      // Height above TDZ = distance * tan(slope angle)
+      // Height above = distance * tan(slope angle)
       const slopeRadians = (slopeAngle * Math.PI) / 180;
-      const heightAboveTDZ = distanceFeet * Math.tan(slopeRadians);
+      const heightAbove = distanceFeet * Math.tan(slopeRadians);
       
-      // Altitude = TDZ altitude + height above TDZ
-      const altitude = tdzAltitude + heightAboveTDZ;
+      // Altitude above = target altitude + height above
+      const altitudeAbove = targetAltitude + heightAbove;
       
       results.push({
         distanceNM,
-        distanceKm,
-        altitude,
-        heightAboveTDZ
+        distanceKM,
+        altitudeAbove,
+        heightAbove
       });
     }
     
