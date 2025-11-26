@@ -6,6 +6,7 @@ import { TrackGroundSpeed } from './TrackGroundSpeed';
 import { ApproachTable } from './ApproachTable';
 import { CoordinatesConversion } from './CoordinatesConversion';
 import { SpeedConversion } from './SpeedConversion';
+import { DistanceConversion } from './DistanceConversion';
 
 /**
  * Central registry for all aviation tools
@@ -20,6 +21,7 @@ export class ToolRegistry {
     new TrackGroundSpeed(),
     new ApproachTable(),
     new SpeedConversion(),
+    new DistanceConversion(),
   ];
 
   /**
