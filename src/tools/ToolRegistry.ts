@@ -5,8 +5,9 @@ import { HeadCrossWind } from './HeadCrossWind';
 import { TrackGroundSpeed } from './TrackGroundSpeed';
 import { ApproachTable } from './ApproachTable';
 import { CoordinatesConversion } from './CoordinatesConversion';
-import { SpeedConversion } from './SpeedConversion';
 import { DistanceConversion } from './DistanceConversion';
+import { FuelConversion } from './FuelConversion';
+import { SpeedConversion } from './SpeedConversion';
 
 /**
  * Central registry for all aviation tools
@@ -22,6 +23,7 @@ export class ToolRegistry {
     new ApproachTable(),
     new SpeedConversion(),
     new DistanceConversion(),
+    new FuelConversion(),
   ];
 
   /**
