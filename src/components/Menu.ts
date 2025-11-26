@@ -86,7 +86,6 @@ export class Menu {
         </div>
         <nav class="menu-nav">
           <div class="menu-section">
-            <h3>Calculators</h3>
             <ul class="tool-list">
               ${tools.map(tool => `
                 <li>

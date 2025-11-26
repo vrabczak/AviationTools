@@ -123,7 +123,7 @@
 
 .tool-button {
   width: 100%;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm);
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--border-radius);
@@ -167,7 +167,7 @@
 }
 
 .menu-footer {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-sm);
   border-top: 1px solid var(--border);
   text-align: center;
   color: var(--text-light);

@@ -56,7 +56,7 @@
 .input-group select:focus {
   outline: none;
   border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
 }
 
 .input-group input[type="number"]:invalid {
@@ -318,7 +318,7 @@
 }
 
 .approach-table tbody tr:hover {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(34, 197, 94, 0.1);
 }
 
 .approach-table td:first-child {
