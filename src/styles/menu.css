@@ -141,9 +141,13 @@
 }
 
 .tool-button.active {
-  background: var(--primary-light);
+  background: var(--primary-dark);
   color: white;
   border-color: var(--primary);
+}
+
+[data-theme="light"] .tool-button.active {
+  background: var(--primary-light);
 }
 
 .tool-button.active .tool-desc {
