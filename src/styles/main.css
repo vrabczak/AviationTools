@@ -179,6 +179,7 @@ small {
   
   #tool-container {
     padding: var(--spacing-md);
+    padding-inline: 0;
   }
 }
 
