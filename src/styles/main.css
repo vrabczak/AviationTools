@@ -93,7 +93,7 @@ html, body {
 #tool-container {
   flex: 1;
   overflow-y: auto;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-md);
   background: var(--bg-gray);
 }
 
@@ -184,10 +184,14 @@ small {
 }
 
 /* Large screens - wider menu */
-@media (min-width: 1201px) {
+@media (min-width: 1025px) {
   :root {
     --menu-width: 320px;
   }
+
+  #tool-container {
+    padding: var(--spacing-lg);
+}
 }
 
 /* Print Styles */

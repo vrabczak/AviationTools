@@ -132,6 +132,11 @@ export class AltitudeCorrection implements ITool {
         interpretationP.textContent = `Temperature matches ISA. No correction needed.`;
         interpretationP.className = 'result-info';
       } 
+      try {
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (_) {
+        (resultDiv as HTMLElement).scrollIntoView();
+      }
     }
   }
 

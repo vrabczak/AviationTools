@@ -4,7 +4,7 @@
   max-width: 800px;
   margin: 0 auto;
   background: var(--bg);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-md);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow);
 }
@@ -44,6 +44,15 @@
   background: var(--bg);
   color: var(--text);
   transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  min-height: 40px;
+}
+
+/* Inline input row used to group inputs and selects on a single line */
+.input-group .inline-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .input-group input[type="number"]::placeholder,
@@ -120,7 +129,7 @@
 /* Results */
 .result {
   margin-top: var(--spacing-xl);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   background: var(--bg-gray);
   border-radius: var(--border-radius);
   border: 2px solid var(--border);
@@ -220,19 +229,6 @@
 
 /* Responsive */
 
-/* Tablets - keep results readable when space is constrained */
-@media (max-width: 1024px) {
-  .result-value {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-xs);
-  }
-
-  .result-value .value {
-    font-size: 1.25rem;
-  }
-}
-
 /* Mobile phones */
 @media (max-width: 725px) {
   .result {
@@ -256,6 +252,7 @@
 @media (min-width: 1025px) {
   .tool-content {
     max-width: 900px;
+    padding: var(--spacing-xl);
   }
 }
 

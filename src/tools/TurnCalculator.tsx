@@ -136,6 +136,11 @@ export class TurnCalculator implements ITool {
         interpretationP.textContent = 'This is slower than a standard rate turn.';
         interpretationP.className = 'result-info';
       }
+      try {
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (_) {
+        (resultDiv as HTMLElement).scrollIntoView();
+      }
     }
   }
 

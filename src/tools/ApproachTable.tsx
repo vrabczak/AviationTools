@@ -25,7 +25,7 @@ export class ApproachTable implements ITool {
         
         <div class="input-group">
           <label for="target-altitude">Target Altitude:</label>
-          <div style="display:flex; gap:8px; align-items:center;">
+          <div class="inline-row">
             <input type="number" id="target-altitude" placeholder="e.g., 1500" step="1" />
             <select id="altitude-unit" aria-label="Altitude unit">
               <option value="ft" selected>ft</option>
@@ -179,6 +179,13 @@ export class ApproachTable implements ITool {
       );
       
       tableContainer.appendChild(tableElement as Node);
+      // Automatically scroll to the result when the table is generated
+      try {
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (_) {
+        // Fallback for older browsers
+        (resultDiv as HTMLElement).scrollIntoView();
+      }
     }
   }
 

@@ -274,6 +274,13 @@ export class CoordinatesConversion implements ITool {
     if (dmsField) dmsField.textContent = dmsText;
     if (mgrsField) mgrsField.textContent = mgrsText;
     resultCard?.classList.remove('hidden');
+    if (resultCard) {
+      try {
+        resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (_) {
+        (resultCard as HTMLElement).scrollIntoView();
+      }
+    }
 
     this.registerCopyHandlers();
   }

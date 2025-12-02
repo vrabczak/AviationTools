@@ -140,6 +140,11 @@ export class HeadCrossWind implements ITool {
     interpretationContainer.textContent = '';
 
     resultDiv.classList.remove('hidden');
+    try {
+      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (_) {
+      (resultDiv as HTMLElement).scrollIntoView();
+    }
   }
 
   private calculateComponents(

@@ -132,6 +132,11 @@ export class TrackGroundSpeed implements ITool {
     }
 
     resultDiv.classList.remove('hidden');
+    try {
+      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (_) {
+      (resultDiv as HTMLElement).scrollIntoView();
+    }
     trackSpan.textContent = `${groundTrack.toFixed(0).padStart(3, '0')}°`;
     speedSpan.textContent = groundSpeed.toFixed(1);
 
