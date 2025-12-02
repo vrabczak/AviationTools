@@ -159,7 +159,7 @@ small {
 /* Responsive Design */
 
 /* Mobile phones (portrait) - hide menu by default */
-@media (max-width: 740px) {
+@media (max-width: 725px) {
   #app {
     flex-direction: column;
   }
@@ -180,24 +180,6 @@ small {
   #tool-container {
     padding: var(--spacing-md);
     padding-inline: 0;
-  }
-}
-
-/* iPad Mini (portrait) and tablets - show side menu */
-@media (min-width: 601px) and (max-width: 820px) {
-  :root {
-    --menu-width: 260px;
-  }
-  
-  #tool-container {
-    padding: var(--spacing-lg);
-  }
-}
-
-/* iPad Mini (landscape) and larger tablets */
-@media (min-width: 821px) and (max-width: 1200px) {
-  :root {
-    --menu-width: 280px;
   }
 }
 

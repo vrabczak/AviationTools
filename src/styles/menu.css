@@ -183,7 +183,7 @@
 }
 
 /* Mobile Menu - Only for phones */
-@media (max-width: 600px) {
+@media (max-width: 725px) {
   .menu-toggle {
     display: inline-flex;
   }
@@ -192,9 +192,9 @@
     gap: var(--spacing-xs);
   }
 
-  .menu {
+  /*.menu {
     height: auto;
-  }
+  }*/
 
   .menu-nav,
   .menu-footer {
@@ -226,20 +226,5 @@
   .menu.menu-open .hamburger::after {
     transform: rotate(-45deg);
     top: 0;
-  }
-}
-
-/* iPad Mini and tablets - optimize button spacing */
-@media (min-width: 601px) and (max-width: 1024px) {
-  .tool-button {
-    padding: var(--spacing-sm) var(--spacing-md);
-  }
-  
-  .tool-name {
-    font-size: 0.875rem;
-  }
-  
-  .tool-desc {
-    font-size: 0.75rem;
   }
 }

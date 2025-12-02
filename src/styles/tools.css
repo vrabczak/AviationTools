@@ -234,9 +234,12 @@
 }
 
 /* Mobile phones */
-@media (max-width: 600px) {
+@media (max-width: 725px) {
+  .result {
+    padding: var(--spacing-xs);
+  }
   .tool-content {
-    padding: var(--spacing-md);
+    padding: var(--spacing-xs);
   }
 
   .result-grid {
@@ -248,33 +251,6 @@
   }
 }
 
-/* iPad Mini - optimize for touch and comfortable reading */
-@media (min-width: 601px) and (max-width: 1024px) {
-  .tool-content {
-    max-width: 680px;
-    padding: var(--spacing-xl);
-  }
-  
-  .input-group input[type="number"] {
-    padding: var(--spacing-lg);
-    font-size: 1.125rem;
-    min-height: 48px; /* Touch-friendly */
-  }
-  
-  .btn-primary {
-    padding: var(--spacing-lg) var(--spacing-xl);
-    font-size: 1.125rem;
-    min-height: 48px; /* Touch-friendly */
-  }
-  
-  .result-value .value {
-    font-size: 1.75rem;
-  }
-  
-  h2 {
-    font-size: 1.75rem;
-  }
-}
 
 /* Desktop - maximize space */
 @media (min-width: 1025px) {
