@@ -24,9 +24,15 @@ export class ApproachTable implements ITool {
         </p>
         
         <div class="input-group">
-          <label for="target-altitude">Target Altitude (ft):</label>
-          <input type="number" id="target-altitude" placeholder="e.g., 1500" step="1" />
-          <small>Target Altitude in feet</small>
+          <label for="target-altitude">Target Altitude:</label>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="number" id="target-altitude" placeholder="e.g., 1500" step="1" />
+            <select id="altitude-unit" aria-label="Altitude unit">
+              <option value="ft" selected>ft</option>
+              <option value="m">m</option>
+            </select>
+          </div>
+          <small>Enter target altitude in the selected unit</small>
         </div>
         
         <div class="input-group">
@@ -39,6 +45,14 @@ export class ApproachTable implements ITool {
           <label for="ground-speed">Ground Speed (kt):</label>
           <input type="number" id="ground-speed" placeholder="e.g., 100" step="1" min="1" />
           <small>Ground speed in knots (optional, for vertical speed calculation)</small>
+        </div>
+
+        <div class="input-group">
+          <label for="distance-unit">Distance Unit:</label>
+          <select id="distance-unit" aria-label="Distance unit">
+            <option value="NM" selected>NM</option>
+            <option value="km">km</option>
+          </select>
         </div>
         
         <button id="generate-table" class="btn-primary">Generate Table</button>
@@ -70,7 +84,9 @@ export class ApproachTable implements ITool {
   }
 
   private generateTable(): void {
-    const targetAltitude = parseFloat(
+    const altitudeUnit = (this.container?.querySelector('#altitude-unit') as HTMLSelectElement)?.value || 'ft';
+    const distanceUnit = (this.container?.querySelector('#distance-unit') as HTMLSelectElement)?.value || 'NM';
+    const targetAltitudeInput = parseFloat(
       (this.container?.querySelector('#target-altitude') as HTMLInputElement)?.value
     );
     const slopeAngle = parseFloat(
@@ -80,7 +96,7 @@ export class ApproachTable implements ITool {
       (this.container?.querySelector('#ground-speed') as HTMLInputElement)?.value
     );
 
-    if (isNaN(targetAltitude)) {
+    if (isNaN(targetAltitudeInput)) {
       alert('Please enter a valid Target Altitude');
       return;
     }
@@ -90,8 +106,11 @@ export class ApproachTable implements ITool {
       return;
     }
 
+    // Convert target altitude to feet for internal calculations if needed
+    const targetAltitudeFt = altitudeUnit === 'm' ? targetAltitudeInput * 3.28084 : targetAltitudeInput;
+
     // Generate table data
-    const tableData = this.calculateApproachTable(targetAltitude, slopeAngle);
+    const tableData = this.calculateApproachTable(targetAltitudeFt, slopeAngle);
 
     // Display result
     const resultDiv = this.container?.querySelector('#approach-result');
@@ -109,25 +128,51 @@ export class ApproachTable implements ITool {
           <table class="approach-table">
             <thead>
               <tr>
-                <th>Distance (NM / km)</th>
-                <th>Altitude (ft)</th>
-                <th>Height (ft)</th>
+                <th>Distance ({distanceUnit})</th>
+                <th>Altitude ({altitudeUnit})</th>
+                <th>Height ({altitudeUnit})</th>
               </tr>
             </thead>
             <tbody>
               {tableData.map(row => (
                 <tr>
-                  <td>{row.distanceNM} / {row.distanceKM}</td>
-                  <td>{Math.round(row.altitudeAbove).toLocaleString()}</td>
-                  <td>{Math.round(row.heightAbove).toLocaleString()}</td>
+                  <td>{distanceUnit === 'NM' ? row.distanceNM : row.distanceKM}</td>
+                  <td>{
+                    (() => {
+                      const val = altitudeUnit === 'm' ? row.altitudeAbove / 3.28084 : row.altitudeAbove;
+                      return Math.round(val).toLocaleString();
+                    })()
+                  }</td>
+                  <td>{
+                    (() => {
+                      const val = altitudeUnit === 'm' ? row.heightAbove / 3.28084 : row.heightAbove;
+                      return Math.round(val).toLocaleString();
+                    })()
+                  }</td>
                 </tr>
               ))}
             </tbody>
           </table>
           <div class="result-info">
-            <p>Glide slope: {slopeAngle}° | Target Altitude: {targetAltitude.toLocaleString()} ft</p>
+            <p>
+              Glide slope: {slopeAngle}° |
+              {' '}Target Altitude: {(
+                altitudeUnit === 'm'
+                  ? Math.round(targetAltitudeFt / 3.28084).toLocaleString() + ' m'
+                  : Math.round(targetAltitudeFt).toLocaleString() + ' ft'
+              )}
+            </p>
             {!isNaN(groundSpeed) && groundSpeed > 0 && (
-              <p>Target Vertical Speed: {Math.round(groundSpeed * Math.tan(slopeAngle * Math.PI / 180) * 101.27)} ft/min</p>
+              <p>
+                {(() => {
+                  const vsFtMin = groundSpeed * Math.tan(slopeAngle * Math.PI / 180) * 101.27;
+                  if (altitudeUnit === 'm') {
+                    const vsMMin = vsFtMin / 3.28084;
+                    return `Target Vertical Speed: ${Math.round(vsMMin)} m/min`;
+                  }
+                  return `Target Vertical Speed: ${Math.round(vsFtMin)} ft/min`;
+                })()}
+              </p>
             )}
           </div>
         </div>
