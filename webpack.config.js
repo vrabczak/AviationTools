@@ -21,9 +21,15 @@ module.exports = (env, argv) => {
     },
     devtool: isProduction ? 'source-map' : 'eval-source-map',
     devServer: {
-      static: {
-        directory: path.join(__dirname, 'dist'),
-      },
+      static: [
+        {
+          directory: path.join(__dirname, 'dist'),
+        },
+        {
+          directory: path.join(__dirname, 'src/assets'),
+          publicPath: '/assets',
+        },
+      ],
       compress: true,
       port: 8080,
       hot: true,
@@ -57,6 +63,7 @@ module.exports = (env, argv) => {
       new CopyWebpackPlugin({
         patterns: [
           { from: 'public/manifest.json', to: 'manifest.json' },
+          { from: 'src/assets/images', to: 'assets/images' },
         ],
       }),
       ...(isProduction

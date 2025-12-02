@@ -19,7 +19,8 @@
     "noFallthroughCasesInSwitch": true,
     "jsx": "react",
     "jsxFactory": "jsx",
-    "jsxFragmentFactory": "Fragment"
+    "jsxFragmentFactory": "Fragment",
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "include": ["src/**/*", "public/service-worker.ts"],
   "exclude": ["node_modules", "dist"]
