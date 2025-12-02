@@ -180,6 +180,7 @@ small {
   #tool-container {
     padding: var(--spacing-md);
     padding-inline: 0;
+    padding-top: var(--spacing-xl);
   }
 }
 
