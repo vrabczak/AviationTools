@@ -169,7 +169,7 @@ small {
     height: 100%;
     border-right: none;
     border-bottom: 1px solid var(--border);
-    max-height: 60px;
+    max-height: 65px;
     overflow: visible;
   }
 

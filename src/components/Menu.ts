@@ -1,7 +1,7 @@
 /// <reference path="../types/assets.d.ts" />
 import { ITool } from '../tools/ITool';
 import { ToolRegistry } from '../tools/ToolRegistry';
-import appIcon from '../assets/images/ATicon.png';
+import appIcon from '../assets/images/ATiconTransparent.png';
 
 /**
  * Menu component

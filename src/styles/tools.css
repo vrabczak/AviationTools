@@ -12,7 +12,6 @@
 .tool-description {
   color: var(--text-light);
   font-size: 0.9375rem;
-  margin-bottom: var(--spacing-xl);
   padding: var(--spacing-md);
   background: var(--bg-gray);
   border-left: 3px solid var(--primary-light);

@@ -16,10 +16,10 @@ import { SpeedConversion } from './SpeedConversion';
 export class ToolRegistry {
   private static tools: ITool[] = [
     new AltitudeCorrection(),
-    new TurnCalculator(),
+    new ApproachTable(),
     new HeadCrossWind(),
     new TrackGroundSpeed(),
-    new ApproachTable(),
+    new TurnCalculator(),
     new CoordinatesConversion(),
     new DistanceConversion(),
     new FuelConversion(),

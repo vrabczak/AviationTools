@@ -202,10 +202,6 @@
     gap: var(--spacing-xs);
   }
 
-  /*.menu {
-    height: auto;
-  }*/
-
   .menu-nav,
   .menu-footer {
     display: none;
