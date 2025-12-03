@@ -17,10 +17,10 @@ export class MinimaAltitudeHeight implements ITool {
 
     const content = (
       <div class="tool-content">
-        <h2>Minima</h2>
+        <h2>DA/MDA DH/MDH</h2>
         <p class="tool-description">
-          Calculate Decision Altitude/Minimum Descent Altitude and Decision Height/Minimum Descent Height
-          by combining published OCA/OCH, your aircraft minima, and any operator margin.
+          Calculate Decision Altitude (DA) or Minimum Descent Altitude (MDA) and Decision Height (DH) or Minimum Descent Height (MDH)
+          by combining published Obstacle Clearance Altitude (OCA) and Obcstacle Clearance Height (OCH), your Aircraft Minima, and any Operator Margin.
         </p>
 
         <div class="input-group">
