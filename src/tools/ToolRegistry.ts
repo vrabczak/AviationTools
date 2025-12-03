@@ -8,6 +8,7 @@ import { CoordinatesConversion } from './CoordinatesConversion';
 import { DistanceConversion } from './DistanceConversion';
 import { FuelConversion } from './FuelConversion';
 import { SpeedConversion } from './SpeedConversion';
+import { MinimaAltitudeHeight } from './MinimaAltitudeHeight';
 
 /**
  * Central registry for all aviation tools
@@ -18,6 +19,7 @@ export class ToolRegistry {
     new AltitudeCorrection(),
     new ApproachTable(),
     new HeadCrossWind(),
+    new MinimaAltitudeHeight(),
     new TrackGroundSpeed(),
     new TurnCalculator(),
     new CoordinatesConversion(),
