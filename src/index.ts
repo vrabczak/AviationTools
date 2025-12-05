@@ -32,7 +32,7 @@ function initApp(): void {
 }
 
 // Register service worker for offline support (production only)
-if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     const serviceWorkerUrl = new URL('service-worker.js', window.location.href);
 
