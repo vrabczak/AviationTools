@@ -2,6 +2,7 @@
 import { ITool } from '../tools/ITool';
 import { ToolRegistry } from '../tools/ToolRegistry';
 import appIcon from '../assets/images/ATiconTransparent.png';
+import { jsx } from '../jsx-runtime';
 
 /**
  * Menu component
@@ -40,10 +41,13 @@ export class Menu {
   private updateThemeIcon(): void {
     const themeToggle = this.container.querySelector('.theme-toggle');
     if (themeToggle) {
-      themeToggle.innerHTML = this.getThemeIcon();
       const label = this.getThemeIconLabel();
       themeToggle.setAttribute('aria-label', label);
       themeToggle.setAttribute('title', label);
+      // Clear existing children
+      while (themeToggle.firstChild) themeToggle.removeChild(themeToggle.firstChild);
+      // Append new icon element
+      themeToggle.appendChild(this.getThemeIcon());
     }
   }
 
@@ -59,18 +63,22 @@ export class Menu {
     }
   }
 
-  private getThemeIcon(): string {
+  private getThemeIcon(): Element {
     const label = this.getThemeIconLabel();
     if (this.currentTheme === 'dark') {
       // Sun icon for switching to light mode
-      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="${label}">
-        <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
-      </svg>`;
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" role="img" aria-label={label}>
+          <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"></path>
+        </svg>
+      ) as unknown as Element;
     } else {
       // Moon icon for switching to dark mode
-      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" role="img" aria-label="${label}">
-        <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd" />
-      </svg>`;
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" role="img" aria-label={label}>
+          <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"></path>
+        </svg>
+      ) as unknown as Element;
     }
   }
 
@@ -81,16 +89,16 @@ export class Menu {
   render(): void {
     const tools = ToolRegistry.getAllTools();
 
-    this.container.innerHTML = `
+    const content = (
       <div class="menu">
         <div class="menu-header">
           <h1>
-            <img src="${appIcon}" alt="" class="menu-logo" aria-hidden="true" />
+            <img src={appIcon} alt="" class="menu-logo" aria-hidden="true" />
             Aviation Tools
           </h1>
           <div class="menu-actions">
-            <button class="theme-toggle" aria-label="${this.getThemeIconLabel()}" title="${this.getThemeIconLabel()}">
-              ${this.getThemeIcon()}
+            <button class="theme-toggle" aria-label={this.getThemeIconLabel()} title={this.getThemeIconLabel()}>
+              {this.getThemeIcon()}
             </button>
             <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">
               <span class="hamburger"></span>
@@ -100,18 +108,18 @@ export class Menu {
         <nav class="menu-nav">
           <div class="menu-section">
             <ul class="tool-list">
-              ${tools.map(tool => `
+              {tools.map(tool => (
                 <li>
                   <button 
                     class="tool-button" 
-                    data-tool-id="${tool.id}"
-                    title="${tool.description}"
+                    data-tool-id={tool.id}
+                    title={tool.description}
                   >
-                    <span class="tool-name">${tool.name}</span>
-                    <span class="tool-desc">${tool.description}</span>
+                    <span class="tool-name">{tool.name}</span>
+                    <span class="tool-desc">{tool.description}</span>
                   </button>
                 </li>
-              `).join('')}
+              ))}
             </ul>
           </div>
         </nav>
@@ -120,9 +128,15 @@ export class Menu {
           <p><small>Offline-capable PWA</small></p>
         </div>
       </div>
-    `;
+    );
+
+    // Replace container content
+    while (this.container.firstChild) this.container.removeChild(this.container.firstChild);
+    this.container.appendChild(content as unknown as Node);
 
     this.attachEventListeners();
+    // Ensure theme icon is present after rendering
+    this.updateThemeIcon();
 
     // Default to open menu on mobile for immediate visibility
     if (window.innerWidth <= 600) {

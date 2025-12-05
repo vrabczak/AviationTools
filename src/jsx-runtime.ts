@@ -26,15 +26,28 @@ export function jsx(
     return tag(props, children);
   }
 
-  const element = document.createElement(tag);
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const svgTags = new Set([
+    'svg', 'path', 'circle', 'ellipse', 'g', 'defs', 'clipPath', 'mask', 'pattern', 'linearGradient',
+    'radialGradient', 'stop', 'rect', 'line', 'polyline', 'polygon', 'text', 'tspan', 'textPath', 'use',
+    'symbol', 'marker', 'filter', 'feGaussianBlur', 'feOffset', 'feBlend', 'feColorMatrix', 'feComponentTransfer',
+    'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap', 'feFlood', 'feImage', 'feMerge',
+    'feMorphology', 'feSpecularLighting', 'feTile', 'feTurbulence', 'foreignObject'
+  ]);
+  const isSvgTag = svgTags.has(tag as string);
+  const element = isSvgTag
+    ? document.createElementNS(SVG_NS, tag as string)
+    : document.createElement(tag as string);
 
   // Set properties and attributes
   if (props) {
     for (const [key, value] of Object.entries(props)) {
-      if (key === 'className') {
-        element.className = value;
-      } else if (key === 'class') {
-        element.className = value;
+      if (key === 'className' || key === 'class') {
+        if (element instanceof SVGElement) {
+          element.setAttribute('class', value);
+        } else {
+          (element as HTMLElement).className = value;
+        }
       } else if (key.startsWith('on') && typeof value === 'function') {
         // Event handlers
         const eventName = key.substring(2).toLowerCase();
