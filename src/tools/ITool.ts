@@ -1,19 +1,19 @@
+import { ComponentType } from 'react';
+
 /**
- * Interface that all aviation tools must implement
+ * Shape of a tool that can be rendered in the application.
+ * Component should be a self-contained React component that handles its own state.
  */
 export interface ITool {
   /** Unique identifier for the tool */
   id: string;
-  
+
   /** Display name shown in the menu */
   name: string;
-  
+
   /** Short description of what the tool does */
   description: string;
-  
-  /** Render the tool's UI into the provided container */
-  render(container: HTMLElement): void;
-  
-  /** Clean up event listeners and resources when tool is unmounted */
-  destroy(): void;
+
+  /** React component that renders the tool UI */
+  Component: ComponentType;
 }

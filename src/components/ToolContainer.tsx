@@ -1,42 +1,33 @@
 import { ITool } from '../tools/ITool';
 
 /**
- * Tool Container component
- * Manages the display area for the currently active tool
+ * Props for {@link ToolContainer}.
  */
-export class ToolContainer {
-  private container: HTMLElement;
-  private currentTool: ITool | null = null;
+interface ToolContainerProps {
+  tool?: ITool;
+}
 
-  constructor(container: HTMLElement) {
-    this.container = container;
+/**
+ * Renders the active tool component or a loading state when no tool is selected yet.
+ *
+ * @param props - Contains the active tool definition to render.
+ * @returns Wrapper element hosting the selected tool component.
+ */
+export function ToolContainer({ tool }: ToolContainerProps): JSX.Element {
+  if (!tool) {
+    return (
+      <div className="loading">
+        <div className="spinner"></div>
+        <p>Select a tool to get started.</p>
+      </div>
+    );
   }
 
-  /**
-   * Display a tool in the container
-   */
-  showTool(tool: ITool): void {
-    // Clean up previous tool
-    if (this.currentTool) {
-      this.currentTool.destroy();
-    }
+  const ToolComponent = tool.Component;
 
-    // Clear container
-    this.container.innerHTML = '';
-
-    // Render new tool
-    this.currentTool = tool;
-    tool.render(this.container);
-  }
-
-  /**
-   * Clear the container
-   */
-  clear(): void {
-    if (this.currentTool) {
-      this.currentTool.destroy();
-      this.currentTool = null;
-    }
-    this.container.innerHTML = '';
-  }
+  return (
+    <div className="tool-wrapper" key={tool.id}>
+      <ToolComponent />
+    </div>
+  );
 }

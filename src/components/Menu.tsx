@@ -1,203 +1,97 @@
-/// <reference path="../types/assets.d.ts" />
-import { ITool } from '../tools/ITool';
-import { ToolRegistry } from '../tools/ToolRegistry';
 import appIcon from '../assets/images/ATiconTransparent.png';
-import { jsx } from '../jsx-runtime';
+import { ITool } from '../tools/ITool';
 
 /**
- * Menu component
- * Displays a list of available tools and handles tool selection
+ * Props for the navigation menu component.
  */
-export class Menu {
-  private container: HTMLElement;
-  private onToolSelect: (tool: ITool) => void;
-  private currentTheme: 'light' | 'dark' = 'dark';
+interface MenuProps {
+  tools: ITool[];
+  selectedToolId?: string;
+  onSelect: (toolId: string) => void;
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
+  isOpen: boolean;
+  onToggleMenu: () => void;
+}
 
-  constructor(container: HTMLElement, onToolSelect: (tool: ITool) => void) {
-    this.container = container;
-    this.onToolSelect = onToolSelect;
-    this.initializeTheme();
+/**
+ * Decorative icon that reflects the current theme and provides an accessible label for toggling.
+ *
+ * @param props - Contains the current theme.
+ * @returns SVG indicating light or dark mode.
+ */
+function ThemeIcon({ theme }: { theme: 'light' | 'dark' }): JSX.Element {
+  const label = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+
+  if (theme === 'dark') {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" role="img" aria-label={label}>
+        <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"></path>
+      </svg>
+    );
   }
 
-  private initializeTheme(): void {
-    // Load theme from localStorage or default to dark
-    const savedTheme = localStorage.getItem('aviation-tools-theme') as 'light' | 'dark' | null;
-    this.currentTheme = savedTheme || 'dark';
-    this.applyTheme(this.currentTheme);
-  }
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" role="img" aria-label={label}>
+      <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clipRule="evenodd"></path>
+    </svg>
+  );
+}
 
-  private applyTheme(theme: 'light' | 'dark'): void {
-    document.documentElement.setAttribute('data-theme', theme);
-    this.currentTheme = theme;
-    localStorage.setItem('aviation-tools-theme', theme);
-  }
-
-  private toggleTheme(): void {
-    const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
-    this.applyTheme(newTheme);
-    this.updateThemeIcon();
-  }
-
-  private updateThemeIcon(): void {
-    const themeToggle = this.container.querySelector('.theme-toggle');
-    if (themeToggle) {
-      const label = this.getThemeIconLabel();
-      themeToggle.setAttribute('aria-label', label);
-      themeToggle.setAttribute('title', label);
-      // Clear existing children
-      while (themeToggle.firstChild) themeToggle.removeChild(themeToggle.firstChild);
-      // Append new icon element
-      themeToggle.appendChild(this.getThemeIcon());
-    }
-  }
-
-  private setMenuOpenState(isOpen: boolean): void {
-    const menu = this.container.querySelector('.menu');
-
-    if (isOpen) {
-      menu?.classList.add('menu-open');
-      this.container.classList.add('menu-open');
-    } else {
-      menu?.classList.remove('menu-open');
-      this.container.classList.remove('menu-open');
-    }
-  }
-
-  private getThemeIcon(): Element {
-    const label = this.getThemeIconLabel();
-    if (this.currentTheme === 'dark') {
-      // Sun icon for switching to light mode
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" role="img" aria-label={label}>
-          <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"></path>
-        </svg>
-      ) as unknown as Element;
-    } else {
-      // Moon icon for switching to dark mode
-      return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" role="img" aria-label={label}>
-          <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"></path>
-        </svg>
-      ) as unknown as Element;
-    }
-  }
-
-  private getThemeIconLabel(): string {
-    return this.currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-  }
-
-  render(): void {
-    const tools = ToolRegistry.getAllTools();
-
-    const content = (
-      <div class="menu">
-        <div class="menu-header">
-          <h1>
-            <img src={appIcon} alt="" class="menu-logo" aria-hidden="true" />
-            Aviation Tools
-          </h1>
-          <div class="menu-actions">
-            <button class="theme-toggle" aria-label={this.getThemeIconLabel()} title={this.getThemeIconLabel()}>
-              {this.getThemeIcon()}
-            </button>
-            <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">
-              <span class="hamburger"></span>
-            </button>
-          </div>
-        </div>
-        <nav class="menu-nav">
-          <div class="menu-section">
-            <ul class="tool-list">
-              {tools.map(tool => (
-                <li>
-                  <button 
-                    class="tool-button" 
-                    data-tool-id={tool.id}
-                    title={tool.description}
-                  >
-                    <span class="tool-name">{tool.name}</span>
-                    <span class="tool-desc">{tool.description}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </nav>
-        <div class="menu-footer">
-          <p>Aviation Tools v1.0</p>
-          <p><small>Offline-capable PWA</small></p>
+/**
+ * Application side menu listing available tools and theme/menu toggles.
+ *
+ * @param props - Tool list, selection state, and UI toggles.
+ * @returns Structured menu UI.
+ */
+export function Menu({
+  tools,
+  selectedToolId,
+  onSelect,
+  theme,
+  onToggleTheme,
+  isOpen,
+  onToggleMenu,
+}: MenuProps): JSX.Element {
+  return (
+    <div className={`menu ${isOpen ? 'menu-open' : ''}`}>
+      <div className="menu-header">
+        <h1>
+          <img src={appIcon} alt="" className="menu-logo" aria-hidden="true" />
+          Aviation Tools
+        </h1>
+        <div className="menu-actions">
+          <button className="theme-toggle" aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} onClick={onToggleTheme}>
+            <ThemeIcon theme={theme} />
+          </button>
+          <button id="menu-toggle" className="menu-toggle" aria-label="Toggle menu" onClick={onToggleMenu}>
+            <span className="hamburger"></span>
+          </button>
         </div>
       </div>
-    );
-
-    // Replace container content
-    while (this.container.firstChild) this.container.removeChild(this.container.firstChild);
-    this.container.appendChild(content as unknown as Node);
-
-    this.attachEventListeners();
-    // Ensure theme icon is present after rendering
-    this.updateThemeIcon();
-
-    // Default to open menu on mobile for immediate visibility
-    if (window.innerWidth <= 600) {
-      this.setMenuOpenState(true);
-    }
-
-    // Select first tool by default
-    if (tools.length > 0) {
-      this.selectTool(tools[0].id, false);
-    }
-  }
-
-  private attachEventListeners(): void {
-    // Tool selection
-    const toolButtons = this.container.querySelectorAll('.tool-button');
-    toolButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        const toolId = (e.currentTarget as HTMLElement).getAttribute('data-tool-id');
-        if (toolId) {
-          this.selectTool(toolId);
-        }
-      });
-    });
-
-    // Theme toggle
-    const themeToggle = this.container.querySelector('.theme-toggle');
-    themeToggle?.addEventListener('click', () => {
-      this.toggleTheme();
-    });
-
-    // Mobile menu toggle
-    const menuToggle = this.container.querySelector('#menu-toggle');
-
-    menuToggle?.addEventListener('click', () => {
-      const menu = this.container.querySelector('.menu');
-      const isOpen = menu?.classList.contains('menu-open');
-      this.setMenuOpenState(!isOpen);
-    });
-  }
-
-  private selectTool(toolId: string, closeMenu: boolean = true): void {
-    const tool = ToolRegistry.getToolById(toolId);
-    if (!tool) return;
-
-    // Update active state
-    const buttons = this.container.querySelectorAll('.tool-button');
-    buttons.forEach(button => {
-      if (button.getAttribute('data-tool-id') === toolId) {
-        button.classList.add('active');
-      } else {
-        button.classList.remove('active');
-      }
-    });
-
-    // Close mobile menu after selection
-    if (closeMenu) {
-      this.setMenuOpenState(false);
-    }
-
-    // Notify parent
-    this.onToolSelect(tool);
-  }
+      <nav className="menu-nav">
+        <div className="menu-section">
+          <ul className="tool-list">
+            {tools.map((tool) => (
+              <li key={tool.id}>
+                <button
+                  className={`tool-button ${selectedToolId === tool.id ? 'active' : ''}`}
+                  title={tool.description}
+                  onClick={() => onSelect(tool.id)}
+                >
+                  <span className="tool-name">{tool.name}</span>
+                  <span className="tool-desc">{tool.description}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+      <div className="menu-footer">
+        <p>Aviation Tools v1.0</p>
+        <p><small>Offline-capable PWA</small></p>
+      </div>
+    </div>
+  );
 }
 

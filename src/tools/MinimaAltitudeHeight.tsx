@@ -1,151 +1,180 @@
+import { useEffect, useRef, useState } from 'react';
 import { ITool } from './ITool';
-import { jsx } from '../jsx-runtime';
+
+export interface MinimaResult {
+  decisionAltitude: number;
+  decisionHeight: number;
+  usesAircraftMinima: boolean;
+  aircraftAdjustment: number;
+}
 
 /**
- * Minima Altitude/Height Tool
- * Calculates DA/MDA and DH/MDH based on OCA/OCH, aircraft minima, and operator margin
+ * Calculates decision altitude/height by combining OCA/OCH, aircraft minima, and operator margin.
+ *
+ * @param oca - Obstacle Clearance Altitude in feet.
+ * @param och - Obstacle Clearance Height in feet.
+ * @param aircraftMinima - Aircraft-specific minima in feet.
+ * @param operatorMargin - Additional operator-required margin in feet.
+ * @returns Decision altitude/height and metadata on applied adjustments.
  */
-export class MinimaAltitudeHeight implements ITool {
-  id = 'minima';
-  name = 'DA/MDA DH/MDH';
-  description = 'Calculate DA/MDA and DH/MDH using OCA/OCH';
+export function calculateMinima(
+  oca: number,
+  och: number,
+  aircraftMinima: number,
+  operatorMargin: number
+): MinimaResult {
+  const usesAircraftMinima = och < aircraftMinima;
+  const aircraftAdjustment = usesAircraftMinima ? aircraftMinima - och : 0;
+  const decisionAltitude = oca + aircraftAdjustment + operatorMargin;
+  const decisionHeight = (usesAircraftMinima ? aircraftMinima : och) + operatorMargin;
 
-  private container: HTMLElement | null = null;
+  return {
+    decisionAltitude,
+    decisionHeight,
+    usesAircraftMinima,
+    aircraftAdjustment,
+  };
+}
 
-  render(container: HTMLElement): void {
-    this.container = container;
+/**
+ * UI component for deriving DA/MDA and DH/MDH values from published minima and operator margins.
+ *
+ * @returns Calculation form with summarized results.
+ */
+function MinimaTool(): JSX.Element {
+  const [oca, setOca] = useState('');
+  const [och, setOch] = useState('');
+  const [aircraftMinima, setAircraftMinima] = useState('');
+  const [operatorMargin, setOperatorMargin] = useState('0');
+  const [result, setResult] = useState<MinimaResult | null>(null);
+  const resultRef = useRef<HTMLDivElement | null>(null);
 
-    const content = (
-      <div class="tool-content">
-        <h2>DA/MDA DH/MDH</h2>
-        <p class="tool-description">
-          Calculate Decision Altitude (DA) or Minimum Descent Altitude (MDA) and Decision Height (DH) or Minimum Descent Height (MDH)
-          by combining published Obstacle Clearance Altitude (OCA) and Obcstacle Clearance Height (OCH), your Aircraft Minima, and any Operator Margin.
-        </p>
+  useEffect(() => {
+    if (!result || !resultRef.current) return;
+    try {
+      resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch {
+      resultRef.current.scrollIntoView();
+    }
+  }, [result]);
 
-        <div class="input-group">
-          <label for="minima-oca">OCA (ft):</label>
-          <input type="number" id="minima-oca" placeholder="e.g., 1500" step="1" />
-          <small>Obstacle Clearance Altitude from the approach chart.</small>
-        </div>
-
-        <div class="input-group">
-          <label for="minima-och">OCH (ft):</label>
-          <input type="number" id="minima-och" placeholder="e.g., 200" step="1" />
-          <small>Obstacle Clearance Height from the approach chart.</small>
-        </div>
-
-        <div class="input-group">
-          <label for="minima-aircraft">Aircraft Minima (ft):</label>
-          <input type="number" id="minima-aircraft" placeholder="e.g., 200" step="1" />
-          <small>Aircraft-specific minima to compare against OCH.</small>
-        </div>
-
-        <div class="input-group">
-          <label for="minima-operator">Operator Margin (ft):</label>
-          <input type="number" id="minima-operator" placeholder="e.g., 100" step="1" value="0" />
-          <small>Any additional margin required by your operator (enter 0 if none).</small>
-        </div>
-
-        <button id="calculate-minima" class="btn-primary">Calculate</button>
-
-        <div id="minima-result" class="result hidden">
-          <h3>Calculated Minima</h3>
-          <div class="result-grid">
-            <div class="result-value">
-              <span class="label">DA / MDA</span>
-              <span class="value" id="result-da">-</span>
-              <span class="unit">ft</span>
-            </div>
-            <div class="result-value">
-              <span class="label">DH / MDH</span>
-              <span class="value" id="result-dh">-</span>
-              <span class="unit">ft</span>
-            </div>
-          </div>
-          <div class="result-info">
-            <p id="minima-note"></p>
-          </div>
-        </div>
-      </div>
-    );
-
-    container.appendChild(content as Node);
-    this.attachEventListeners();
-  }
-
-  destroy(): void {
-    this.container = null;
-  }
-
-  private attachEventListeners(): void {
-    const calculateBtn = this.container?.querySelector('#calculate-minima');
-    calculateBtn?.addEventListener('click', () => this.calculate());
-
-    const inputs = this.container?.querySelectorAll('input');
-    inputs?.forEach(input => {
-      input.addEventListener('keypress', (e: Event) => {
-        if ((e as KeyboardEvent).key === 'Enter') {
-          this.calculate();
-        }
-      });
-    });
-  }
-
-  private calculate(): void {
-    const oca = parseFloat((this.container?.querySelector('#minima-oca') as HTMLInputElement)?.value);
-    const och = parseFloat((this.container?.querySelector('#minima-och') as HTMLInputElement)?.value);
-    const aircraftMinima = parseFloat(
-      (this.container?.querySelector('#minima-aircraft') as HTMLInputElement)?.value
-    );
-    const operatorMargin = parseFloat(
-      (this.container?.querySelector('#minima-operator') as HTMLInputElement)?.value
-    );
-
-    if ([oca, och, aircraftMinima, operatorMargin].some(value => isNaN(value))) {
+  const handleCalculate = () => {
+    const values = [oca, och, aircraftMinima, operatorMargin].map((v) => parseFloat(v));
+    if (values.some((v) => Number.isNaN(v))) {
       alert('Please fill in all fields with valid numbers.');
       return;
     }
-
-    if ([oca, och, aircraftMinima, operatorMargin].some(value => value < 0)) {
+    if (values.some((v) => v < 0)) {
       alert('Values cannot be negative.');
       return;
     }
 
-    const usesAircraftMinima = och < aircraftMinima;
-    const aircraftAdjustment = usesAircraftMinima ? aircraftMinima - och : 0;
+    const [ocaNum, ochNum, aircraftNum, marginNum] = values;
+    setResult(calculateMinima(ocaNum, ochNum, aircraftNum, marginNum));
+  };
 
-    const decisionAltitude = oca + aircraftAdjustment + operatorMargin;
-    const decisionHeight = (usesAircraftMinima ? aircraftMinima : och) + operatorMargin;
+  const noteText = result
+    ? `${result.usesAircraftMinima
+      ? `OCH is below the aircraft minima by ${Math.round(result.aircraftAdjustment)} ft. Added the difference to DA/MDA and set DH/MDH to the aircraft minima before applying the operator margin.`
+      : 'Used published OCA/OCH and applied the operator margin.'} Always crosscheck with manual calculations!`
+    : '';
 
-    this.displayResult(decisionAltitude, decisionHeight, usesAircraftMinima, aircraftAdjustment);
-  }
+  return (
+    <div className="tool-content">
+      <h2>DA/MDA DH/MDH</h2>
+      <p className="tool-description">
+        Calculate Decision Altitude (DA) or Minimum Descent Altitude (MDA) and Decision Height (DH) or Minimum Descent Height (MDH)
+        by combining published Obstacle Clearance Altitude (OCA) and Obcstacle Clearance Height (OCH), your Aircraft Minima, and any Operator Margin.
+      </p>
 
-  private displayResult(
-    decisionAltitude: number,
-    decisionHeight: number,
-    aircraftOverride: boolean,
-    aircraftAdjustment: number
-  ): void {
-    const resultDiv = this.container?.querySelector('#minima-result');
-    const daField = this.container?.querySelector('#result-da');
-    const dhField = this.container?.querySelector('#result-dh');
-    const noteField = this.container?.querySelector('#minima-note');
+      <div className="input-group">
+        <label htmlFor="minima-oca">OCA (ft):</label>
+        <input
+          type="number"
+          id="minima-oca"
+          placeholder="e.g., 1500"
+          step="1"
+          value={oca}
+          onChange={(e) => setOca(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+        />
+        <small>Obstacle Clearance Altitude from the approach chart.</small>
+      </div>
 
-    if (resultDiv && daField && dhField && noteField) {
-      resultDiv.classList.remove('hidden');
-      daField.textContent = Math.round(decisionAltitude).toLocaleString('en-US');
-      dhField.textContent = Math.round(decisionHeight).toLocaleString('en-US');
+      <div className="input-group">
+        <label htmlFor="minima-och">OCH (ft):</label>
+        <input
+          type="number"
+          id="minima-och"
+          placeholder="e.g., 200"
+          step="1"
+          value={och}
+          onChange={(e) => setOch(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+        />
+        <small>Obstacle Clearance Height from the approach chart.</small>
+      </div>
 
-      noteField.textContent = aircraftOverride
-        ? `OCH is below the aircraft minima by ${Math.round(aircraftAdjustment)} ft. Added the difference to DA/MDA and set DH/MDH to the aircraft minima before applying the operator margin.`
-        : 'Used published OCA/OCH and applied the operator margin.';
-      noteField.textContent = noteField.textContent + ' Always crosscheck with manual calculations!';
-      try {
-        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch (_) {
-        (resultDiv as HTMLElement).scrollIntoView();
-      }
-    }
-  }
+      <div className="input-group">
+        <label htmlFor="minima-aircraft">Aircraft Minima (ft):</label>
+        <input
+          type="number"
+          id="minima-aircraft"
+          placeholder="e.g., 200"
+          step="1"
+          value={aircraftMinima}
+          onChange={(e) => setAircraftMinima(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+        />
+        <small>Aircraft-specific minima to compare against OCH.</small>
+      </div>
+
+      <div className="input-group">
+        <label htmlFor="minima-operator">Operator Margin (ft):</label>
+        <input
+          type="number"
+          id="minima-operator"
+          placeholder="e.g., 100"
+          step="1"
+          value={operatorMargin}
+          onChange={(e) => setOperatorMargin(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+        />
+        <small>Any additional margin required by your operator (enter 0 if none).</small>
+      </div>
+
+      <button className="btn-primary" onClick={handleCalculate}>Calculate</button>
+
+      {result && (
+        <div ref={resultRef} className="result">
+          <h3>Calculated Minima</h3>
+          <div className="result-grid">
+            <div className="result-value">
+              <span className="label">DA / MDA</span>
+              <span className="value" id="result-da">{Math.round(result.decisionAltitude).toLocaleString('en-US')}</span>
+              <span className="unit">ft</span>
+            </div>
+            <div className="result-value">
+              <span className="label">DH / MDH</span>
+              <span className="value" id="result-dh">{Math.round(result.decisionHeight).toLocaleString('en-US')}</span>
+              <span className="unit">ft</span>
+            </div>
+          </div>
+          <div className="result-info">
+            <p id="minima-note">{noteText}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
+
+/**
+ * Tool metadata used by the application registry.
+ */
+export const minimaAltitudeHeightTool: ITool = {
+  id: 'minima',
+  name: 'DA/MDA DH/MDH',
+  description: 'Calculate DA/MDA and DH/MDH using OCA/OCH',
+  Component: MinimaTool,
+};

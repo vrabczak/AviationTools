@@ -1,53 +1,33 @@
 import { ITool } from './ITool';
-import { AltitudeCorrection } from './AltitudeCorrection';
-import { TurnCalculator } from './TurnCalculator';
-import { HeadCrossWind } from './HeadCrossWind';
-import { TrackGroundSpeed } from './TrackGroundSpeed';
-import { ApproachTable } from './ApproachTable';
-import { CoordinatesConversion } from './CoordinatesConversion';
-import { DistanceConversion } from './DistanceConversion';
-import { FuelConversion } from './FuelConversion';
-import { SpeedConversion } from './SpeedConversion';
-import { MinimaAltitudeHeight } from './MinimaAltitudeHeight';
+import { altitudeCorrectionTool } from './AltitudeCorrection';
+import { turnCalculatorTool } from './TurnCalculator';
+import { headCrossWindTool } from './HeadCrossWind';
+import { trackGroundSpeedTool } from './TrackGroundSpeed';
+import { approachTableTool } from './ApproachTable';
+import { coordinatesConversionTool } from './CoordinatesConversion';
+import { distanceConversionTool } from './DistanceConversion';
+import { fuelConversionTool } from './FuelConversion';
+import { speedConversionTool } from './SpeedConversion';
+import { minimaAltitudeHeightTool } from './MinimaAltitudeHeight';
 
-/**
- * Central registry for all aviation tools
- * Add new tools here to make them available in the app
- */
-export class ToolRegistry {
-  private static tools: ITool[] = [
-    new AltitudeCorrection(),
-    new ApproachTable(),
-    new HeadCrossWind(),
-    new MinimaAltitudeHeight(),
-    new TrackGroundSpeed(),
-    new TurnCalculator(),
-    new CoordinatesConversion(),
-    new DistanceConversion(),
-    new FuelConversion(),
-    new SpeedConversion(),
-  ];
+export const tools: ITool[] = [
+  altitudeCorrectionTool,
+  approachTableTool,
+  headCrossWindTool,
+  minimaAltitudeHeightTool,
+  trackGroundSpeedTool,
+  turnCalculatorTool,
+  coordinatesConversionTool,
+  distanceConversionTool,
+  fuelConversionTool,
+  speedConversionTool,
+];
 
-  /**
-   * Get all registered tools
-   */
-  static getAllTools(): ITool[] {
-    return this.tools;
-  }
-
-  /**
-   * Get a tool by its ID
-   */
-  static getToolById(id: string): ITool | undefined {
-    return this.tools.find(tool => tool.id === id);
-  }
-
-  /**
-   * Register a new tool dynamically
-   */
-  static registerTool(tool: ITool): void {
-    if (!this.tools.find(t => t.id === tool.id)) {
-      this.tools.push(tool);
-    }
-  }
+export function getToolById(id: string): ITool | undefined {
+  return tools.find((tool) => tool.id === id);
 }
+
+export const ToolRegistry = {
+  getAllTools: () => tools,
+  getToolById,
+};

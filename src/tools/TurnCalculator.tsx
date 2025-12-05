@@ -1,170 +1,167 @@
+import { useEffect, useRef, useState } from 'react';
 import { ITool } from './ITool';
-import { jsx } from '../jsx-runtime';
+
+export interface TurnResult {
+  radiusMeters: number;
+  time360Seconds: number;
+}
 
 /**
- * Turn Calculator Tool
- * Calculates turn radius and time for 360° turn based on speed and bank angle
+ * Calculates turn radius and time for a full 360° turn given speed and bank angle.
+ *
+ * @param speedKnots - True airspeed in knots.
+ * @param bankAngle - Bank angle in degrees.
+ * @returns Turn radius in meters and time for a complete turn in seconds.
  */
-export class TurnCalculator implements ITool {
-  id = 'turn-calculator';
-  name = 'Turn Calculator';
-  description = 'Calculate turn radius and rate based on speed and bank angle';
-
-  private container: HTMLElement | null = null;
-
-  render(container: HTMLElement): void {
-    this.container = container;
-    
-    const content = (
-      <div class="tool-content">
-        <h2>Turn Calculator</h2>
-        <p class="tool-description">
-          Calculate turn performance including turn radius and time to complete a 360° turn.
-          Useful for planning holds, procedure turns, and traffic patterns.
-        </p>
-        
-        <div class="input-group">
-          <label for="speed">True Airspeed (kt):</label>
-          <input type="number" id="speed" placeholder="e.g., 120" step="1" min="1" />
-        </div>
-        
-        <div class="input-group">
-          <label for="bank-angle">Bank Angle (°):</label>
-          <input type="number" id="bank-angle" placeholder="e.g., 15" step="1" min="1" max="89" />
-          <small>Typical: 15° (standard rate), 30° (steep), 45° (very steep)</small>
-        </div>
-        
-        <button id="calculate-turn" class="btn-primary">Calculate</button>
-        
-        <div id="turn-result" class="result hidden">
-          <h3>Results:</h3>
-          <div class="result-grid">
-            <div class="result-value">
-              <span class="label">Turn Radius:</span>
-              <span id="turn-radius" class="value">-</span>
-              <span class="unit">m</span>
-            </div>
-            <div class="result-value">
-              <span class="label">360° Turn Time:</span>
-              <span id="turn-time" class="value">-</span>
-            </div>
-            <div class="result-value">
-              <span class="label">Turn Rate:</span>
-              <span id="turn-rate" class="value">-</span>
-              <span class="unit">°/sec</span>
-            </div>
-          </div>
-          <div class="result-info">
-            <p id="turn-interpretation"></p>
-          </div>
-        </div>
-      </div>
-    );
-
-    container.appendChild(content as Node);
-    this.attachEventListeners();
+export function calculateTurn(speedKnots: number, bankAngle: number): TurnResult {
+  if (bankAngle === 0 || bankAngle >= 90) {
+    return { radiusMeters: Infinity, time360Seconds: Infinity };
   }
 
-  private attachEventListeners(): void {
-    const calculateBtn = this.container?.querySelector('#calculate-turn');
-    calculateBtn?.addEventListener('click', () => this.calculate());
+  const speedMps = speedKnots * 0.514444;
+  const bankRad = (bankAngle * Math.PI) / 180;
+  const radius = (speedMps * speedMps) / (9.81 * Math.tan(bankRad));
+  const turnRateDegPerSec = ((9.81 * Math.tan(bankRad)) / speedMps) * (180 / Math.PI);
+  const time360 = 360 / turnRateDegPerSec;
 
-    // Allow Enter key to trigger calculation
-    const inputs = this.container?.querySelectorAll('input');
-    inputs?.forEach(input => {
-      input.addEventListener('keypress', (e: Event) => {
-        if ((e as KeyboardEvent).key === 'Enter') {
-          this.calculate();
-        }
-      });
-    });
-  }
+  return {
+    radiusMeters: Math.round(radius),
+    time360Seconds: Math.round(time360),
+  };
+}
 
-  private calculate(): void {
-    const speed = parseFloat(
-      (this.container?.querySelector('#speed') as HTMLInputElement)?.value
-    );
-    const bankAngle = parseFloat(
-      (this.container?.querySelector('#bank-angle') as HTMLInputElement)?.value
-    );
+/**
+ * UI component that computes turn performance metrics for a selected bank angle.
+ *
+ * @returns Calculation form with derived metrics.
+ */
+function TurnCalculatorTool(): JSX.Element {
+  const [speed, setSpeed] = useState('');
+  const [bankAngle, setBankAngle] = useState('');
+  const [result, setResult] = useState<TurnResult | null>(null);
+  const resultRef = useRef<HTMLDivElement | null>(null);
 
-    if (isNaN(speed) || isNaN(bankAngle)) {
+  useEffect(() => {
+    if (!result || !resultRef.current) return;
+    try {
+      resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch {
+      resultRef.current.scrollIntoView();
+    }
+  }, [result]);
+
+  const handleCalculate = () => {
+    const speedValue = parseFloat(speed);
+    const bankValue = parseFloat(bankAngle);
+
+    if (Number.isNaN(speedValue) || Number.isNaN(bankValue)) {
       alert('Please fill in all fields with valid numbers');
       return;
     }
 
-    if (speed <= 0) {
+    if (speedValue <= 0) {
       alert('Speed must be greater than 0');
       return;
     }
 
-    if (bankAngle <= 0 || bankAngle >= 90) {
+    if (bankValue <= 0 || bankValue >= 90) {
       alert('Bank angle must be between 0 and 90 degrees');
       return;
     }
 
-    // Calculate turn performance
-    const { radiusMeters, time360Seconds } = this.calculateTurn(speed, bankAngle);
-    const turnRateDegPerSec = 360 / time360Seconds;
+    setResult(calculateTurn(speedValue, bankValue));
+  };
 
-    // Display results
-    const resultDiv = this.container?.querySelector('#turn-result');
-    const radiusSpan = this.container?.querySelector('#turn-radius');
-    const timeSpan = this.container?.querySelector('#turn-time');
-    const rateSpan = this.container?.querySelector('#turn-rate');
-    const interpretationP = this.container?.querySelector('#turn-interpretation');
+  const turnRateDegPerSec = result ? 360 / result.time360Seconds : null;
+  const interpretation =
+    turnRateDegPerSec === null
+      ? ''
+      : turnRateDegPerSec >= 2.9 && turnRateDegPerSec <= 3.1
+        ? 'This is approximately a standard rate turn (3°/sec).'
+        : turnRateDegPerSec > 3.1
+          ? 'This is faster than a standard rate turn.'
+          : 'This is slower than a standard rate turn.';
 
-    if (resultDiv && radiusSpan && timeSpan && rateSpan && interpretationP) {
-      resultDiv.classList.remove('hidden');
-      radiusSpan.textContent = radiusMeters.toLocaleString();
-      
-      // Format time as minutes and seconds
-      const minutes = Math.floor(time360Seconds / 60);
-      const seconds = Math.round(time360Seconds % 60);
-      timeSpan.textContent = `${minutes}m ${seconds}s`;
-      
-      rateSpan.textContent = turnRateDegPerSec.toFixed(2);
+  return (
+    <div className="tool-content">
+      <h2>Turn Calculator</h2>
+      <p className="tool-description">
+        Calculate turn performance including turn radius and time to complete a 360° turn. Useful
+        for planning holds, procedure turns, and traffic patterns.
+      </p>
 
-      // Interpretation
-      if (turnRateDegPerSec >= 2.9 && turnRateDegPerSec <= 3.1) {
-        interpretationP.textContent = 'This is approximately a standard rate turn (3°/sec).';
-        interpretationP.className = 'result-info success';
-      } else if (turnRateDegPerSec > 3.1) {
-        interpretationP.textContent = 'This is faster than a standard rate turn.';
-        interpretationP.className = 'result-info';
-      } else {
-        interpretationP.textContent = 'This is slower than a standard rate turn.';
-        interpretationP.className = 'result-info';
-      }
-      try {
-        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch (_) {
-        (resultDiv as HTMLElement).scrollIntoView();
-      }
-    }
-  }
+      <div className="input-group">
+        <label htmlFor="speed">True Airspeed (kt):</label>
+        <input
+          type="number"
+          id="speed"
+          placeholder="e.g., 120"
+          step="1"
+          min="1"
+          value={speed}
+          onChange={(e) => setSpeed(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+        />
+      </div>
 
-  private calculateTurn(
-    speedKnots: number,
-    bankAngle: number
-  ): { radiusMeters: number; time360Seconds: number } {
-    if (bankAngle === 0 || bankAngle >= 90) {
-      return { radiusMeters: Infinity, time360Seconds: Infinity };
-    }
-    
-    const speedMps = speedKnots * 0.514444;
-    const bankRad = (bankAngle * Math.PI) / 180;
-    const radius = (speedMps * speedMps) / (9.81 * Math.tan(bankRad));
-    const turnRateDegPerSec = ((9.81 * Math.tan(bankRad)) / speedMps) * (180 / Math.PI);
-    const time360 = 360 / turnRateDegPerSec;
-    
-    return {
-      radiusMeters: Math.round(radius),
-      time360Seconds: Math.round(time360),
-    };
-  }
+      <div className="input-group">
+        <label htmlFor="bank-angle">Bank Angle (°):</label>
+        <input
+          type="number"
+          id="bank-angle"
+          placeholder="e.g., 15"
+          step="1"
+          min="1"
+          max="89"
+          value={bankAngle}
+          onChange={(e) => setBankAngle(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+        />
+        <small>Typical: 15° (standard rate), 30° (steep), 45° (very steep)</small>
+      </div>
 
-  destroy(): void {
-    this.container = null;
-  }
+      <button className="btn-primary" onClick={handleCalculate}>Calculate</button>
+
+      {result && (
+        <div ref={resultRef} className="result">
+          <h3>Results:</h3>
+          <div className="result-grid">
+            <div className="result-value">
+              <span className="label">Turn Radius:</span>
+              <span id="turn-radius" className="value">{result.radiusMeters.toLocaleString()}</span>
+              <span className="unit">m</span>
+            </div>
+            <div className="result-value">
+              <span className="label">360° Turn Time:</span>
+              <span id="turn-time" className="value">
+                {(() => {
+                  const minutes = Math.floor(result.time360Seconds / 60);
+                  const seconds = Math.round(result.time360Seconds % 60);
+                  return `${minutes}m ${seconds}s`;
+                })()}
+              </span>
+            </div>
+            <div className="result-value">
+              <span className="label">Turn Rate:</span>
+              <span id="turn-rate" className="value">{turnRateDegPerSec?.toFixed(2)}</span>
+              <span className="unit">°/sec</span>
+            </div>
+          </div>
+          <div className={`result-info ${turnRateDegPerSec && turnRateDegPerSec >= 2.9 && turnRateDegPerSec <= 3.1 ? 'success' : ''}`}>
+            <p id="turn-interpretation">{interpretation}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
+
+/**
+ * Tool metadata used by the application registry.
+ */
+export const turnCalculatorTool: ITool = {
+  id: 'turn-calculator',
+  name: 'Turn Calculator',
+  description: 'Calculate turn radius and rate based on speed and bank angle',
+  Component: TurnCalculatorTool,
+};

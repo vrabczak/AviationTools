@@ -26,14 +26,17 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "@vitest/coverage-v8": "^2.1.8",
-    "@vitest/ui": "^2.1.8",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^4.0.15",
+    "@vitest/ui": "^4.0.15",
     "gh-pages": "^6.2.0",
     "happy-dom": "^20.0.11",
     "typescript": "^5.9.3",
-    "vite": "^5.4.21",
-    "vite-plugin-pwa": "0.20.5",
-    "vitest": "^2.1.8",
+    "vite": "^7.2.6",
+    "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.0.15",
     "workbox-core": "7.1.0",
     "workbox-expiration": "7.1.0",
     "workbox-precaching": "7.1.0",
@@ -44,6 +47,8 @@
     "workbox-build": "7.1.0"
   },
   "dependencies": {
-    "mgrs": "^2.1.0"
+    "mgrs": "^2.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }

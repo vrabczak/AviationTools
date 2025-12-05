@@ -1,174 +1,164 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ITool } from './ITool';
-import { jsx } from '../jsx-runtime';
+
+export interface AltitudeCorrectionResult {
+  correctedAltitude: number;
+  correction: number;
+}
 
 /**
- * Altitude Correction Tool
- * Calculates temperature-corrected altitude for approach procedures
+ * Calculates ISA temperature-based altitude correction for cold/warm conditions.
+ *
+ * @param decisionAltitude - Decision altitude or MDA in feet.
+ * @param airportAltitude - Airport elevation in feet.
+ * @param temperature - Actual temperature at the airport in Celsius.
+ * @returns Corrected altitude and the applied correction in feet.
  */
-export class AltitudeCorrection implements ITool {
-  id = 'altitude-correction';
-  name = 'Altitude Correction';
-  description = 'Calculate temperature-corrected altitude for approach procedures';
+export function calculateTemperatureCorrection(
+  decisionAltitude: number,
+  airportAltitude: number,
+  temperature: number
+): AltitudeCorrectionResult {
+  const heightAboveAirport = decisionAltitude - airportAltitude;
+  const isaTemp = 15 - (airportAltitude / 1000) * 2;
+  const actualTempKelvin = temperature + 273;
+  const correction = (heightAboveAirport * (isaTemp - temperature)) / actualTempKelvin;
+  const correctedAltitude = decisionAltitude + correction;
 
-  private container: HTMLElement | null = null;
+  return { correctedAltitude, correction };
+}
 
-  render(container: HTMLElement): void {
-    this.container = container;
-    
-    const content = (
-      <div class="tool-content">
-        <h2>Altitude Correction (Temperature)</h2>
-        <p class="tool-description">
-          Calculate temperature-corrected altitude for approach procedures. Cold temperatures cause
-          the aircraft to be lower than indicated, warm temperatures cause it to be higher.
-          Critical for Decision Altitude and Minimum Descent Altitude.
-        </p>
-        
-        <div class="input-group">
-          <label for="decision-alt">DA / MDA (ft):</label>
-          <input type="number" id="decision-alt" placeholder="e.g., 1700" step="10" />
-          <small>Altitude you want to correct (e.g., Decision Altitude, Minimum Descent Altitude)</small>
-        </div>
-        
-        <div class="input-group">
-          <label for="airport-alt">Airport Elevation (ft):</label>
-          <input type="number" id="airport-alt" placeholder="e.g., 1500" step="10" />
-        </div>
-        
-        <div class="input-group">
-          <label for="temperature">Airport Temperature (°C):</label>
-          <input type="number" id="temperature" placeholder="e.g., -15" step="0.1" />
-        </div>
-        
-        <button id="calculate-alt" class="btn-primary">Calculate</button>
-        
-        <div id="altitude-result" class="result hidden">
-          <h3>Result:</h3>
-          <div class="result-value">
-            <span class="label">Corrected Altitude:</span>
-            <span id="corrected-alt" class="value">-</span>
-            <span class="unit">ft</span>
-          </div>
-          <div class="result-value">
-            <span class="label">Correction:</span>
-            <span id="correction-value" class="value">-</span>
-            <span class="unit">ft</span>
-          </div>
-          <div class="result-info">
-            <p id="result-interpretation"></p>
-          </div>
-        </div>
-      </div>
-    );
+/**
+ * UI component that computes altitude corrections for non-ISA temperatures.
+ *
+ * @returns Calculation form with guidance text.
+ */
+function AltitudeCorrectionTool(): JSX.Element {
+  const [decisionAlt, setDecisionAlt] = useState('');
+  const [airportAlt, setAirportAlt] = useState('');
+  const [temperature, setTemperature] = useState('');
+  const [result, setResult] = useState<AltitudeCorrectionResult | null>(null);
+  const resultRef = useRef<HTMLDivElement | null>(null);
 
-    container.appendChild(content as Node);
-    this.attachEventListeners();
-  }
+  const interpretation = useMemo(() => {
+    if (!result) return '';
+    if (result.correction > 0) {
+      return `Cold temperature! You will be LOWER than indicated altitude. Add ${Math.round(result.correction)} ft to your decision altitude to maintain safe terrain clearance.`;
+    }
+    if (result.correction < 0) {
+      return `Warm temperature. You will be HIGHER than indicated altitude by ${Math.abs(Math.round(result.correction))} ft. Correction usually not applied for warmer temperatures.`;
+    }
+    return 'Temperature matches ISA. No correction needed.';
+  }, [result]);
 
-  private attachEventListeners(): void {
-    const calculateBtn = this.container?.querySelector('#calculate-alt');
-    calculateBtn?.addEventListener('click', () => this.calculate());
+  useEffect(() => {
+    if (!result || !resultRef.current) return;
+    try {
+      resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch {
+      resultRef.current.scrollIntoView();
+    }
+  }, [result]);
 
-    // Allow Enter key to trigger calculation
-    const inputs = this.container?.querySelectorAll('input');
-    inputs?.forEach(input => {
-      input.addEventListener('keypress', (e: Event) => {
-        if ((e as KeyboardEvent).key === 'Enter') {
-          this.calculate();
-        }
-      });
-    });
-  }
+  const handleCalculate = () => {
+    const decisionValue = parseFloat(decisionAlt);
+    const airportValue = parseFloat(airportAlt);
+    const temperatureValue = parseFloat(temperature);
 
-  private calculate(): void {
-    const decisionAlt = parseFloat(
-      (this.container?.querySelector('#decision-alt') as HTMLInputElement)?.value
-    );
-    const airportAlt = parseFloat(
-      (this.container?.querySelector('#airport-alt') as HTMLInputElement)?.value
-    );
-    const temperature = parseFloat(
-      (this.container?.querySelector('#temperature') as HTMLInputElement)?.value
-    );
-
-    if (isNaN(decisionAlt) || isNaN(airportAlt) || isNaN(temperature)) {
+    if (Number.isNaN(decisionValue) || Number.isNaN(airportValue) || Number.isNaN(temperatureValue)) {
       alert('Please fill in all fields with valid numbers');
       return;
     }
 
-    if (airportAlt >= decisionAlt) {
+    if (airportValue >= decisionValue) {
       alert('Airport elevation must be lower than DA/MDA');
       return;
     }
 
-    // Calculate temperature-corrected altitude
-    const { correctedAltitude, correction } = this.calculateTemperatureCorrection(
-      decisionAlt,
-      airportAlt,
-      temperature
-    );
+    setResult(calculateTemperatureCorrection(decisionValue, airportValue, temperatureValue));
+  };
 
-    // Display result
-    const resultDiv = this.container?.querySelector('#altitude-result');
-    const correctedAltSpan = this.container?.querySelector('#corrected-alt');
-    const correctionSpan = this.container?.querySelector('#correction-value');
-    const interpretationP = this.container?.querySelector('#result-interpretation');
+  return (
+    <div className="tool-content">
+      <h2>Altitude Correction (Temperature)</h2>
+      <p className="tool-description">
+        Calculate temperature-corrected altitude for approach procedures. Cold temperatures cause
+        the aircraft to be lower than indicated, warm temperatures cause it to be higher. Critical
+        for Decision Altitude and Minimum Descent Altitude.
+      </p>
 
-    if (resultDiv && correctedAltSpan && correctionSpan && interpretationP) {
-      resultDiv.classList.remove('hidden');
-      correctedAltSpan.textContent = Math.round(correctedAltitude).toLocaleString();
-      
-      const correctionSign = correction >= 0 ? '+' : '';
-      correctionSpan.textContent = `${correctionSign}${Math.round(correction).toLocaleString()}`;
+      <div className="input-group">
+        <label htmlFor="decision-alt">DA / MDA (ft):</label>
+        <input
+          type="number"
+          id="decision-alt"
+          placeholder="e.g., 1700"
+          step="10"
+          value={decisionAlt}
+          onChange={(e) => setDecisionAlt(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+        />
+        <small>Altitude you want to correct (e.g., Decision Altitude, Minimum Descent Altitude)</small>
+      </div>
 
-      // Interpretation based on temperature
-      if (correction > 0) {
-        interpretationP.textContent = `Cold temperature! You will be LOWER than indicated altitude. Add ${Math.round(correction)} ft to your decision altitude to maintain safe terrain clearance.`;
-        interpretationP.className = 'result-info warning';
-      } else if (correction < 0) {
-        interpretationP.textContent = `Warm temperature. You will be HIGHER than indicated altitude by ${Math.abs(Math.round(correction))} ft. Correction usually not applied for warmer temperatures.`;
-        interpretationP.className = 'result-info';
-      } else {
-        interpretationP.textContent = `Temperature matches ISA. No correction needed.`;
-        interpretationP.className = 'result-info';
-      } 
-      try {
-        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch (_) {
-        (resultDiv as HTMLElement).scrollIntoView();
-      }
-    }
-  }
+      <div className="input-group">
+        <label htmlFor="airport-alt">Airport Elevation (ft):</label>
+        <input
+          type="number"
+          id="airport-alt"
+          placeholder="e.g., 1500"
+          step="10"
+          value={airportAlt}
+          onChange={(e) => setAirportAlt(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+        />
+      </div>
 
-  private calculateTemperatureCorrection(
-    decisionAltitude: number,
-    airportAltitude: number,
-    temperature: number
-  ): { correctedAltitude: number; correction: number } {
-    // Height above airport
-    const heightAboveAirport = decisionAltitude - airportAltitude;
-    
-    // ISA temperature at airport elevation (15°C at sea level, -2°C per 1000ft)
-    const isaTemp = 15 - (airportAltitude / 1000) * 2;
-    
-    // ICAO cold temperature correction formula:
-    // Correction = Height × (ISA Temp - Actual Temp) / (273 + Actual Temp)
-    // This gives positive correction for cold temps (aircraft is lower than indicated)
-    const actualTempKelvin = temperature + 273;
-    const correction = (heightAboveAirport * (isaTemp - temperature)) / actualTempKelvin;
-    
-    // Corrected altitude (add correction when cold, subtract when warm)
-    // But typically we add to the minimum to ensure terrain clearance
-    const correctedAltitude = decisionAltitude + correction;
-    
-    return {
-      correctedAltitude,
-      correction
-    };
-  }
+      <div className="input-group">
+        <label htmlFor="temperature">Airport Temperature (°C):</label>
+        <input
+          type="number"
+          id="temperature"
+          placeholder="e.g., -15"
+          step="0.1"
+          value={temperature}
+          onChange={(e) => setTemperature(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleCalculate()}
+        />
+      </div>
 
-  destroy(): void {
-    // Event listeners are automatically removed when container is cleared
-    this.container = null;
-  }
+      <button className="btn-primary" onClick={handleCalculate}>Calculate</button>
+
+      {result && (
+        <div ref={resultRef} className="result">
+          <h3>Result:</h3>
+          <div className="result-value">
+            <span className="label">Corrected Altitude:</span>
+            <span id="corrected-alt" className="value">{Math.round(result.correctedAltitude).toLocaleString()}</span>
+            <span className="unit">ft</span>
+          </div>
+          <div className="result-value">
+            <span className="label">Correction:</span>
+            <span id="correction-value" className="value">
+              {`${result.correction >= 0 ? '+' : ''}${Math.round(result.correction).toLocaleString()}`}
+            </span>
+            <span className="unit">ft</span>
+          </div>
+          <div className={`result-info ${result.correction > 0 ? 'warning' : ''}`}>
+            <p id="result-interpretation">{interpretation}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
+
+/**
+ * Tool metadata used by the application registry.
+ */
+export const altitudeCorrectionTool: ITool = {
+  id: 'altitude-correction',
+  name: 'Altitude Correction',
+  description: 'Calculate temperature-corrected altitude for approach procedures',
+  Component: AltitudeCorrectionTool,
+};

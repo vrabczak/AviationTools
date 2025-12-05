@@ -3,18 +3,29 @@
   "tasks": [
     {
       "label": "Start Dev Server",
-      "type": "npm",
-      "script": "dev",
+      "type": "process",
+      "command": "npm",
+      "args": ["run", "dev"],
+      "windows": {
+        "command": "npm.cmd"
+      },
       "isBackground": true,
       "problemMatcher": {
-        "owner": "webpack",
-        "pattern": {
-          "regexp": "."
-        },
+        "owner": "vite",
+        "pattern": [
+          {
+            "regexp": "^([^\\s].*?):(\\d+):(\\d+):\\s*(error|warning)\\s*(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "message": 5
+          }
+        ],
         "background": {
           "activeOnStart": true,
-          "beginsPattern": "webpack",
-          "endsPattern": "compiled successfully"
+          "beginsPattern": "vite v\\d",
+          "endsPattern": "ready in"
         }
       }
     }

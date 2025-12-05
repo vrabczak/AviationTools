@@ -1,227 +1,237 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ITool } from './ITool';
-import { jsx } from '../jsx-runtime';
+
+export interface ApproachRow {
+  distanceNM: number;
+  distanceKM: string;
+  altitudeAbove: number;
+  heightAbove: number;
+}
+
+export type AltitudeUnit = 'ft' | 'm';
+export type DistanceUnit = 'NM' | 'km';
 
 /**
- * Approach Table Tool
- * Generates a table showing distance, altitude, and height above Target Altitude for approach
+ * Builds an approach reference table for 1–10 NM with target altitude and glide slope.
+ *
+ * @param targetAltitude - Target altitude in feet.
+ * @param slopeAngle - Glide slope angle in degrees.
+ * @returns Table rows containing distances and required heights.
  */
-export class ApproachTable implements ITool {
-  id = 'approach-table';
-  name = 'Approach Table';
-  description = 'Generate approach table with distances, altitudes, and heights above Target Altitude';
+export function calculateApproachTable(targetAltitude: number, slopeAngle: number): ApproachRow[] {
+  const NM_TO_FEET = 6076.12;
+  const NM_TO_KM = 1.852;
+  const results: ApproachRow[] = [];
 
-  private container: HTMLElement | null = null;
+  for (let distanceNM = 1; distanceNM <= 10; distanceNM++) {
+    const distanceFeet = distanceNM * NM_TO_FEET;
+    const distanceKM = (distanceNM * NM_TO_KM).toFixed(1);
+    const slopeRadians = (slopeAngle * Math.PI) / 180;
+    const heightAbove = distanceFeet * Math.tan(slopeRadians);
+    const altitudeAbove = targetAltitude + heightAbove;
 
-  render(container: HTMLElement): void {
-    this.container = container;
-    
-    const content = (
-      <div class="tool-content">
-        <h2>Approach Table</h2>
-        <p class="tool-description">
-          Generate a table showing distance to Target Altitude, Altitude Above and Height Above
-          for a given glide slope angle. Useful for approach planning and monitoring.
-        </p>
-        
-        <div class="input-group">
-          <label for="target-altitude">Target Altitude:</label>
-          <div class="inline-row">
-            <input type="number" id="target-altitude" placeholder="e.g., 1500" step="1" />
-            <select id="altitude-unit" aria-label="Altitude unit">
-              <option value="ft" selected>ft</option>
-              <option value="m">m</option>
-            </select>
-          </div>
-          <small>Enter target altitude in the selected unit</small>
-        </div>
-        
-        <div class="input-group">
-          <label for="slope-angle">Glide Slope Angle (°):</label>
-          <input type="number" id="slope-angle" placeholder="3" step="0.1" value="3" />
-          <small>Approach slope angle in degrees (default: 3°)</small>
-        </div>
-        
-        <div class="input-group">
-          <label for="ground-speed">Ground Speed (kt):</label>
-          <input type="number" id="ground-speed" placeholder="e.g., 100" step="1" min="1" />
-          <small>Ground speed in knots (optional, for vertical speed calculation)</small>
-        </div>
-
-        <div class="input-group">
-          <label for="distance-unit">Distance Unit:</label>
-          <select id="distance-unit" aria-label="Distance unit">
-            <option value="NM" selected>NM</option>
-            <option value="km">km</option>
-          </select>
-        </div>
-        
-        <button id="generate-table" class="btn-primary">Generate Table</button>
-        
-        <div id="approach-result" class="result hidden">
-          <h3>Approach Table:</h3>
-          <div id="approach-table-container" class="table-container"></div>
-        </div>
-      </div>
-    );
-
-    container.appendChild(content as Node);
-    this.attachEventListeners();
-  }
-
-  private attachEventListeners(): void {
-    const generateBtn = this.container?.querySelector('#generate-table');
-    generateBtn?.addEventListener('click', () => this.generateTable());
-
-    // Allow Enter key to trigger calculation
-    const inputs = this.container?.querySelectorAll('input');
-    inputs?.forEach(input => {
-      input.addEventListener('keypress', (e: Event) => {
-        if ((e as KeyboardEvent).key === 'Enter') {
-          this.generateTable();
-        }
-      });
+    results.push({
+      distanceNM,
+      distanceKM,
+      altitudeAbove,
+      heightAbove,
     });
   }
 
-  private generateTable(): void {
-    const altitudeUnit = (this.container?.querySelector('#altitude-unit') as HTMLSelectElement)?.value || 'ft';
-    const distanceUnit = (this.container?.querySelector('#distance-unit') as HTMLSelectElement)?.value || 'NM';
-    const targetAltitudeInput = parseFloat(
-      (this.container?.querySelector('#target-altitude') as HTMLInputElement)?.value
-    );
-    const slopeAngle = parseFloat(
-      (this.container?.querySelector('#slope-angle') as HTMLInputElement)?.value
-    );
-    const groundSpeed = parseFloat(
-      (this.container?.querySelector('#ground-speed') as HTMLInputElement)?.value
-    );
+  return results;
+}
 
-    if (isNaN(targetAltitudeInput)) {
+const FEET_PER_METER = 3.28084;
+
+/**
+ * Formats a value in feet into the requested altitude unit.
+ *
+ * @param valueFt - Value in feet.
+ * @param unit - Desired altitude unit.
+ * @returns Rounded, localized string.
+ */
+function formatAltitude(valueFt: number, unit: AltitudeUnit): string {
+  const converted = unit === 'm' ? valueFt / FEET_PER_METER : valueFt;
+  return Math.round(converted).toLocaleString();
+}
+
+/**
+ * UI component that generates an approach table for a glide slope and target altitude.
+ *
+ * @returns Form inputs and result table.
+ */
+function ApproachTableTool(): JSX.Element {
+  const [targetAltitude, setTargetAltitude] = useState('');
+  const [slopeAngle, setSlopeAngle] = useState('3');
+  const [groundSpeed, setGroundSpeed] = useState('');
+  const [altitudeUnit, setAltitudeUnit] = useState<AltitudeUnit>('ft');
+  const [distanceUnit, setDistanceUnit] = useState<DistanceUnit>('NM');
+  const [rows, setRows] = useState<ApproachRow[] | null>(null);
+  const resultRef = useRef<HTMLDivElement | null>(null);
+
+  const targetAltitudeFt = useMemo(() => {
+    const val = parseFloat(targetAltitude);
+    if (Number.isNaN(val)) return null;
+    return altitudeUnit === 'm' ? val * FEET_PER_METER : val;
+  }, [altitudeUnit, targetAltitude]);
+
+  useEffect(() => {
+    if (!rows || !resultRef.current) return;
+    try {
+      resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch {
+      resultRef.current.scrollIntoView();
+    }
+  }, [rows]);
+
+  const handleGenerate = () => {
+    const slope = parseFloat(slopeAngle);
+    if (targetAltitudeFt === null) {
       alert('Please enter a valid Target Altitude');
       return;
     }
-
-    if (isNaN(slopeAngle) || slopeAngle < 0 || slopeAngle > 60) {
+    if (Number.isNaN(slope) || slope < 0 || slope > 60) {
       alert('Please enter a valid slope angle (0-60°)');
       return;
     }
+    setRows(calculateApproachTable(targetAltitudeFt, slope));
+  };
 
-    // Convert target altitude to feet for internal calculations if needed
-    const targetAltitudeFt = altitudeUnit === 'm' ? targetAltitudeInput * 3.28084 : targetAltitudeInput;
+  const verticalSpeedText = useMemo(() => {
+    if (!rows) return null;
+    const slope = parseFloat(slopeAngle);
+    const gs = parseFloat(groundSpeed);
+    if (Number.isNaN(slope) || Number.isNaN(gs) || gs <= 0) return null;
+    const vsFtMin = gs * Math.tan((slope * Math.PI) / 180) * 101.27;
+    if (altitudeUnit === 'm') {
+      return `Target Vertical Speed: ${Math.round(vsFtMin / FEET_PER_METER)} m/min`;
+    }
+    return `Target Vertical Speed: ${Math.round(vsFtMin)} ft/min`;
+  }, [altitudeUnit, groundSpeed, rows, slopeAngle]);
 
-    // Generate table data
-    const tableData = this.calculateApproachTable(targetAltitudeFt, slopeAngle);
+  return (
+    <div className="tool-content">
+      <h2>Approach Table</h2>
+      <p className="tool-description">
+        Generate a table showing distance to Target Altitude, Altitude Above and Height Above for a
+        given glide slope angle. Useful for approach planning and monitoring.
+      </p>
 
-    // Display result
-    const resultDiv = this.container?.querySelector('#approach-result');
-    const tableContainer = this.container?.querySelector('#approach-table-container');
+      <div className="input-group">
+        <label htmlFor="target-altitude">Target Altitude:</label>
+        <div className="inline-row">
+          <input
+            type="number"
+            id="target-altitude"
+            placeholder="e.g., 1500"
+            step="1"
+            value={targetAltitude}
+            onChange={(e) => setTargetAltitude(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+          />
+          <select
+            id="altitude-unit"
+            aria-label="Altitude unit"
+            value={altitudeUnit}
+            onChange={(e) => setAltitudeUnit(e.target.value as AltitudeUnit)}
+          >
+            <option value="ft">ft</option>
+            <option value="m">m</option>
+          </select>
+        </div>
+        <small>Enter target altitude in the selected unit</small>
+      </div>
 
-    if (resultDiv && tableContainer) {
-      resultDiv.classList.remove('hidden');
-      
-      // Clear previous content
-      tableContainer.innerHTML = '';
-      
-      // Create table using JSX
-      const tableElement = (
-        <div>
-          <table class="approach-table">
-            <thead>
-              <tr>
-                <th>Distance ({distanceUnit})</th>
-                <th>Altitude ({altitudeUnit})</th>
-                <th>Height ({altitudeUnit})</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.map(row => (
+      <div className="input-group">
+        <label htmlFor="slope-angle">Glide Slope Angle (°):</label>
+        <input
+          type="number"
+          id="slope-angle"
+          placeholder="3"
+          step="0.1"
+          value={slopeAngle}
+          onChange={(e) => setSlopeAngle(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+        />
+        <small>Approach slope angle in degrees (default: 3°)</small>
+      </div>
+
+      <div className="input-group">
+        <label htmlFor="ground-speed">Ground Speed (kt):</label>
+        <input
+          type="number"
+          id="ground-speed"
+          placeholder="e.g., 100"
+          step="1"
+          min="1"
+          value={groundSpeed}
+          onChange={(e) => setGroundSpeed(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+        />
+        <small>Ground speed in knots (optional, for vertical speed calculation)</small>
+      </div>
+
+      <div className="input-group">
+        <label htmlFor="distance-unit">Distance Unit:</label>
+        <select
+          id="distance-unit"
+          aria-label="Distance unit"
+          value={distanceUnit}
+          onChange={(e) => setDistanceUnit(e.target.value as DistanceUnit)}
+        >
+          <option value="NM">NM</option>
+          <option value="km">km</option>
+        </select>
+      </div>
+
+      <button className="btn-primary" onClick={handleGenerate}>Generate Table</button>
+
+      {rows && (
+        <div ref={resultRef} className="result">
+          <h3>Approach Table:</h3>
+          <div className="table-container">
+            <table className="approach-table">
+              <thead>
                 <tr>
-                  <td>{distanceUnit === 'NM' ? row.distanceNM : row.distanceKM}</td>
-                  <td>{
-                    (() => {
-                      const val = altitudeUnit === 'm' ? row.altitudeAbove / 3.28084 : row.altitudeAbove;
-                      return Math.round(val).toLocaleString();
-                    })()
-                  }</td>
-                  <td>{
-                    (() => {
-                      const val = altitudeUnit === 'm' ? row.heightAbove / 3.28084 : row.heightAbove;
-                      return Math.round(val).toLocaleString();
-                    })()
-                  }</td>
+                  <th>Distance ({distanceUnit})</th>
+                  <th>Altitude ({altitudeUnit})</th>
+                  <th>Height ({altitudeUnit})</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <div class="result-info">
-            <p>
-              Glide slope: {slopeAngle}° |
-              {' '}Target Altitude: {(
-                altitudeUnit === 'm'
-                  ? Math.round(targetAltitudeFt / 3.28084).toLocaleString() + ' m'
-                  : Math.round(targetAltitudeFt).toLocaleString() + ' ft'
-              )}
-            </p>
-            {!isNaN(groundSpeed) && groundSpeed > 0 && (
+              </thead>
+              <tbody>
+                {rows.map((row) => (
+                  <tr key={row.distanceNM}>
+                    <td>{distanceUnit === 'NM' ? row.distanceNM : row.distanceKM}</td>
+                    <td>{formatAltitude(row.altitudeAbove, altitudeUnit)}</td>
+                    <td>{formatAltitude(row.heightAbove, altitudeUnit)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="result-info">
               <p>
-                {(() => {
-                  const vsFtMin = groundSpeed * Math.tan(slopeAngle * Math.PI / 180) * 101.27;
-                  if (altitudeUnit === 'm') {
-                    const vsMMin = vsFtMin / 3.28084;
-                    return `Target Vertical Speed: ${Math.round(vsMMin)} m/min`;
-                  }
-                  return `Target Vertical Speed: ${Math.round(vsFtMin)} ft/min`;
-                })()}
+                Glide slope: {parseFloat(slopeAngle) || 0}° | Target Altitude:{' '}
+                {targetAltitudeFt !== null
+                  ? altitudeUnit === 'm'
+                    ? `${Math.round(targetAltitudeFt / FEET_PER_METER).toLocaleString()} m`
+                    : `${Math.round(targetAltitudeFt).toLocaleString()} ft`
+                  : '-'}
               </p>
-            )}
+              {verticalSpeedText && <p>{verticalSpeedText}</p>}
+            </div>
           </div>
         </div>
-      );
-      
-      tableContainer.appendChild(tableElement as Node);
-      // Automatically scroll to the result when the table is generated
-      try {
-        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch (_) {
-        // Fallback for older browsers
-        (resultDiv as HTMLElement).scrollIntoView();
-      }
-    }
-  }
-
-  private calculateApproachTable(
-    targetAltitude: number,
-    slopeAngle: number
-  ): Array<{ distanceNM: number; distanceKM: string; altitudeAbove: number; heightAbove: number }> {
-    const NM_TO_FEET = 6076.12; // 1 NM = 6076.12 feet
-    const NM_TO_KM = 1.852; // 1 NM = 1.852 km
-    
-    const results = [];
-    
-    // Calculate for 1-10 NM
-    for (let distanceNM = 1; distanceNM <= 10; distanceNM++) {
-      const distanceFeet = distanceNM * NM_TO_FEET;
-      const distanceKM = (distanceNM * NM_TO_KM).toFixed(1);
-      
-      // Height above = distance * tan(slope angle)
-      const slopeRadians = (slopeAngle * Math.PI) / 180;
-      const heightAbove = distanceFeet * Math.tan(slopeRadians);
-      
-      // Altitude above = target altitude + height above
-      const altitudeAbove = targetAltitude + heightAbove;
-      
-      results.push({
-        distanceNM,
-        distanceKM,
-        altitudeAbove,
-        heightAbove
-      });
-    }
-    
-    return results;
-  }
-
-  destroy(): void {
-    this.container = null;
-  }
+      )}
+    </div>
+  );
 }
+
+/**
+ * Tool metadata used by the application registry.
+ */
+export const approachTableTool: ITool = {
+  id: 'approach-table',
+  name: 'Approach Table',
+  description: 'Generate approach table with distances, altitudes, and heights above Target Altitude',
+  Component: ApproachTableTool,
+};
