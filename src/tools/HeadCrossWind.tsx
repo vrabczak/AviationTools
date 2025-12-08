@@ -75,6 +75,11 @@ function HeadCrossWindTool(): JSX.Element {
       return;
     }
 
+    if (direction < 0 || direction > 360 || heading < 0 || heading > 360) {
+      alert('Wind direction and aircraft heading must be between 0 and 360 degrees');
+      return;
+    }
+
     const normalizedWindDir = normalizeDegrees(direction);
     const normalizedHeading = normalizeDegrees(heading);
 
@@ -158,9 +163,6 @@ function HeadCrossWindTool(): JSX.Element {
               </span>
               <span className="unit">kt</span>
             </div>
-          </div>
-          <div id="wind-interpretation" className="result-info">
-            <p></p>
           </div>
         </div>
       )}

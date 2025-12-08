@@ -64,12 +64,12 @@ function MinimaTool(): JSX.Element {
       alert('Please fill in all fields with valid numbers.');
       return;
     }
-    if (values.some((v) => v < 0)) {
+    const [ocaNum, ochNum, aircraftNum, marginNum] = values;
+    if (ochNum < 0 || aircraftNum < 0 || marginNum < 0) {
       alert('Values cannot be negative.');
       return;
     }
-
-    const [ocaNum, ochNum, aircraftNum, marginNum] = values;
+    
     setResult(calculateMinima(ocaNum, ochNum, aircraftNum, marginNum));
   };
 

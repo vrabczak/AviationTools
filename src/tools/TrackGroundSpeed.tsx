@@ -79,6 +79,16 @@ function TrackGroundSpeedTool(): JSX.Element {
       return;
     }
 
+    if(windDirValue < 0 || windDirValue > 360) {
+      alert('Wind Direction must be between 0 and 360');
+      return;
+    }
+
+    if(headingValue < 0 || headingValue > 360) {
+      alert('Aircraft Heading must be between 0 and 360');
+      return;
+    }
+
     const normalizedWindDir = normalizeDegrees(windDirValue);
     const normalizedHeading = normalizeDegrees(headingValue);
 
