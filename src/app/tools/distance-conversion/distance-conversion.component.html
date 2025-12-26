@@ -1,0 +1,70 @@
+<div class="tool-content">
+  <h2>Distance Conversion</h2>
+  <p class="tool-description">
+    Convert between Meters (m), Kilometers (km), Nautical Miles (NM), Feet (ft), and Statute Miles (SM).
+  </p>
+
+  <div class="input-group">
+    <label for="distance-unit">Input unit</label>
+    <select id="distance-unit" [formControl]="unitControl">
+      <option value="m">Meters (m)</option>
+      <option value="km">Kilometers (km)</option>
+      <option value="nm">Nautical Miles (NM)</option>
+      <option value="ft">Feet (ft)</option>
+      <option value="sm">Statute Miles (SM)</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label for="distance-input">Distance value</label>
+    <input
+      type="number"
+      id="distance-input"
+      placeholder="100"
+      step="any"
+      [formControl]="valueControl"
+      (keydown.enter)="convert()"
+    >
+    <small>Enter a positive numeric distance value.</small>
+  </div>
+
+  <button class="btn-primary" (click)="convert()">Convert</button>
+
+  @if (results(); as currentResults) {
+    <div #resultRef class="result">
+      <h3>Converted Distances</h3>
+      <div class="result-grid">
+        @for (targetUnit of visibleUnits(); track targetUnit) {
+          <div class="result-value" [id]="'result-row-' + targetUnit">
+            <div class="label">
+              @switch (targetUnit) {
+                @case ('m') {
+                  <span>Meters (m)</span>
+                }
+                @case ('km') {
+                  <span>Kilometers (km)</span>
+                }
+                @case ('nm') {
+                  <span>Nautical Miles (NM)</span>
+                }
+                @case ('ft') {
+                  <span>Feet (ft)</span>
+                }
+                @case ('sm') {
+                  <span>Statute Miles (SM)</span>
+                }
+              }
+            </div>
+            <div class="value" [id]="'result-' + targetUnit">{{ currentResults[targetUnit] }}</div>
+            <button class="btn-secondary copy-btn" (click)="copy(targetUnit)">
+              {{ copiedField() === targetUnit ? 'Copied!' : 'Copy' }}
+            </button>
+          </div>
+        }
+      </div>
+      <div class="result-info">
+        <p>Copy any format to quickly share distance values across devices or systems.</p>
+      </div>
+    </div>
+  }
+</div>

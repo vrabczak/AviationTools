@@ -1,0 +1,94 @@
+<div class="tool-content">
+  <h2>Fuel Conversion</h2>
+  <p class="tool-description">
+    Convert between volume (liters, gallons) and weight (kg, pounds) units for aviation fuel.
+    Adjust the density based on fuel type (default 0.8 kg/L for Jet A-1).
+  </p>
+
+  <div class="input-group">
+    <label for="fuel-unit">Unit</label>
+    <select id="fuel-unit" [formControl]="unitControl">
+      <option value="liters">Liters (L)</option>
+      <option value="kg">Kilograms (kg)</option>
+      <option value="gallon">US Gallons (gal)</option>
+      <option value="pound">Pounds (lb)</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label for="fuel-value">Value</label>
+    <input
+      type="number"
+      id="fuel-value"
+      placeholder="Enter value"
+      step="any"
+      [formControl]="valueControl"
+      (keydown.enter)="convert()"
+    >
+  </div>
+
+  <div class="input-group">
+    <label for="fuel-density">Density (kg/L)</label>
+    <input
+      type="number"
+      id="fuel-density"
+      placeholder="0.8"
+      step="0.01"
+      [formControl]="densityControl"
+      (keydown.enter)="convert()"
+    >
+    <small>Typical values: Jet A-1 ≈ 0.8, Avgas 100LL ≈ 0.72</small>
+  </div>
+
+  <button class="btn-primary" (click)="convert()">Convert</button>
+
+  @if (results(); as currentResults) {
+    <div #resultRef class="result">
+      <h3>Converted Values</h3>
+      <div class="result-grid">
+        @for (targetUnit of visibleUnits(); track targetUnit) {
+          <div class="result-value">
+            <div class="label">
+              @switch (targetUnit) {
+                @case ('liters') {
+                  <span>Liters (L)</span>
+                }
+                @case ('kg') {
+                  <span>Kilograms (kg)</span>
+                }
+                @case ('gallon') {
+                  <span>US Gallons (gal)</span>
+                }
+                @case ('pound') {
+                  <span>Pounds (lb)</span>
+                }
+              }
+            </div>
+            <div class="value" [id]="'result-' + targetUnit">
+              @switch (targetUnit) {
+                @case ('liters') {
+                  <span>{{ currentResults.liters.toFixed(2) }} L</span>
+                }
+                @case ('kg') {
+                  <span>{{ currentResults.kg.toFixed(2) }} kg</span>
+                }
+                @case ('gallon') {
+                  <span>{{ currentResults.gallon.toFixed(2) }} gal</span>
+                }
+                @case ('pound') {
+                  <span>{{ currentResults.pound.toFixed(2) }} lb</span>
+                }
+              }
+            </div>
+            <button class="btn-secondary copy-btn" (click)="copy(targetUnit)">
+              {{ copiedField() === targetUnit ? 'Copied!' : 'Copy' }}
+            </button>
+          </div>
+        }
+      </div>
+      <div class="result-info">
+        <p>Conversions are based on the specified fuel density.</p>
+      </div>
+    </div>
+  }
+</div>

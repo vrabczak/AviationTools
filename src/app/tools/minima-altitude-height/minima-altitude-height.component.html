@@ -1,0 +1,82 @@
+﻿<div class="tool-content">
+  <h2>DA/MDA DH/MDH</h2>
+  <p class="tool-description">
+    Calculate Decision Altitude (DA) or Minimum Descent Altitude (MDA) and Decision Height (DH) or Minimum Descent Height (MDH)
+    by combining published Obstacle Clearance Altitude (OCA) and Obcstacle Clearance Height (OCH), your Aircraft Minima, and any Operator Margin.
+  </p>
+
+  <div class="input-group">
+    <label for="minima-oca">OCA (ft):</label>
+    <input
+      type="number"
+      id="minima-oca"
+      placeholder="e.g., 1500"
+      step="1"
+      [formControl]="ocaControl"
+      (keydown.enter)="calculate()"
+    >
+    <small>Obstacle Clearance Altitude from the approach chart.</small>
+  </div>
+
+  <div class="input-group">
+    <label for="minima-och">OCH (ft):</label>
+    <input
+      type="number"
+      id="minima-och"
+      placeholder="e.g., 200"
+      step="1"
+      [formControl]="ochControl"
+      (keydown.enter)="calculate()"
+    >
+    <small>Obstacle Clearance Height from the approach chart.</small>
+  </div>
+
+  <div class="input-group">
+    <label for="minima-aircraft">Aircraft Minima (ft):</label>
+    <input
+      type="number"
+      id="minima-aircraft"
+      placeholder="e.g., 200"
+      step="1"
+      [formControl]="aircraftMinimaControl"
+      (keydown.enter)="calculate()"
+    >
+    <small>Aircraft-specific minima to compare against OCH.</small>
+  </div>
+
+  <div class="input-group">
+    <label for="minima-operator">Operator Margin (ft):</label>
+    <input
+      type="number"
+      id="minima-operator"
+      placeholder="e.g., 100"
+      step="1"
+      [formControl]="operatorMarginControl"
+      (keydown.enter)="calculate()"
+    >
+    <small>Any additional margin required by your operator (enter 0 if none).</small>
+  </div>
+
+  <button class="btn-primary" (click)="calculate()">Calculate</button>
+
+  @if (result(); as currentResult) {
+    <div #resultRef class="result">
+      <h3>Calculated Minima</h3>
+      <div class="result-grid">
+        <div class="result-value">
+          <span class="label">DA / MDA</span>
+          <span class="value" id="result-da">{{ formatMinimaValue(currentResult.decisionAltitude) }}</span>
+          <span class="unit">ft</span>
+        </div>
+        <div class="result-value">
+          <span class="label">DH / MDH</span>
+          <span class="value" id="result-dh">{{ formatMinimaValue(currentResult.decisionHeight) }}</span>
+          <span class="unit">ft</span>
+        </div>
+      </div>
+      <div class="result-info">
+        <p id="minima-note">{{ noteText() }}</p>
+      </div>
+    </div>
+  }
+</div>

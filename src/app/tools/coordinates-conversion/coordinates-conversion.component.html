@@ -1,0 +1,94 @@
+﻿<div class="tool-content">
+  <h2>Coordinates Conversion</h2>
+  <p class="tool-description">
+    Convert between Decimal Degrees (DD), Degrees + Decimal Minutes (DM), Degrees + Minutes + Seconds (DMS) and
+    5-digit Military Grid Reference System (MGRS).
+  </p>
+
+  <div class="input-group">
+    <label for="coordinate-format">Input format</label>
+    <select id="coordinate-format" [formControl]="formatControl">
+      <option value="dd">Decimal Degrees (DD)</option>
+      <option value="dm">Degrees + Decimal Minutes (DM)</option>
+      <option value="dms">Degrees + Minutes + Seconds (DMS)</option>
+      <option value="mgrs">MGRS (5-digit)</option>
+    </select>
+  </div>
+
+  @if (formatControl.value === 'mgrs') {
+    <div class="input-group">
+      <label for="mgrs-input">MGRS Coordinate</label>
+      <input
+        type="text"
+        id="mgrs-input"
+        placeholder="33UVR59664936"
+        [formControl]="mgrsInputControl"
+        (keydown.enter)="convert()"
+      >
+      <small>Enter a 5-digit precision MGRS coordinate (e.g., 33UVR59664936).</small>
+    </div>
+  } @else {
+    <div class="input-group">
+      <label for="lat-input">Latitude</label>
+      <input
+        type="text"
+        id="lat-input"
+        [placeholder]="placeholders[formatControl.value].lat"
+        [formControl]="latInputControl"
+        (keydown.enter)="convert()"
+      >
+    </div>
+    <div class="input-group">
+      <label for="lon-input">Longitude</label>
+      <input
+        type="text"
+        id="lon-input"
+        [placeholder]="placeholders[formatControl.value].lon"
+        [formControl]="lonInputControl"
+        (keydown.enter)="convert()"
+      >
+      <small>{{ placeholders[formatControl.value].helper }}</small>
+    </div>
+  }
+
+  <button class="btn-primary" (click)="convert()">Convert</button>
+
+  @if (results(); as currentResults) {
+    <div #resultRef class="result">
+      <h3>Converted Coordinates</h3>
+      <div class="result-grid">
+        <div class="result-value">
+          <div class="label">Decimal Degrees (DD)</div>
+          <div class="value" id="result-dd">{{ currentResults.dd }}</div>
+          <button class="btn-secondary copy-btn" (click)="copy('dd')">
+            {{ copiedField() === 'dd' ? 'Copied!' : 'Copy' }}
+          </button>
+        </div>
+        <div class="result-value">
+          <div class="label">Degrees + Decimal Minutes (DM)</div>
+          <div class="value" id="result-dm">{{ currentResults.dm }}</div>
+          <button class="btn-secondary copy-btn" (click)="copy('dm')">
+            {{ copiedField() === 'dm' ? 'Copied!' : 'Copy' }}
+          </button>
+        </div>
+        <div class="result-value">
+          <div class="label">Degrees + Minutes + Seconds (DMS)</div>
+          <div class="value" id="result-dms">{{ currentResults.dms }}</div>
+          <button class="btn-secondary copy-btn" (click)="copy('dms')">
+            {{ copiedField() === 'dms' ? 'Copied!' : 'Copy' }}
+          </button>
+        </div>
+        <div class="result-value">
+          <div class="label">MGRS (5-digit)</div>
+          <div class="value" id="result-mgrs">{{ currentResults.mgrs }}</div>
+          <button class="btn-secondary copy-btn" (click)="copy('mgrs')">
+            {{ copiedField() === 'mgrs' ? 'Copied!' : 'Copy' }}
+          </button>
+        </div>
+      </div>
+      <div class="result-info">
+        <p>Copy any format to quickly share coordinates across devices or systems.</p>
+      </div>
+    </div>
+  }
+</div>

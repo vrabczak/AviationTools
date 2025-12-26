@@ -1,0 +1,68 @@
+<div class="tool-content">
+  <h2>Altitude Correction (Temperature)</h2>
+  <p class="tool-description">
+    Calculate temperature-corrected altitude for approach procedures. Cold temperatures cause
+    the aircraft to be lower than indicated, warm temperatures cause it to be higher. Critical
+    for Decision Altitude and Minimum Descent Altitude.
+  </p>
+
+  <div class="input-group">
+    <label for="decision-alt">DA / MDA (ft):</label>
+    <input
+      type="number"
+      id="decision-alt"
+      placeholder="e.g., 1700"
+      step="10"
+      [formControl]="decisionAltControl"
+      (keydown.enter)="calculate()"
+    >
+    <small>Altitude you want to correct (e.g., Decision Altitude, Minimum Descent Altitude)</small>
+  </div>
+
+  <div class="input-group">
+    <label for="airport-alt">Airport Elevation (ft):</label>
+    <input
+      type="number"
+      id="airport-alt"
+      placeholder="e.g., 1500"
+      step="10"
+      [formControl]="airportAltControl"
+      (keydown.enter)="calculate()"
+    >
+  </div>
+
+  <div class="input-group">
+    <label for="temperature">Airport Temperature (°C):</label>
+    <input
+      type="number"
+      id="temperature"
+      placeholder="e.g., -15"
+      step="0.1"
+      [formControl]="temperatureControl"
+      (keydown.enter)="calculate()"
+    >
+  </div>
+
+  <button class="btn-primary" (click)="calculate()">Calculate</button>
+
+  @if (result(); as currentResult) {
+    <div #resultRef class="result">
+      <h3>Result:</h3>
+      <div class="result-value">
+        <span class="label">Corrected Altitude:</span>
+        <span id="corrected-alt" class="value">{{ formatFeet(currentResult.correctedAltitude) }}</span>
+        <span class="unit">ft</span>
+      </div>
+      <div class="result-value">
+        <span class="label">Correction:</span>
+        <span id="correction-value" class="value">
+          {{ formatCorrection(currentResult.correction) }}
+        </span>
+        <span class="unit">ft</span>
+      </div>
+      <div class="result-info" [class.warning]="currentResult.correction > 0">
+        <p id="result-interpretation">{{ interpretation() }}</p>
+      </div>
+    </div>
+  }
+</div>

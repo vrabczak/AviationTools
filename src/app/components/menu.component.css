@@ -1,0 +1,233 @@
+.menu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.menu-header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.menu-header h1 {
+  color: white;
+  font-size: 1.5rem;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.menu-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.menu-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  transition: background 0.2s;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: white;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.hamburger::before,
+.hamburger::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: white;
+  position: absolute;
+  transition: transform 0.3s;
+}
+
+.hamburger::before {
+  top: -7px;
+}
+
+.hamburger::after {
+  top: 7px;
+}
+
+.menu-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+}
+
+.menu-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.menu-section h3 {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-light);
+  margin-bottom: var(--spacing-md);
+  padding: 0 var(--spacing-sm);
+}
+
+.tool-list {
+  list-style: none;
+}
+
+.tool-list li {
+  margin-bottom: var(--spacing-xs);
+}
+
+.tool-button {
+  width: 100%;
+  padding: var(--spacing-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.tool-button:hover {
+  background: var(--bg-gray);
+  border-color: var(--border);
+}
+
+.tool-button.active {
+  background: var(--primary-dark);
+  color: white;
+  border-color: var(--primary);
+}
+
+[data-theme="light"] .tool-button.active {
+  background: var(--primary-light);
+}
+
+.tool-button.active .tool-desc {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tool-name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text);
+}
+
+.tool-button.active .tool-name {
+  color: white;
+}
+
+.tool-desc {
+  font-size: 0.8125rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+.menu-footer {
+  padding: var(--spacing-sm);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.875rem;
+}
+
+.menu-footer p {
+  margin-bottom: var(--spacing-xs);
+}
+
+@media (max-width: 725px) {
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  .menu-actions {
+    gap: var(--spacing-xs);
+  }
+
+  .menu-nav,
+  .menu-footer {
+    display: none;
+  }
+
+  .menu.menu-open {
+    position: relative;
+    z-index: 2;
+    max-height: none;
+    overflow: visible;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .menu.menu-open .menu-nav,
+  .menu.menu-open .menu-footer {
+    display: block;
+  }
+
+  .menu.menu-open .hamburger {
+    background: transparent;
+  }
+
+  .menu.menu-open .hamburger::before {
+    transform: rotate(45deg);
+    top: 0;
+  }
+
+  .menu.menu-open .hamburger::after {
+    transform: rotate(-45deg);
+    top: 0;
+  }
+}

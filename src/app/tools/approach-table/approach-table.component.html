@@ -1,0 +1,102 @@
+﻿<div class="tool-content">
+  <h2>Approach Table</h2>
+  <p class="tool-description">
+    Generate a table showing distance to Target Altitude, Altitude Above and Height Above for a
+    given glide slope angle. Useful for approach planning and monitoring.
+  </p>
+
+  <div class="input-group">
+    <label for="target-altitude">Target Altitude:</label>
+    <div class="inline-row">
+      <input
+        type="number"
+        id="target-altitude"
+        placeholder="e.g., 1500"
+        step="1"
+        [formControl]="targetAltitudeControl"
+        (keydown.enter)="calculate()"
+      >
+      <select id="altitude-unit" aria-label="Altitude unit" [formControl]="altitudeUnitControl">
+        <option value="ft">ft</option>
+        <option value="m">m</option>
+      </select>
+    </div>
+    <small>Enter target altitude in the selected unit</small>
+  </div>
+
+  <div class="input-group">
+    <label for="slope-angle">Glide Slope Angle (°):</label>
+    <input
+      type="number"
+      id="slope-angle"
+      placeholder="3"
+      step="0.1"
+      [formControl]="slopeAngleControl"
+      (keydown.enter)="calculate()"
+    >
+    <small>Approach slope angle in degrees (default: 3°)</small>
+  </div>
+
+  <div class="input-group">
+    <label for="ground-speed">Ground Speed (kt):</label>
+    <input
+      type="number"
+      id="ground-speed"
+      placeholder="e.g., 100"
+      step="1"
+      min="1"
+      [formControl]="groundSpeedControl"
+      (keydown.enter)="calculate()"
+    >
+    <small>Ground speed in knots (optional, for vertical speed calculation)</small>
+  </div>
+
+  <div class="input-group">
+    <label for="distance-unit">Distance Unit:</label>
+    <select id="distance-unit" aria-label="Distance unit" [formControl]="distanceUnitControl">
+      <option value="NM">NM</option>
+      <option value="km">km</option>
+    </select>
+  </div>
+
+  <button class="btn-primary" (click)="calculate()">Generate Table</button>
+
+  @if (rows(); as currentRows) {
+    <div #resultRef class="result">
+      <h3>Approach Table:</h3>
+      <div class="table-container">
+        <table class="approach-table">
+          <thead>
+            <tr>
+              <th>Distance ({{ distanceUnitControl.value }})</th>
+              <th>Altitude ({{ altitudeUnitControl.value }})</th>
+              <th>Height ({{ altitudeUnitControl.value }})</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of currentRows; track row.distanceNM) {
+              <tr>
+                <td>{{ distanceUnitControl.value === 'NM' ? row.distanceNM : row.distanceKM }}</td>
+                <td>{{ formatAltitudeValue(row.altitudeAbove) }}</td>
+                <td>{{ formatAltitudeValue(row.heightAbove) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <div class="result-info">
+          <p>
+            Glide slope: {{ slopeAngleValue() }}° | Target Altitude:
+            @if (targetAltitudeFt() !== null) {
+              {{ formatTargetAltitudeValue() }}
+            } @else {
+              -
+            }
+          </p>
+          @if (verticalSpeedText()) {
+            <p>{{ verticalSpeedText() }}</p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

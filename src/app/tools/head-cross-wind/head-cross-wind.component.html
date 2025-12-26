@@ -1,0 +1,74 @@
+<div class="tool-content">
+  <h2>Head/Cross Wind</h2>
+  <p class="tool-description">
+    Calculate how much of the reported wind becomes headwind/tailwind and crosswind for your
+    selected runway or course. Enter directions in degrees true or magnetic consistently with
+    your aircraft heading.
+  </p>
+
+  <div class="input-group">
+    <label for="wind-speed">Wind Speed (kt):</label>
+    <input
+      type="number"
+      id="wind-speed"
+      placeholder="e.g., 18"
+      min="0"
+      step="0.1"
+      [formControl]="windSpeedControl"
+      (keydown.enter)="calculate()"
+    >
+  </div>
+
+  <div class="input-group">
+    <label for="wind-direction">Wind Direction (° from):</label>
+    <input
+      type="number"
+      id="wind-direction"
+      placeholder="e.g., 210"
+      min="0"
+      max="360"
+      step="1"
+      [formControl]="windDirectionControl"
+      (keydown.enter)="calculate()"
+    >
+    <small>Direction the wind is coming from. Use the same reference as your heading (true or magnetic).</small>
+  </div>
+
+  <div class="input-group">
+    <label for="aircraft-heading">Aircraft Heading / Runway (°):</label>
+    <input
+      type="number"
+      id="aircraft-heading"
+      placeholder="e.g., 180"
+      min="0"
+      max="360"
+      step="1"
+      [formControl]="aircraftHeadingControl"
+      (keydown.enter)="calculate()"
+    >
+  </div>
+
+  <button class="btn-primary" (click)="calculate()">Calculate</button>
+
+  @if (result(); as currentResult) {
+    <div #resultRef class="result">
+      <h3>Wind Components</h3>
+      <div class="result-grid">
+        <div class="result-value">
+          <span class="label">Headwind / Tailwind</span>
+          <span id="headwind-value" class="value">
+            {{ formatWindComponent(currentResult.headwind) }} ({{ headwindLabel() }})
+          </span>
+          <span class="unit">kt</span>
+        </div>
+        <div class="result-value">
+          <span class="label">Crosswind</span>
+          <span id="crosswind-value" class="value">
+            {{ formatWindComponent(currentResult.crosswind) }} ({{ crosswindLabel() }})
+          </span>
+          <span class="unit">kt</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

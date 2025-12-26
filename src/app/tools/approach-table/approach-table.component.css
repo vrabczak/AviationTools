@@ -1,0 +1,41 @@
+.table-container {
+  overflow-x: auto;
+}
+
+.approach-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacing-md);
+  font-family: var(--font-mono);
+}
+
+.approach-table th,
+.approach-table td {
+  padding: var(--spacing-md);
+  text-align: right;
+  border: 1px solid var(--border);
+}
+
+.approach-table th {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  text-align: center;
+}
+
+.approach-table tbody tr:nth-child(odd) {
+  background: var(--bg);
+}
+
+.approach-table tbody tr:nth-child(even) {
+  background: var(--bg-gray);
+}
+
+.approach-table tbody tr:hover {
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.approach-table td:first-child {
+  font-weight: 600;
+  text-align: center;
+}

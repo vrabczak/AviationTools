@@ -1,0 +1,66 @@
+<div class="tool-content">
+  <h2>Speed Conversion</h2>
+  <p class="tool-description">
+    Convert between Knots (kt), Kilometers per hour (km/h), Meters per second (m/s), and Feet per minute (ft/min).
+  </p>
+
+  <div class="input-group">
+    <label for="speed-unit">Input unit</label>
+    <select id="speed-unit" [formControl]="unitControl">
+      <option value="kt">Knots (kt)</option>
+      <option value="kmh">Kilometers per hour (km/h)</option>
+      <option value="ms">Meters per second (m/s)</option>
+      <option value="ftmin">Feet per minute (ft/min)</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label for="speed-input">Speed value</label>
+    <input
+      type="number"
+      id="speed-input"
+      placeholder="100"
+      step="any"
+      [formControl]="valueControl"
+      (keydown.enter)="convert()"
+    >
+    <small>Enter a positive numeric speed value.</small>
+  </div>
+
+  <button class="btn-primary" (click)="convert()">Convert</button>
+
+  @if (results(); as currentResults) {
+    <div #resultRef class="result">
+      <h3>Converted Speeds</h3>
+      <div class="result-grid">
+        @for (targetUnit of visibleUnits(); track targetUnit) {
+          <div class="result-value" [id]="'result-row-' + targetUnit">
+            <div class="label">
+              @switch (targetUnit) {
+                @case ('kt') {
+                  <span>Knots (kt)</span>
+                }
+                @case ('kmh') {
+                  <span>Kilometers per hour (km/h)</span>
+                }
+                @case ('ms') {
+                  <span>Meters per second (m/s)</span>
+                }
+                @case ('ftmin') {
+                  <span>Feet per minute (ft/min)</span>
+                }
+              }
+            </div>
+            <div class="value" [id]="'result-' + targetUnit">{{ currentResults[targetUnit] }}</div>
+            <button class="btn-secondary copy-btn" (click)="copy(targetUnit)">
+              {{ copiedField() === targetUnit ? 'Copied!' : 'Copy' }}
+            </button>
+          </div>
+        }
+      </div>
+      <div class="result-info">
+        <p>Copy any format to quickly share speed values across devices or systems.</p>
+      </div>
+    </div>
+  }
+</div>

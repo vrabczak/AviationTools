@@ -1,0 +1,10 @@
+@if (tool(); as selectedTool) {
+  <div class="tool-wrapper">
+    <ng-container *ngComponentOutlet="selectedTool.component"></ng-container>
+  </div>
+} @else {
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Select a tool to get started.</p>
+  </div>
+}

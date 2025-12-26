@@ -1,0 +1,22 @@
+{
+  "name": "Aviation Tools",
+  "short_name": "Aviation Tools",
+  "description": "Offline-capable aviation calculators for pilots",
+  "id": "./",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e40af",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/images/ATicon.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "scope": "./",
+  "prefer_related_applications": false
+}

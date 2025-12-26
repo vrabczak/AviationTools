@@ -1,0 +1,62 @@
+﻿<div class="tool-content">
+  <h2>Turn Calculator</h2>
+  <p class="tool-description">
+    Calculate turn performance including turn radius and time to complete a 360° turn. Useful
+    for planning holds, procedure turns, and traffic patterns.
+  </p>
+
+  <div class="input-group">
+    <label for="speed">True Airspeed (kt):</label>
+    <input
+      type="number"
+      id="speed"
+      placeholder="e.g., 120"
+      step="1"
+      min="1"
+      [formControl]="speedControl"
+      (keydown.enter)="calculate()"
+    >
+  </div>
+
+  <div class="input-group">
+    <label for="bank-angle">Bank Angle (°):</label>
+    <input
+      type="number"
+      id="bank-angle"
+      placeholder="e.g., 15"
+      step="1"
+      min="1"
+      max="89"
+      [formControl]="bankAngleControl"
+      (keydown.enter)="calculate()"
+    >
+    <small>Typical: 15° (standard rate), 30° (steep), 45° (very steep)</small>
+  </div>
+
+  <button class="btn-primary" (click)="calculate()">Calculate</button>
+
+  @if (result(); as currentResult) {
+    <div #resultRef class="result">
+      <h3>Results:</h3>
+      <div class="result-grid">
+        <div class="result-value">
+          <span class="label">Turn Radius:</span>
+          <span id="turn-radius" class="value">{{ currentResult.radiusMeters.toLocaleString() }}</span>
+          <span class="unit">m</span>
+        </div>
+        <div class="result-value">
+          <span class="label">360° Turn Time:</span>
+          <span id="turn-time" class="value">{{ formatTurnTime() }}</span>
+        </div>
+        <div class="result-value">
+          <span class="label">Turn Rate:</span>
+          <span id="turn-rate" class="value">{{ turnRateDegPerSec()?.toFixed(2) }}</span>
+          <span class="unit">°/sec</span>
+        </div>
+      </div>
+      <div class="result-info" [class.success]="turnRateDegPerSec() && turnRateDegPerSec() >= 2.9 && turnRateDegPerSec() <= 3.1">
+        <p id="turn-interpretation">{{ interpretation() }}</p>
+      </div>
+    </div>
+  }
+</div>

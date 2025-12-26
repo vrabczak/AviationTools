@@ -1,0 +1,15 @@
+<div id="app">
+  <aside id="menu-container" [class.menu-open]="isMenuOpen()">
+    <app-menu
+      [tools]="tools"
+      [theme]="theme()"
+      [isOpen]="isMenuOpen()"
+      (selectTool)="onSelectTool()"
+      (toggleTheme)="toggleTheme()"
+      (toggleMenu)="toggleMenu()"
+    ></app-menu>
+  </aside>
+  <main id="tool-container">
+    <router-outlet></router-outlet>
+  </main>
+</div>

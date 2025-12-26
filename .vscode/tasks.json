@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Angular Dev Server",
+      "type": "process",
+      "command": "npm",
+      "args": ["start"],
+      "windows": {
+        "command": "npm.cmd"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "angular",
+        "pattern": [
+          {
+            "regexp": "^([^\\s].*?):(\\d+):(\\d+):\\s*(error|warning)\\s*(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "message": 5
+          }
+        ],
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Angular Live Development Server",
+          "endsPattern": "Compiled successfully"
+        }
+      }
+    }
+  ]
+}
