@@ -1,4 +1,5 @@
-import { calculateWindComponents, headCrossWindTool, normalizeDegrees } from './head-cross-wind.component';
+import { HeadCrossWindComponent, headCrossWindTool } from './head-cross-wind.component';
+import { normalizeDegrees } from '../../utils/angles';
 
 describe('HeadCrossWind', () => {
   it('normalizes degrees into 0-360', () => {
@@ -7,7 +8,8 @@ describe('HeadCrossWind', () => {
   });
 
   it('calculates wind components', () => {
-    const result = calculateWindComponents(20, 180, 180);
+    const component = new HeadCrossWindComponent();
+    const result = component.calculateWindComponents(20, 180, 180);
     expect(result.headwind).toBeCloseTo(20, 2);
     expect(result.crosswind).toBeCloseTo(0, 2);
   });

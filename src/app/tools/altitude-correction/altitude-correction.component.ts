@@ -9,28 +9,6 @@ export interface AltitudeCorrectionResult {
 }
 
 /**
- * Calculates ISA temperature-based altitude correction for cold/warm conditions.
- *
- * @param decisionAltitude - Decision altitude or MDA in feet.
- * @param airportAltitude - Airport elevation in feet.
- * @param temperature - Actual temperature at the airport in Celsius.
- * @returns Corrected altitude and the applied correction in feet.
- */
-export function calculateTemperatureCorrection(
-  decisionAltitude: number,
-  airportAltitude: number,
-  temperature: number
-): AltitudeCorrectionResult {
-  const heightAboveAirport = decisionAltitude - airportAltitude;
-  const isaTemp = 15 - (airportAltitude / 1000) * 2;
-  const actualTempKelvin = temperature + 273;
-  const correction = (heightAboveAirport * (isaTemp - temperature)) / actualTempKelvin;
-  const correctedAltitude = decisionAltitude + correction;
-
-  return { correctedAltitude, correction };
-}
-
-/**
  * UI component that computes altitude corrections for non-ISA temperatures.
  */
 @Component({
@@ -69,6 +47,20 @@ export class AltitudeCorrectionComponent {
     return `${sign}${Math.round(value).toLocaleString()}`;
   }
 
+  calculateTemperatureCorrection(
+    decisionAltitude: number,
+    airportAltitude: number,
+    temperature: number
+  ): AltitudeCorrectionResult {
+    const heightAboveAirport = decisionAltitude - airportAltitude;
+    const isaTemp = 15 - (airportAltitude / 1000) * 2;
+    const actualTempKelvin = temperature + 273;
+    const correction = (heightAboveAirport * (isaTemp - temperature)) / actualTempKelvin;
+    const correctedAltitude = decisionAltitude + correction;
+
+    return { correctedAltitude, correction };
+  }
+
   calculate(): void {
     const decisionValue = parseFloat(this.decisionAltControl.value);
     const airportValue = parseFloat(this.airportAltControl.value);
@@ -84,7 +76,7 @@ export class AltitudeCorrectionComponent {
       return;
     }
 
-    this.result.set(calculateTemperatureCorrection(decisionValue, airportValue, temperatureValue));
+    this.result.set(this.calculateTemperatureCorrection(decisionValue, airportValue, temperatureValue));
     this.scrollToResult();
   }
 

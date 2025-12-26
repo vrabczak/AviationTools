@@ -21,32 +21,6 @@ const FROM_MS: Record<SpeedUnit, number> = {
 };
 
 /**
- * Converts a speed between supported units using meters per second as an intermediary.
- *
- * @param value - Input speed value.
- * @param fromUnit - Unit of the provided value.
- * @param toUnit - Desired output unit.
- * @returns Converted speed.
- */
-export function convertSpeed(value: number, fromUnit: SpeedUnit, toUnit: SpeedUnit): number {
-  const ms = value * TO_MS[fromUnit];
-  return ms * FROM_MS[toUnit];
-}
-
-/**
- * Formats a speed value with adaptive precision for readability.
- *
- * @param value - Numeric speed.
- * @returns Formatted speed string.
- */
-function formatSpeed(value: number): string {
-  if (value >= 1000) return value.toFixed(1);
-  if (value >= 100) return value.toFixed(2);
-  if (value >= 10) return value.toFixed(3);
-  return value.toFixed(4);
-}
-
-/**
  * UI component for converting speeds between knots, km/h, m/s, and ft/min.
  */
 @Component({
@@ -79,10 +53,10 @@ export class SpeedConversionComponent {
       }
 
       const converted: Record<SpeedUnit, string> = {
-        kt: `${formatSpeed(convertSpeed(numericValue, this.unitControl.value, 'kt'))} kt`,
-        kmh: `${formatSpeed(convertSpeed(numericValue, this.unitControl.value, 'kmh'))} km/h`,
-        ms: `${formatSpeed(convertSpeed(numericValue, this.unitControl.value, 'ms'))} m/s`,
-        ftmin: `${formatSpeed(convertSpeed(numericValue, this.unitControl.value, 'ftmin'))} ft/min`,
+        kt: `${this.formatSpeed(this.convertSpeed(numericValue, this.unitControl.value, 'kt'))} kt`,
+        kmh: `${this.formatSpeed(this.convertSpeed(numericValue, this.unitControl.value, 'kmh'))} km/h`,
+        ms: `${this.formatSpeed(this.convertSpeed(numericValue, this.unitControl.value, 'ms'))} m/s`,
+        ftmin: `${this.formatSpeed(this.convertSpeed(numericValue, this.unitControl.value, 'ftmin'))} ft/min`,
       };
 
       this.results.set(converted);
@@ -106,6 +80,18 @@ export class SpeedConversionComponent {
     } else {
       alert('Unable to copy to clipboard.');
     }
+  }
+
+  private formatSpeed(value: number): string {
+    if (value >= 1000) return value.toFixed(1);
+    if (value >= 100) return value.toFixed(2);
+    if (value >= 10) return value.toFixed(3);
+    return value.toFixed(4);
+  }
+
+  convertSpeed(value: number, fromUnit: SpeedUnit, toUnit: SpeedUnit): number {
+    const ms = value * TO_MS[fromUnit];
+    return ms * FROM_MS[toUnit];
   }
 
   private scrollToResult(): void {

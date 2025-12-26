@@ -31,10 +31,6 @@ export const tools: ToolDefinition[] = [
   speedConversionTool,
 ];
 
-const getToolById = (id: string): ToolDefinition | undefined => {
-  return tools.find((tool) => tool.id === id);
-};
-
 /**
  * Route-aware container that selects a tool based on the current URL.
  */
@@ -54,6 +50,10 @@ export class ToolRouteComponent {
     const fallbackTool = tools[0];
     if (!params) return fallbackTool;
     const toolId = params.get('toolId') ?? fallbackTool?.id ?? '';
-    return getToolById(toolId) ?? fallbackTool;
+    return this.getToolById(toolId) ?? fallbackTool;
   });
+
+  private getToolById(id: string): ToolDefinition | undefined {
+    return tools.find((tool) => tool.id === id);
+  }
 }

@@ -23,32 +23,6 @@ const FROM_M: Record<DistanceUnit, number> = {
 };
 
 /**
- * Converts a distance from one unit to another.
- *
- * @param value - Input distance value.
- * @param fromUnit - Unit of the provided value.
- * @param toUnit - Desired output unit.
- * @returns Converted distance.
- */
-export function convertDistance(value: number, fromUnit: DistanceUnit, toUnit: DistanceUnit): number {
-  const meters = value * TO_M[fromUnit];
-  return meters * FROM_M[toUnit];
-}
-
-/**
- * Formats a distance with adaptive precision for readability.
- *
- * @param value - Numeric distance to format.
- * @returns Formatted distance string.
- */
-function formatDistance(value: number): string {
-  if (value >= 1000) return value.toFixed(1);
-  if (value >= 100) return value.toFixed(2);
-  if (value >= 10) return value.toFixed(3);
-  return value.toFixed(4);
-}
-
-/**
  * UI component for converting distances between aviation-relevant units.
  */
 @Component({
@@ -81,11 +55,11 @@ export class DistanceConversionComponent {
       }
 
       const converted: Record<DistanceUnit, string> = {
-        m: `${formatDistance(convertDistance(numericValue, this.unitControl.value, 'm'))} m`,
-        km: `${formatDistance(convertDistance(numericValue, this.unitControl.value, 'km'))} km`,
-        nm: `${formatDistance(convertDistance(numericValue, this.unitControl.value, 'nm'))} NM`,
-        ft: `${formatDistance(convertDistance(numericValue, this.unitControl.value, 'ft'))} ft`,
-        sm: `${formatDistance(convertDistance(numericValue, this.unitControl.value, 'sm'))} SM`,
+        m: `${this.formatDistance(this.convertDistance(numericValue, this.unitControl.value, 'm'))} m`,
+        km: `${this.formatDistance(this.convertDistance(numericValue, this.unitControl.value, 'km'))} km`,
+        nm: `${this.formatDistance(this.convertDistance(numericValue, this.unitControl.value, 'nm'))} NM`,
+        ft: `${this.formatDistance(this.convertDistance(numericValue, this.unitControl.value, 'ft'))} ft`,
+        sm: `${this.formatDistance(this.convertDistance(numericValue, this.unitControl.value, 'sm'))} SM`,
       };
 
       this.results.set(converted);
@@ -109,6 +83,18 @@ export class DistanceConversionComponent {
     } else {
       alert('Unable to copy to clipboard.');
     }
+  }
+
+  private formatDistance(value: number): string {
+    if (value >= 1000) return value.toFixed(1);
+    if (value >= 100) return value.toFixed(2);
+    if (value >= 10) return value.toFixed(3);
+    return value.toFixed(4);
+  }
+
+  convertDistance(value: number, fromUnit: DistanceUnit, toUnit: DistanceUnit): number {
+    const meters = value * TO_M[fromUnit];
+    return meters * FROM_M[toUnit];
   }
 
   private scrollToResult(): void {

@@ -16,72 +16,6 @@ export type DistanceUnit = 'NM' | 'km';
 const FEET_PER_METER = 3.28084;
 
 /**
- * Builds an approach reference table for NM or kilometer distances with target altitude and glide slope.
- *
- * @param targetAltitude - Target altitude in feet.
- * @param slopeAngle - Glide slope angle in degrees.
- * @param distanceUnit - Distance unit for row spacing.
- * @returns Table rows containing distances and required heights.
- */
-export function calculateApproachTable(
-  targetAltitude: number,
-  slopeAngle: number,
-  distanceUnit: DistanceUnit,
-): ApproachRow[] {
-  const NM_TO_FEET = 6076.12;
-  const NM_TO_KM = 1.852;
-  const results: ApproachRow[] = [];
-
-  if (distanceUnit === 'km') {
-    for (let distanceKM = 1; distanceKM <= 20; distanceKM++) {
-      const distanceNM = distanceKM / NM_TO_KM;
-      const distanceFeet = distanceNM * NM_TO_FEET;
-      const slopeRadians = (slopeAngle * Math.PI) / 180;
-      const heightAbove = distanceFeet * Math.tan(slopeRadians);
-      const altitudeAbove = targetAltitude + heightAbove;
-
-      results.push({
-        distanceNM,
-        distanceKM: `${distanceKM}`,
-        altitudeAbove,
-        heightAbove,
-      });
-    }
-
-    return results;
-  }
-
-  for (let distanceNM = 1; distanceNM <= 10; distanceNM++) {
-    const distanceFeet = distanceNM * NM_TO_FEET;
-    const distanceKM = (distanceNM * NM_TO_KM).toFixed(1);
-    const slopeRadians = (slopeAngle * Math.PI) / 180;
-    const heightAbove = distanceFeet * Math.tan(slopeRadians);
-    const altitudeAbove = targetAltitude + heightAbove;
-
-    results.push({
-      distanceNM,
-      distanceKM,
-      altitudeAbove,
-      heightAbove,
-    });
-  }
-
-  return results;
-}
-
-/**
- * Formats a value in feet into the requested altitude unit.
- *
- * @param valueFt - Value in feet.
- * @param unit - Desired altitude unit.
- * @returns Rounded, localized string.
- */
-function formatAltitude(valueFt: number, unit: AltitudeUnit): string {
-  const converted = unit === 'm' ? valueFt / FEET_PER_METER : valueFt;
-  return Math.round(converted).toLocaleString();
-}
-
-/**
  * UI component that generates an approach table for a glide slope and target altitude.
  */
 @Component({
@@ -125,7 +59,7 @@ export class ApproachTableComponent {
   });
 
   formatAltitudeValue(valueFt: number): string {
-    return formatAltitude(valueFt, this.altitudeUnitControl.value);
+    return this.formatAltitude(valueFt, this.altitudeUnitControl.value);
   }
 
   formatTargetAltitudeValue(): string {
@@ -133,6 +67,52 @@ export class ApproachTableComponent {
     if (altitudeFt === null) return '-';
     const converted = this.altitudeUnitControl.value === 'm' ? altitudeFt / FEET_PER_METER : altitudeFt;
     return `${Math.round(converted).toLocaleString()} ${this.altitudeUnitControl.value}`;
+  }
+
+  calculateApproachTable(
+    targetAltitude: number,
+    slopeAngle: number,
+    distanceUnit: DistanceUnit,
+  ): ApproachRow[] {
+    const NM_TO_FEET = 6076.12;
+    const NM_TO_KM = 1.852;
+    const results: ApproachRow[] = [];
+
+    if (distanceUnit === 'km') {
+      for (let distanceKM = 1; distanceKM <= 20; distanceKM++) {
+        const distanceNM = distanceKM / NM_TO_KM;
+        const distanceFeet = distanceNM * NM_TO_FEET;
+        const slopeRadians = (slopeAngle * Math.PI) / 180;
+        const heightAbove = distanceFeet * Math.tan(slopeRadians);
+        const altitudeAbove = targetAltitude + heightAbove;
+
+        results.push({
+          distanceNM,
+          distanceKM: `${distanceKM}`,
+          altitudeAbove,
+          heightAbove,
+        });
+      }
+
+      return results;
+    }
+
+    for (let distanceNM = 1; distanceNM <= 10; distanceNM++) {
+      const distanceFeet = distanceNM * NM_TO_FEET;
+      const distanceKM = (distanceNM * NM_TO_KM).toFixed(1);
+      const slopeRadians = (slopeAngle * Math.PI) / 180;
+      const heightAbove = distanceFeet * Math.tan(slopeRadians);
+      const altitudeAbove = targetAltitude + heightAbove;
+
+      results.push({
+        distanceNM,
+        distanceKM,
+        altitudeAbove,
+        heightAbove,
+      });
+    }
+
+    return results;
   }
 
   calculate(): void {
@@ -146,8 +126,13 @@ export class ApproachTableComponent {
       alert('Please enter a valid slope angle (0-60¶o)');
       return;
     }
-    this.rows.set(calculateApproachTable(altitudeFt, slope, this.distanceUnitControl.value));
+    this.rows.set(this.calculateApproachTable(altitudeFt, slope, this.distanceUnitControl.value));
     this.scrollToResult();
+  }
+
+  private formatAltitude(valueFt: number, unit: AltitudeUnit): string {
+    const converted = unit === 'm' ? valueFt / FEET_PER_METER : valueFt;
+    return Math.round(converted).toLocaleString();
   }
 
   private scrollToResult(): void {

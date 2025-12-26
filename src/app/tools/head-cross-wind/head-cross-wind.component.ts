@@ -2,44 +2,9 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
+import { normalizeDegrees } from '../../utils/angles';
 
 export type CrosswindSide = 'left' | 'right' | 'none';
-
-/**
- * Normalizes a degree measurement to the range [0, 360).
- *
- * @param value - Angle in degrees, possibly outside 0–359.
- * @returns Equivalent angle within a full circle.
- */
-export function normalizeDegrees(value: number): number {
-  const normalized = value % 360;
-  return normalized < 0 ? normalized + 360 : normalized;
-}
-
-/**
- * Calculates headwind/tailwind and crosswind components relative to an aircraft heading.
- *
- * @param windSpeed - Wind speed in knots.
- * @param windDirection - Direction the wind is coming from, in degrees.
- * @param aircraftHeading - Aircraft or runway heading in degrees.
- * @returns Magnitudes for headwind and crosswind plus crosswind origin side.
- */
-export function calculateWindComponents(
-  windSpeed: number,
-  windDirection: number,
-  aircraftHeading: number
-): { headwind: number; crosswind: number; crosswindFrom: CrosswindSide } {
-  const relativeDirectionRad = ((windDirection - aircraftHeading) * Math.PI) / 180;
-  const headwind = windSpeed * Math.cos(relativeDirectionRad);
-  const crosswind = windSpeed * Math.sin(relativeDirectionRad);
-
-  let crosswindFrom: CrosswindSide = 'none';
-  if (Math.abs(crosswind) >= 0.05) {
-    crosswindFrom = crosswind > 0 ? 'right' : 'left';
-  }
-
-  return { headwind, crosswind, crosswindFrom };
-}
 
 /**
  * UI component for computing headwind/tailwind and crosswind values for a given heading.
@@ -82,8 +47,25 @@ export class HeadCrossWindComponent {
     const normalizedWindDir = normalizeDegrees(direction);
     const normalizedHeading = normalizeDegrees(heading);
 
-    this.result.set(calculateWindComponents(speed, normalizedWindDir, normalizedHeading));
+    this.result.set(this.calculateWindComponents(speed, normalizedWindDir, normalizedHeading));
     this.scrollToResult();
+  }
+
+  calculateWindComponents(
+    windSpeed: number,
+    windDirection: number,
+    aircraftHeading: number
+  ): { headwind: number; crosswind: number; crosswindFrom: CrosswindSide } {
+    const relativeDirectionRad = ((windDirection - aircraftHeading) * Math.PI) / 180;
+    const headwind = windSpeed * Math.cos(relativeDirectionRad);
+    const crosswind = windSpeed * Math.sin(relativeDirectionRad);
+
+    let crosswindFrom: CrosswindSide = 'none';
+    if (Math.abs(crosswind) >= 0.05) {
+      crosswindFrom = crosswind > 0 ? 'right' : 'left';
+    }
+
+    return { headwind, crosswind, crosswindFrom };
   }
 
   readonly headwindLabel = computed(() => {

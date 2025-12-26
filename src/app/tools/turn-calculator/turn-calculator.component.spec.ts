@@ -1,8 +1,9 @@
-import { calculateTurn, turnCalculatorTool } from './turn-calculator.component';
+import { TurnCalculatorComponent, turnCalculatorTool } from './turn-calculator.component';
 
 describe('TurnCalculator', () => {
   it('calculates a turn radius', () => {
-    const result = calculateTurn(120, 15);
+    const component = new TurnCalculatorComponent();
+    const result = component.calculateTurn(120, 15);
     expect(result.radiusMeters).toBeGreaterThan(0);
     expect(result.time360Seconds).toBeGreaterThan(0);
   });

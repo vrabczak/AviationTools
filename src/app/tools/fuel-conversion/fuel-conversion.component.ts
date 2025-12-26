@@ -10,46 +10,6 @@ const LITERS_PER_GALLON = 3.785411784;
 const KG_PER_POUND = 0.45359237;
 
 /**
- * Converts a fuel quantity to liters using density where needed.
- *
- * @param value - Input fuel quantity.
- * @param unit - Unit of the provided value.
- * @param density - Fuel density in kg/L.
- * @returns Equivalent value in liters.
- */
-export function convertToLiters(value: number, unit: FuelUnit, density: number): number {
-  switch (unit) {
-    case 'liters':
-      return value;
-    case 'kg':
-      return value / density;
-    case 'gallon':
-      return value * LITERS_PER_GALLON;
-    case 'pound':
-      return (value * KG_PER_POUND) / density;
-    default:
-      throw new Error('Unsupported unit selected.');
-  }
-}
-
-/**
- * Converts a fuel quantity into all supported units.
- *
- * @param value - Input fuel quantity.
- * @param unit - Unit of the provided value.
- * @param density - Fuel density in kg/L.
- * @returns Object keyed by unit with converted numeric values.
- */
-export function convertFuel(value: number, unit: FuelUnit, density: number): Record<FuelUnit, number> {
-  const liters = convertToLiters(value, unit, density);
-  const kg = liters * density;
-  const gallon = liters / LITERS_PER_GALLON;
-  const pound = kg / KG_PER_POUND;
-
-  return { liters, kg, gallon, pound };
-}
-
-/**
  * UI component for converting fuel between volume and weight using a density factor.
  */
 @Component({
@@ -85,7 +45,7 @@ export class FuelConversionComponent {
         throw new Error('Please enter a valid density greater than 0.');
       }
 
-      this.results.set(convertFuel(numericValue, this.unitControl.value, densityValue));
+      this.results.set(this.convertFuel(numericValue, this.unitControl.value, densityValue));
       this.copiedField.set(null);
       this.scrollToResult();
     } catch (error) {
@@ -120,6 +80,30 @@ export class FuelConversionComponent {
     } else {
       alert('Unable to copy to clipboard.');
     }
+  }
+
+  convertToLiters(value: number, unit: FuelUnit, density: number): number {
+    switch (unit) {
+      case 'liters':
+        return value;
+      case 'kg':
+        return value / density;
+      case 'gallon':
+        return value * LITERS_PER_GALLON;
+      case 'pound':
+        return (value * KG_PER_POUND) / density;
+      default:
+        throw new Error('Unsupported unit selected.');
+    }
+  }
+
+  convertFuel(value: number, unit: FuelUnit, density: number): Record<FuelUnit, number> {
+    const liters = this.convertToLiters(value, unit, density);
+    const kg = liters * density;
+    const gallon = liters / LITERS_PER_GALLON;
+    const pound = kg / KG_PER_POUND;
+
+    return { liters, kg, gallon, pound };
   }
 
   private scrollToResult(): void {

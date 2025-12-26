@@ -2,45 +2,11 @@
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
-import { normalizeDegrees } from '../head-cross-wind/head-cross-wind.component';
+import { normalizeDegrees } from '../../utils/angles';
 
 export interface GroundVector {
   groundTrack: number;
   groundSpeed: number;
-}
-
-/**
- * Calculates resulting ground track and ground speed from heading, TAS, and wind.
- *
- * @param heading - Aircraft heading in degrees (true or magnetic consistently).
- * @param tas - True airspeed in knots.
- * @param windFromDirection - Wind-from direction in degrees.
- * @param windSpeed - Wind speed in knots.
- * @returns Ground track and ground speed vector.
- */
-export function calculateGroundVector(
-  heading: number,
-  tas: number,
-  windFromDirection: number,
-  windSpeed: number
-): GroundVector {
-  const headingRad = (heading * Math.PI) / 180;
-  const windToDirection = normalizeDegrees(windFromDirection + 180);
-  const windToRad = (windToDirection * Math.PI) / 180;
-
-  const aircraftVx = tas * Math.sin(headingRad);
-  const aircraftVy = tas * Math.cos(headingRad);
-
-  const windVx = windSpeed * Math.sin(windToRad);
-  const windVy = windSpeed * Math.cos(windToRad);
-
-  const totalVx = aircraftVx + windVx;
-  const totalVy = aircraftVy + windVy;
-
-  const groundSpeed = Math.sqrt(totalVx * totalVx + totalVy * totalVy);
-  const groundTrack = normalizeDegrees((Math.atan2(totalVx, totalVy) * 180) / Math.PI);
-
-  return { groundTrack, groundSpeed };
 }
 
 /**
@@ -91,8 +57,33 @@ export class TrackGroundSpeedComponent {
     const normalizedWindDir = normalizeDegrees(windDirValue);
     const normalizedHeading = normalizeDegrees(headingValue);
 
-    this.result.set(calculateGroundVector(normalizedHeading, tasValue, normalizedWindDir, windSpeedValue));
+    this.result.set(this.calculateGroundVector(normalizedHeading, tasValue, normalizedWindDir, windSpeedValue));
     this.scrollToResult();
+  }
+
+  calculateGroundVector(
+    heading: number,
+    tas: number,
+    windFromDirection: number,
+    windSpeed: number
+  ): GroundVector {
+    const headingRad = (heading * Math.PI) / 180;
+    const windToDirection = normalizeDegrees(windFromDirection + 180);
+    const windToRad = (windToDirection * Math.PI) / 180;
+
+    const aircraftVx = tas * Math.sin(headingRad);
+    const aircraftVy = tas * Math.cos(headingRad);
+
+    const windVx = windSpeed * Math.sin(windToRad);
+    const windVy = windSpeed * Math.cos(windToRad);
+
+    const totalVx = aircraftVx + windVx;
+    const totalVy = aircraftVy + windVy;
+
+    const groundSpeed = Math.sqrt(totalVx * totalVx + totalVy * totalVy);
+    const groundTrack = normalizeDegrees((Math.atan2(totalVx, totalVy) * 180) / Math.PI);
+
+    return { groundTrack, groundSpeed };
   }
 
   readonly groundTrackDisplay = computed(() => {

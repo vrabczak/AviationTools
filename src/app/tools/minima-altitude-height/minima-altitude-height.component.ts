@@ -11,34 +11,6 @@ export interface MinimaResult {
 }
 
 /**
- * Calculates decision altitude/height by combining OCA/OCH, aircraft minima, and operator margin.
- *
- * @param oca - Obstacle Clearance Altitude in feet.
- * @param och - Obstacle Clearance Height in feet.
- * @param aircraftMinima - Aircraft-specific minima in feet.
- * @param operatorMargin - Additional operator-required margin in feet.
- * @returns Decision altitude/height and metadata on applied adjustments.
- */
-export function calculateMinima(
-  oca: number,
-  och: number,
-  aircraftMinima: number,
-  operatorMargin: number
-): MinimaResult {
-  const usesAircraftMinima = och < aircraftMinima;
-  const aircraftAdjustment = usesAircraftMinima ? aircraftMinima - och : 0;
-  const decisionAltitude = oca + aircraftAdjustment + operatorMargin;
-  const decisionHeight = (usesAircraftMinima ? aircraftMinima : och) + operatorMargin;
-
-  return {
-    decisionAltitude,
-    decisionHeight,
-    usesAircraftMinima,
-    aircraftAdjustment,
-  };
-}
-
-/**
  * UI component for deriving DA/MDA and DH/MDH values from published minima and operator margins.
  */
 @Component({
@@ -69,6 +41,25 @@ export class MinimaAltitudeHeightComponent {
     return Math.round(value).toLocaleString('en-US');
   }
 
+  calculateMinima(
+    oca: number,
+    och: number,
+    aircraftMinima: number,
+    operatorMargin: number
+  ): MinimaResult {
+    const usesAircraftMinima = och < aircraftMinima;
+    const aircraftAdjustment = usesAircraftMinima ? aircraftMinima - och : 0;
+    const decisionAltitude = oca + aircraftAdjustment + operatorMargin;
+    const decisionHeight = (usesAircraftMinima ? aircraftMinima : och) + operatorMargin;
+
+    return {
+      decisionAltitude,
+      decisionHeight,
+      usesAircraftMinima,
+      aircraftAdjustment,
+    };
+  }
+
   calculate(): void {
     const values = [
       this.ocaControl.value,
@@ -86,7 +77,7 @@ export class MinimaAltitudeHeightComponent {
       return;
     }
 
-    this.result.set(calculateMinima(ocaNum, ochNum, aircraftNum, marginNum));
+    this.result.set(this.calculateMinima(ocaNum, ochNum, aircraftNum, marginNum));
     this.scrollToResult();
   }
 

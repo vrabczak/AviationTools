@@ -15,23 +15,6 @@ export interface TurnResult {
  * @param bankAngle - Bank angle in degrees.
  * @returns Turn radius in meters and time for a complete turn in seconds.
  */
-export function calculateTurn(speedKnots: number, bankAngle: number): TurnResult {
-  if (bankAngle === 0 || bankAngle >= 90) {
-    return { radiusMeters: Infinity, time360Seconds: Infinity };
-  }
-
-  const speedMps = speedKnots * 0.514444;
-  const bankRad = (bankAngle * Math.PI) / 180;
-  const radius = (speedMps * speedMps) / (9.81 * Math.tan(bankRad));
-  const turnRateDegPerSec = ((9.81 * Math.tan(bankRad)) / speedMps) * (180 / Math.PI);
-  const time360 = 360 / turnRateDegPerSec;
-
-  return {
-    radiusMeters: Math.round(radius),
-    time360Seconds: Math.round(time360),
-  };
-}
-
 /**
  * UI component that computes turn performance metrics for a selected bank angle.
  */
@@ -68,8 +51,25 @@ export class TurnCalculatorComponent {
       return;
     }
 
-    this.result.set(calculateTurn(speedValue, bankValue));
+    this.result.set(this.calculateTurn(speedValue, bankValue));
     this.scrollToResult();
+  }
+
+  calculateTurn(speedKnots: number, bankAngle: number): TurnResult {
+    if (bankAngle === 0 || bankAngle >= 90) {
+      return { radiusMeters: Infinity, time360Seconds: Infinity };
+    }
+
+    const speedMps = speedKnots * 0.514444;
+    const bankRad = (bankAngle * Math.PI) / 180;
+    const radius = (speedMps * speedMps) / (9.81 * Math.tan(bankRad));
+    const turnRateDegPerSec = ((9.81 * Math.tan(bankRad)) / speedMps) * (180 / Math.PI);
+    const time360 = 360 / turnRateDegPerSec;
+
+    return {
+      radiusMeters: Math.round(radius),
+      time360Seconds: Math.round(time360),
+    };
   }
 
   readonly turnRateDegPerSec = computed(() => {
