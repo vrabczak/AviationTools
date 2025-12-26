@@ -1,0 +1,69 @@
+{
+  "configVersion": 1,
+  "timestamp": 1766772600433,
+  "index": "/AviationTools/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/AviationTools/index.html",
+        "/AviationTools/main.351731a174914515.js",
+        "/AviationTools/polyfills.c6339dcef8e5d28f.js",
+        "/AviationTools/runtime.d6a358070d52fcae.js",
+        "/AviationTools/styles.22b5d6b6290e4b95.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/AviationTools/.nojekyll",
+        "/AviationTools/assets/images/ATicon.png",
+        "/AviationTools/assets/images/ATiconTransparent.png",
+        "/AviationTools/manifest.json"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/AviationTools/.nojekyll": "adc83b19e793491b1c6ea0fd8b46cd9f32e592fc",
+    "/AviationTools/assets/images/ATicon.png": "b8cc19f0809e2b804510c9038bbfdabd47399c52",
+    "/AviationTools/assets/images/ATiconTransparent.png": "a5af379b0cc43422685d4a5a125da0c432a5451c",
+    "/AviationTools/index.html": "22daa9e280c5d1209265bbab2316a9c4605724a2",
+    "/AviationTools/main.351731a174914515.js": "f70edcaccbcb3810abe39dbc03ad9f8d57796ddd",
+    "/AviationTools/manifest.json": "9a751100b3ea00b210c9a86ff9562dbc2d024c7b",
+    "/AviationTools/polyfills.c6339dcef8e5d28f.js": "9d98e1b9f5860d803ba9ce4bc757d15232e52405",
+    "/AviationTools/runtime.d6a358070d52fcae.js": "01baed341aabe86e956efaa38b18c7f83559dda0",
+    "/AviationTools/styles.22b5d6b6290e4b95.css": "04ebdd996471bdac1d824b72cd2af1f8f2c7c83e"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
