@@ -1,10 +1,21 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { getById, setInputValue, setSelectValue } from '../../../testing/dom-helpers';
 import { CoordinatesConversionComponent, coordinatesConversionTool } from './coordinates-conversion.component';
 
 describe('CoordinatesConversion', () => {
   let component: CoordinatesConversionComponent;
+  let fixture: ComponentFixture<CoordinatesConversionComponent>;
+  let element: HTMLElement;
 
-  beforeEach(() => {
-    component = new CoordinatesConversionComponent();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [CoordinatesConversionComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(CoordinatesConversionComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    element = fixture.nativeElement as HTMLElement;
   });
   describe('Parsing', () => {
     it('parses decimal degrees', () => {
@@ -72,5 +83,24 @@ describe('CoordinatesConversion', () => {
       expect(coordinatesConversionTool.id).toBe('coordinates-conversion');
       expect(coordinatesConversionTool.name).toBeTruthy();
     });
+  });
+
+  it('renders converted coordinates for decimal degrees input', () => {
+    setSelectValue(getById<HTMLSelectElement>(element, 'coordinate-format'), 'dd');
+    setInputValue(getById<HTMLInputElement>(element, 'lat-input'), '50.0952147');
+    setInputValue(getById<HTMLInputElement>(element, 'lon-input'), '14.4360100');
+    fixture.detectChanges();
+
+    const button = element.querySelector('button.btn-primary') as HTMLButtonElement;
+    button.click();
+    fixture.detectChanges();
+
+    const ddText = getById<HTMLElement>(element, 'result-dd').textContent ?? '';
+    expect(ddText).toContain('50.095215');
+    expect(ddText).toContain('14.436010');
+
+    const dmsText = getById<HTMLElement>(element, 'result-dms').textContent ?? '';
+    expect(dmsText).toContain('N');
+    expect(dmsText).toContain('E');
   });
 });

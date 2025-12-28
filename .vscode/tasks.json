@@ -28,6 +28,17 @@
           "endsPattern": "Compiled successfully"
         }
       }
+    },
+    {
+      "label": "ng test (no watch)",
+      "type": "shell",
+      "command": "npx",
+      "windows": {
+        "command": "npx.cmd"
+      },
+      "args": ["ng", "test", "--watch=false"],
+      "group": "test",
+      "problemMatcher": []
     }
   ]
 }

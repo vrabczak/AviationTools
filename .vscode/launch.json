@@ -17,6 +17,12 @@
       "port": 9222,
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true
+    },
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "ng test (no watch)",
+      "command": "npx.cmd ng test --watch=false"
     }
   ]
 }
