@@ -67,12 +67,12 @@ export class AltitudeCorrectionComponent {
     const temperatureValue = parseFloat(this.temperatureControl.value);
 
     if (Number.isNaN(decisionValue) || Number.isNaN(airportValue) || Number.isNaN(temperatureValue)) {
-      alert('Please fill in all fields with valid numbers');
+      alert('Please fill in all fields with valid numbers.');
       return;
     }
 
     if (airportValue >= decisionValue) {
-      alert('Airport elevation must be lower than DA/MDA');
+      alert('Airport elevation must be lower than DA/MDA.');
       return;
     }
 
@@ -99,6 +99,6 @@ export class AltitudeCorrectionComponent {
 export const altitudeCorrectionTool: ToolDefinition = {
   id: 'altitude-correction',
   name: 'Altitude Correction',
-  description: 'Calculate temperature-corrected altitude for approach procedures',
+  description: 'Calculate temperature-corrected altitude for approach procedures.',
   component: AltitudeCorrectionComponent,
 };

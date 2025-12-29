@@ -119,11 +119,11 @@ export class ApproachTableComponent {
     const slope = parseFloat(this.slopeAngleControl.value);
     const altitudeFt = this.targetAltitudeFt();
     if (altitudeFt === null) {
-      alert('Please enter a valid Target Altitude');
+      alert('Please enter a valid Target Altitude.');
       return;
     }
     if (Number.isNaN(slope) || slope < 0 || slope > 60) {
-      alert('Please enter a valid slope angle (0-60¶o)');
+      alert('Please enter a valid slope angle (0-60Â°).');
       return;
     }
     this.rows.set(this.calculateApproachTable(altitudeFt, slope, this.distanceUnitControl.value));
@@ -154,6 +154,6 @@ export class ApproachTableComponent {
 export const approachTableTool: ToolDefinition = {
   id: 'approach-table',
   name: 'Approach Table',
-  description: 'Generate approach table with distances, altitudes, and heights above Target Altitude',
+  description: 'Generate approach table with distances, altitudes, and heights above Target Altitude.',
   component: ApproachTableComponent,
 };

@@ -30,17 +30,17 @@ export class HeadCrossWindComponent {
     const heading = parseFloat(this.aircraftHeadingControl.value);
 
     if (Number.isNaN(speed) || Number.isNaN(direction) || Number.isNaN(heading)) {
-      alert('Please fill in all fields with valid numbers');
+      alert('Please fill in all fields with valid numbers.');
       return;
     }
 
     if (speed < 0) {
-      alert('Wind speed must be zero or greater');
+      alert('Wind speed must be zero or greater.');
       return;
     }
 
     if (direction < 0 || direction > 360 || heading < 0 || heading > 360) {
-      alert('Wind direction and aircraft heading must be between 0 and 360 degrees');
+      alert('Wind direction and aircraft heading must be between 0 and 360 degrees.');
       return;
     }
 
@@ -102,6 +102,6 @@ export class HeadCrossWindComponent {
 export const headCrossWindTool: ToolDefinition = {
   id: 'head-cross-wind',
   name: 'Head/Cross Wind',
-  description: 'Compute headwind and crosswind components for a given runway or heading',
+  description: 'Compute headwind and crosswind components for a given runway or heading.',
   component: HeadCrossWindComponent,
 };

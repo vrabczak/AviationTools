@@ -125,6 +125,6 @@ export class FuelConversionComponent {
 export const fuelConversionTool: ToolDefinition = {
   id: 'fuel-conversion',
   name: 'Fuel Conversion',
-  description: 'Convert between liters, kg, gallons, and pounds using fuel density',
+  description: 'Convert between liters, kg, gallons, and pounds using fuel density.',
   component: FuelConversionComponent,
 };

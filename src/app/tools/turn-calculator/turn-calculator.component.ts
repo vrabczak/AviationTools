@@ -115,6 +115,6 @@ export class TurnCalculatorComponent {
 export const turnCalculatorTool: ToolDefinition = {
   id: 'turn-calculator',
   name: 'Turn Calculator',
-  description: 'Calculate turn radius and rate based on speed and bank angle',
+  description: 'Calculate turn radius and rate based on speed and bank angle.',
   component: TurnCalculatorComponent,
 };

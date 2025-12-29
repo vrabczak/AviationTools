@@ -100,6 +100,6 @@ export class MinimaAltitudeHeightComponent {
 export const minimaAltitudeHeightTool: ToolDefinition = {
   id: 'minima',
   name: 'DA/MDA DH/MDH',
-  description: 'Calculate DA/MDA and DH/MDH using OCA/OCH',
+  description: 'Calculate DA/MDA and DH/MDH using OCA/OCH.',
   component: MinimaAltitudeHeightComponent,
 };

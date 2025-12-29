@@ -116,6 +116,6 @@ export class DistanceConversionComponent {
 export const distanceConversionTool: ToolDefinition = {
   id: 'distance-conversion',
   name: 'Distance Conversion',
-  description: 'Convert between m, km, NM, ft, and SM',
+  description: 'Convert between m, km, NM, ft, and SM.',
   component: DistanceConversionComponent,
 };

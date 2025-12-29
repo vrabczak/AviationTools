@@ -12,7 +12,7 @@
       type="number"
       id="decision-alt"
       placeholder="e.g., 1700"
-      step="10"
+      step="1"
       [formControl]="decisionAltControl"
       (keydown.enter)="calculate()"
     >
@@ -25,7 +25,7 @@
       type="number"
       id="airport-alt"
       placeholder="e.g., 1500"
-      step="10"
+      step="1"
       [formControl]="airportAltControl"
       (keydown.enter)="calculate()"
     >
@@ -37,7 +37,7 @@
       type="number"
       id="temperature"
       placeholder="e.g., -15"
-      step="0.1"
+      step="1"
       [formControl]="temperatureControl"
       (keydown.enter)="calculate()"
     >

@@ -35,22 +35,22 @@ export class TrackGroundSpeedComponent {
     const tasValue = parseFloat(this.tasControl.value);
 
     if (Number.isNaN(windDirValue) || Number.isNaN(windSpeedValue) || Number.isNaN(headingValue) || Number.isNaN(tasValue)) {
-      alert('Please fill in all fields with valid numbers');
+      alert('Please fill in all fields with valid numbers.');
       return;
     }
 
-    if (windSpeedValue < 0 || tasValue < 0) {
-      alert('Speeds must be zero or greater');
+    if (windSpeedValue <= 0 || tasValue <= 0) {
+      alert('Speeds must greater than zero.');
       return;
     }
 
     if (windDirValue < 0 || windDirValue > 360) {
-      alert('Wind Direction must be between 0 and 360');
+      alert('Wind Direction must be between 0 and 360.');
       return;
     }
 
     if (headingValue < 0 || headingValue > 360) {
-      alert('Aircraft Heading must be between 0 and 360');
+      alert('Aircraft Heading must be between 0 and 360.');
       return;
     }
 
@@ -139,6 +139,6 @@ export class TrackGroundSpeedComponent {
 export const trackGroundSpeedTool: ToolDefinition = {
   id: 'track-ground-speed',
   name: 'Track / Ground Speed',
-  description: 'Calculate aircraft track and groundspeed from heading, TAS, and wind',
+  description: 'Calculate aircraft track and groundspeed from heading, TAS, and wind.',
   component: TrackGroundSpeedComponent,
 };

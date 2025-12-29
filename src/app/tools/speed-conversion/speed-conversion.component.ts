@@ -113,6 +113,6 @@ export class SpeedConversionComponent {
 export const speedConversionTool: ToolDefinition = {
   id: 'speed-conversion',
   name: 'Speed Conversion',
-  description: 'Convert between kt, km/h, m/s, and ft/min',
+  description: 'Convert between kt, km/h, m/s, and ft/min.',
   component: SpeedConversionComponent,
 };
