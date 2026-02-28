@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
 import { computeTurnAnticipationDistance } from './flyby-turn.helper';
@@ -29,6 +29,8 @@ const METERS_PER_UNIT: Record<FlybyDistanceUnit, number> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlybyTurnComponent {
+  private readonly injector = inject(Injector);
+
   readonly inboundTrackControl = new FormControl('', { nonNullable: true });
   readonly outboundTrackControl = new FormControl('', { nonNullable: true });
   readonly bankAngleControl = new FormControl('', { nonNullable: true });
@@ -36,6 +38,8 @@ export class FlybyTurnComponent {
   readonly unitControl = new FormControl<FlybyDistanceUnit>('nm', { nonNullable: true });
   readonly result = signal<FlybyTurnResult | null>(null);
   readonly errorMessage = signal<string | null>(null);
+
+  @ViewChild('resultRef') resultRef?: ElementRef<HTMLDivElement>;
 
   readonly unitLabel = computed(() => {
     const unit = this.result()?.unit ?? this.unitControl.value;
@@ -77,6 +81,7 @@ export class FlybyTurnComponent {
         turnRadius: Number.isFinite(rawResult.turnRadiusM) ? rawResult.turnRadiusM / metersPerUnit : null,
         unit,
       });
+      this.scheduleScrollToResult();
     } catch (error) {
       const message = error instanceof Error
         ? error.message
@@ -120,6 +125,18 @@ export class FlybyTurnComponent {
     }
 
     return null;
+  }
+
+  private scheduleScrollToResult(): void {
+    afterNextRender(() => {
+      const element = this.resultRef?.nativeElement;
+      if (!element) return;
+      try {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch {
+        element.scrollIntoView();
+      }
+    }, { injector: this.injector });
   }
 }
 

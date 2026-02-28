@@ -1,5 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import * as mgrs from 'mgrs';
 import { ToolDefinition } from '../tool-definition';
@@ -25,6 +25,8 @@ export interface CoordinateResultSet {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CoordinatesConversionComponent {
+  private readonly injector = inject(Injector);
+
   readonly formatControl = new FormControl<CoordinateFormat>('dd', { nonNullable: true });
   readonly latInputControl = new FormControl('', { nonNullable: true });
   readonly lonInputControl = new FormControl('', { nonNullable: true });
@@ -244,15 +246,15 @@ export class CoordinatesConversionComponent {
   }
 
   private scrollToResult(): void {
-    const element = this.resultRef?.nativeElement;
-    if (!element) return;
-    setTimeout(() => {
+    afterNextRender(() => {
+      const element = this.resultRef?.nativeElement;
+      if (!element) return;
       try {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch {
         element.scrollIntoView();
       }
-    }, 0);
+    }, { injector: this.injector });
   }
 }
 

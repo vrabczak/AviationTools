@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
 import { copyToClipboard } from '../../utils/clipboard';
@@ -31,6 +31,8 @@ const FROM_MS: Record<SpeedUnit, number> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpeedConversionComponent {
+  private readonly injector = inject(Injector);
+
   readonly unitControl = new FormControl<SpeedUnit>('kt', { nonNullable: true });
   readonly valueControl = new FormControl('', { nonNullable: true });
   readonly results = signal<Record<SpeedUnit, string> | null>(null);
@@ -95,15 +97,15 @@ export class SpeedConversionComponent {
   }
 
   private scrollToResult(): void {
-    const element = this.resultRef?.nativeElement;
-    if (!element) return;
-    setTimeout(() => {
+    afterNextRender(() => {
+      const element = this.resultRef?.nativeElement;
+      if (!element) return;
       try {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch {
         element.scrollIntoView();
       }
-    }, 0);
+    }, { injector: this.injector });
   }
 }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
 import { copyToClipboard } from '../../utils/clipboard';
@@ -33,6 +33,8 @@ const FROM_M: Record<DistanceUnit, number> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DistanceConversionComponent {
+  private readonly injector = inject(Injector);
+
   readonly unitControl = new FormControl<DistanceUnit>('m', { nonNullable: true });
   readonly valueControl = new FormControl('', { nonNullable: true });
   readonly results = signal<Record<DistanceUnit, string> | null>(null);
@@ -98,15 +100,15 @@ export class DistanceConversionComponent {
   }
 
   private scrollToResult(): void {
-    const element = this.resultRef?.nativeElement;
-    if (!element) return;
-    setTimeout(() => {
+    afterNextRender(() => {
+      const element = this.resultRef?.nativeElement;
+      if (!element) return;
       try {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch {
         element.scrollIntoView();
       }
-    }, 0);
+    }, { injector: this.injector });
   }
 }
 

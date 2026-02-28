@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
 
@@ -19,6 +19,8 @@ export interface AltitudeCorrectionResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AltitudeCorrectionComponent {
+  private readonly injector = inject(Injector);
+
   readonly decisionAltControl = new FormControl('', { nonNullable: true });
   readonly airportAltControl = new FormControl('', { nonNullable: true });
   readonly temperatureControl = new FormControl('', { nonNullable: true });
@@ -81,15 +83,15 @@ export class AltitudeCorrectionComponent {
   }
 
   private scrollToResult(): void {
-    const element = this.resultRef?.nativeElement;
-    if (!element) return;
-    setTimeout(() => {
+    afterNextRender(() => {
+      const element = this.resultRef?.nativeElement;
+      if (!element) return;
       try {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch {
         element.scrollIntoView();
       }
-    }, 0);
+    }, { injector: this.injector });
   }
 }
 

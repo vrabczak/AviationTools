@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
 import { normalizeDegrees } from '../../utils/angles';
@@ -17,6 +17,8 @@ export type CrosswindSide = 'left' | 'right' | 'none';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeadCrossWindComponent {
+  private readonly injector = inject(Injector);
+
   readonly windSpeedControl = new FormControl('', { nonNullable: true });
   readonly windDirectionControl = new FormControl('', { nonNullable: true });
   readonly aircraftHeadingControl = new FormControl('', { nonNullable: true });
@@ -84,15 +86,15 @@ export class HeadCrossWindComponent {
   }
 
   private scrollToResult(): void {
-    const element = this.resultRef?.nativeElement;
-    if (!element) return;
-    setTimeout(() => {
+    afterNextRender(() => {
+      const element = this.resultRef?.nativeElement;
+      if (!element) return;
       try {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch {
         element.scrollIntoView();
       }
-    }, 0);
+    }, { injector: this.injector });
   }
 }
 

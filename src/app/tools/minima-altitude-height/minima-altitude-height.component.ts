@@ -1,5 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
 
@@ -21,6 +21,8 @@ export interface MinimaResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MinimaAltitudeHeightComponent {
+  private readonly injector = inject(Injector);
+
   readonly ocaControl = new FormControl('', { nonNullable: true });
   readonly ochControl = new FormControl('', { nonNullable: true });
   readonly aircraftMinimaControl = new FormControl('', { nonNullable: true });
@@ -82,15 +84,15 @@ export class MinimaAltitudeHeightComponent {
   }
 
   private scrollToResult(): void {
-    const element = this.resultRef?.nativeElement;
-    if (!element) return;
-    setTimeout(() => {
+    afterNextRender(() => {
+      const element = this.resultRef?.nativeElement;
+      if (!element) return;
       try {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch {
         element.scrollIntoView();
       }
-    }, 0);
+    }, { injector: this.injector });
   }
 }
 

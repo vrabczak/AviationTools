@@ -1,5 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
 
@@ -26,6 +26,8 @@ export interface TurnResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TurnCalculatorComponent {
+  private readonly injector = inject(Injector);
+
   readonly speedControl = new FormControl('', { nonNullable: true });
   readonly bankAngleControl = new FormControl('', { nonNullable: true });
   readonly result = signal<TurnResult | null>(null);
@@ -97,15 +99,15 @@ export class TurnCalculatorComponent {
   }
 
   private scrollToResult(): void {
-    const element = this.resultRef?.nativeElement;
-    if (!element) return;
-    setTimeout(() => {
+    afterNextRender(() => {
+      const element = this.resultRef?.nativeElement;
+      if (!element) return;
       try {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } catch {
         element.scrollIntoView();
       }
-    }, 0);
+    }, { injector: this.injector });
   }
 }
 
