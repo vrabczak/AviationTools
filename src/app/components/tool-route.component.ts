@@ -6,6 +6,7 @@ import { altitudeCorrectionTool } from '../tools/altitude-correction/altitude-co
 import { approachTableTool } from '../tools/approach-table/approach-table.component';
 import { coordinatesConversionTool } from '../tools/coordinates-conversion/coordinates-conversion.component';
 import { distanceConversionTool } from '../tools/distance-conversion/distance-conversion.component';
+import { flybyTurnTool } from '../tools/flyby-turn/flyby-turn.component';
 import { fuelConversionTool } from '../tools/fuel-conversion/fuel-conversion.component';
 import { headCrossWindTool } from '../tools/head-cross-wind/head-cross-wind.component';
 import { minimaAltitudeHeightTool } from '../tools/minima-altitude-height/minima-altitude-height.component';
@@ -25,6 +26,7 @@ export const tools: ToolDefinition[] = [
   minimaAltitudeHeightTool,
   trackGroundSpeedTool,
   turnCalculatorTool,
+  flybyTurnTool,
   coordinatesConversionTool,
   distanceConversionTool,
   fuelConversionTool,

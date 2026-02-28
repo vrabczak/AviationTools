@@ -1,0 +1,5 @@
+.error-message {
+  margin-top: var(--spacing-md);
+  color: var(--danger);
+  font-weight: 600;
+}
