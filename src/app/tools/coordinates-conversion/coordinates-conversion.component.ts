@@ -88,7 +88,7 @@ export class CoordinatesConversionComponent {
   parseCoordinateString(value: string, expectSeconds: boolean, isLat: boolean): number {
     const trimmed = value.trim().toUpperCase();
     const match = trimmed.match(
-      /^(N|S|E|W)?\s*(-?\d+(?:\.\d+)?)\s*(?:[°ůod])?\s*(\d+(?:\.\d+)?)\s*'?\s*(?:(\d+(?:\.\d+)?)\s*"?)?\s*(N|S|E|W)?$/
+      /^(N|S|E|W)?\s*(-?\d+(?:\.\d+)?)\s*(?:[°od])?\s*(\d+(?:\.\d+)?)\s*'?\s*(?:(\d+(?:\.\d+)?)\s*"?)?\s*(N|S|E|W)?$/
     );
 
     if (!match) {
@@ -165,7 +165,7 @@ export class CoordinatesConversionComponent {
     const degrees = Math.floor(abs);
     const minutes = (abs - degrees) * 60;
     const direction = this.getDirection(value, isLat);
-    return `${degrees}ů${minutes.toFixed(3)}'${direction}`;
+    return `${degrees}°${minutes.toFixed(3)}'${direction}`;
   }
 
   formatDms(value: number, isLat: boolean): string {
@@ -175,7 +175,7 @@ export class CoordinatesConversionComponent {
     const minutes = Math.floor(totalMinutes);
     const seconds = (totalMinutes - minutes) * 60;
     const direction = this.getDirection(value, isLat);
-    return `${degrees}ů${minutes}'${seconds.toFixed(1)}"${direction}`;
+    return `${degrees}°${minutes}'${seconds.toFixed(1)}"${direction}`;
   }
 
   formatMgrs(mgrsString: string): string {
