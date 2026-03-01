@@ -112,6 +112,53 @@
   margin-bottom: var(--spacing-xl);
 }
 
+.tool-submenu {
+  margin-bottom: var(--spacing-md);
+}
+
+.submenu-toggle {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+}
+
+.submenu-toggle:hover {
+  background: var(--bg-gray);
+}
+
+.submenu-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.submenu-title {
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+}
+
+.submenu-chevron {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.submenu-chevron.expanded {
+  transform: rotate(-135deg);
+}
+
 .menu-section h3 {
   font-size: 0.875rem;
   text-transform: uppercase;

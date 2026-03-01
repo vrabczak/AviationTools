@@ -37,24 +37,70 @@
   </div>
   <nav class="menu-nav">
     <div class="menu-section">
-      <ul class="tool-list">
-        @for (tool of tools(); track tool.id) {
-          <li>
-            <button
-              class="tool-button"
-              type="button"
-              [attr.title]="tool.description"
-              [routerLink]="['/tools', tool.id]"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              (click)="onSelect()"
-            >
-              <span class="tool-name">{{ tool.name }}</span>
-              <span class="tool-desc">{{ tool.description }}</span>
-            </button>
-          </li>
+      <section class="tool-submenu">
+        <button
+          class="submenu-toggle"
+          type="button"
+          aria-controls="navigation-tools-list"
+          [attr.aria-expanded]="isNavigationExpanded()"
+          (click)="toggleNavigation()"
+        >
+          <span class="submenu-title">Navigation Tools</span>
+          <span class="submenu-chevron" [class.expanded]="isNavigationExpanded()" aria-hidden="true"></span>
+        </button>
+        @if (isNavigationExpanded()) {
+          <ul id="navigation-tools-list" class="tool-list">
+            @for (tool of navigationTools(); track tool.id) {
+              <li>
+                <button
+                  class="tool-button"
+                  type="button"
+                  [attr.title]="tool.description"
+                  [routerLink]="['/tools', tool.id]"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  (click)="onSelect()"
+                >
+                  <span class="tool-name">{{ tool.name }}</span>
+                  <span class="tool-desc">{{ tool.description }}</span>
+                </button>
+              </li>
+            }
+          </ul>
         }
-      </ul>
+      </section>
+      <section class="tool-submenu">
+        <button
+          class="submenu-toggle"
+          type="button"
+          aria-controls="conversion-tools-list"
+          [attr.aria-expanded]="isConversionExpanded()"
+          (click)="toggleConversion()"
+        >
+          <span class="submenu-title">Conversion Tools</span>
+          <span class="submenu-chevron" [class.expanded]="isConversionExpanded()" aria-hidden="true"></span>
+        </button>
+        @if (isConversionExpanded()) {
+          <ul id="conversion-tools-list" class="tool-list">
+            @for (tool of conversionTools(); track tool.id) {
+              <li>
+                <button
+                  class="tool-button"
+                  type="button"
+                  [attr.title]="tool.description"
+                  [routerLink]="['/tools', tool.id]"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  (click)="onSelect()"
+                >
+                  <span class="tool-name">{{ tool.name }}</span>
+                  <span class="tool-desc">{{ tool.description }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </section>
     </div>
   </nav>
   <div class="menu-footer">
