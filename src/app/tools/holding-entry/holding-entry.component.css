@@ -1,0 +1,71 @@
+.error-message {
+  margin-top: var(--spacing-md);
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.entry-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 var(--spacing-md);
+}
+
+.entry-diagram {
+  width: min(100%, 360px);
+  height: auto;
+  display: block;
+  margin-top: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+}
+
+.hold-path {
+  fill: none;
+  stroke: #334155;
+  stroke-width: 3;
+}
+
+.inbound-line,
+.outbound-line {
+  fill: none;
+  stroke: #0f766e;
+  stroke-width: 2;
+}
+
+.entry-line {
+  fill: none;
+  stroke: #1d4ed8;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+}
+
+.teardrop-guide {
+  fill: none;
+  stroke: #94a3b8;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.procedure-line {
+  fill: none;
+  stroke: #dc2626;
+  stroke-width: 3;
+}
+
+.north-arrow {
+  fill: none;
+  stroke: #0f172a;
+  stroke-width: 2;
+}
+
+.north-arrow-head,
+.fix-dot {
+  fill: #0f172a;
+}
+
+.label {
+  fill: #0f172a;
+  font-size: 12px;
+  font-weight: 600;
+}
