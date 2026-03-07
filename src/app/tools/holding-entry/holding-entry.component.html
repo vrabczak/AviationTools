@@ -59,21 +59,17 @@
           role="img"
           [attr.aria-label]="selectedProcedure + ' holding entry diagram, north up'"
         >
-          <ellipse
-            [attr.cx]="chart.holdOvalCenter.x"
-            [attr.cy]="chart.holdOvalCenter.y"
-            [attr.rx]="chart.holdOvalRadiusX"
-            [attr.ry]="chart.holdOvalRadiusY"
-            class="hold-oval"
-            [attr.transform]="'rotate(' + chart.holdOvalRotationDeg + ',' + chart.holdOvalCenter.x + ',' + chart.holdOvalCenter.y + ')'"
-          ></ellipse>
-          <path [attr.d]="chart.inboundLine" class="inbound-line"></path>
-          <path [attr.d]="chart.outboundLine" class="outbound-line"></path>
+          <path [attr.d]="chart.inboundLegLine" class="hold-shape"></path>
+          <path [attr.d]="chart.farArcPath" class="hold-shape"></path>
+          <path [attr.d]="chart.outboundLegLine" class="hold-shape"></path>
+          <path [attr.d]="chart.nearArcPath" class="hold-shape"></path>
+
           <path [attr.d]="chart.entryLine" class="entry-line"></path>
-          @if (chart.showOffsetGuide) {
-            <path [attr.d]="chart.offsetGuideLine" class="offset-guide-line"></path>
-            <polygon [attr.points]="chart.offsetGuideArrowHead" class="offset-guide-head"></polygon>
-          }
+          <polygon [attr.points]="chart.entryArrowHead" class="entry-arrow-head"></polygon>
+
+          <path [attr.d]="chart.offsetGuideLine" class="offset-guide-line"></path>
+          <polygon [attr.points]="chart.offsetGuideArrowHead" class="offset-guide-head"></polygon>
+
           <path [attr.d]="chart.procedureLine" class="procedure-line"></path>
           <path [attr.d]="chart.northArrow" class="north-arrow"></path>
 

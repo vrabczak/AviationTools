@@ -15,17 +15,15 @@ interface Point {
 }
 
 interface EntryDiagramModel {
-  holdOvalCenter: Point;
-  holdOvalRotationDeg: number;
-  holdOvalRadiusX: number;
-  holdOvalRadiusY: number;
-  inboundLine: string;
-  outboundLine: string;
+  inboundLegLine: string;
+  outboundLegLine: string;
+  farArcPath: string;
+  nearArcPath: string;
   entryLine: string;
-  procedureLine: string;
+  entryArrowHead: string;
   offsetGuideLine: string;
   offsetGuideArrowHead: string;
-  showOffsetGuide: boolean;
+  procedureLine: string;
   northArrow: string;
 }
 
@@ -61,50 +59,49 @@ export class HoldingEntryComponent {
     const outbound = normalizeCourse(inbound + 180);
 
     const fix: Point = { x: 160, y: 160 };
-    const legLength = 85;
-    const width = 50;
+    const legLength = 96;
+    const patternWidth = 52;
 
-    const inboundStart = this.projectFromHeading(fix, normalizeCourse(inbound + 180), legLength);
     const outboundEnd = this.projectFromHeading(fix, outbound, legLength);
     const sideHeading = normalizeCourse(inbound + (direction === 'right' ? 90 : -90));
-    const outboundOuter = this.projectFromHeading(outboundEnd, sideHeading, width);
 
-    const holdOvalCenter = this.projectFromHeading(fix, outbound, legLength / 2);
-    const holdOvalRadiusX = 72;
-    const holdOvalRadiusY = 34;
+    const outerNear = this.projectFromHeading(fix, sideHeading, patternWidth);
+    const outerFar = this.projectFromHeading(outboundEnd, sideHeading, patternWidth);
 
-    const inboundLine = this.line(inboundStart, fix);
-    const outboundLine = this.line(fix, outboundEnd);
+    const inboundLegLine = this.line(outerFar, outerNear);
+    const outboundLegLine = this.line(fix, outboundEnd);
 
-    const entryStart = this.projectFromHeading(fix, normalizeCourse(entry + 180), 120);
+    const arcRadius = patternWidth / 2;
+    const nearArcPath = this.arcPath(outerNear, fix, arcRadius, direction === 'right' ? 1 : 0);
+    const farArcPath = this.arcPath(outboundEnd, outerFar, arcRadius, direction === 'right' ? 1 : 0);
+
+    const entryStart = this.projectFromHeading(fix, normalizeCourse(entry + 180), 122);
     const entryLine = this.line(entryStart, fix);
+    const entryArrowHead = this.arrowHead(fix, entry, 8, 26);
 
     const offsetHeading = normalizeCourse(outbound + (direction === 'right' ? -30 : 30));
-    const offsetGuideEnd = this.projectFromHeading(fix, offsetHeading, 95);
-
-    const procedureLine = procedure === 'Teardrop'
-      ? this.line(fix, this.projectFromHeading(fix, offsetHeading, 75))
-      : procedure === 'Parallel'
-        ? this.line(fix, outboundEnd)
-        : this.line(fix, outboundOuter);
-
-    const showOffsetGuide = procedure === 'Teardrop' || procedure === 'Parallel';
+    const offsetGuideEnd = this.projectFromHeading(fix, offsetHeading, 98);
     const offsetGuideLine = this.line(fix, offsetGuideEnd);
     const offsetGuideArrowHead = this.arrowHead(offsetGuideEnd, offsetHeading, 8, 26);
+
+    const procedureLine = procedure === 'Teardrop'
+      ? this.line(fix, this.projectFromHeading(fix, offsetHeading, 78))
+      : procedure === 'Parallel'
+        ? this.line(fix, outboundEnd)
+        : this.line(fix, this.projectFromHeading(outboundEnd, sideHeading, patternWidth * 0.7));
+
     const northArrow = this.line({ x: 280, y: 45 }, { x: 280, y: 15 });
 
     return {
-      holdOvalCenter,
-      holdOvalRotationDeg: outbound,
-      holdOvalRadiusX,
-      holdOvalRadiusY,
-      inboundLine,
-      outboundLine,
+      inboundLegLine,
+      outboundLegLine,
+      farArcPath,
+      nearArcPath,
       entryLine,
-      procedureLine,
+      entryArrowHead,
       offsetGuideLine,
       offsetGuideArrowHead,
-      showOffsetGuide,
+      procedureLine,
       northArrow,
     };
   });
@@ -148,6 +145,10 @@ export class HoldingEntryComponent {
       x: Number((origin.x + Math.sin(angleRad) * distancePx).toFixed(1)),
       y: Number((origin.y - Math.cos(angleRad) * distancePx).toFixed(1)),
     };
+  }
+
+  private arcPath(start: Point, end: Point, radiusPx: number, sweepFlag: 0 | 1): string {
+    return `M ${start.x} ${start.y} A ${radiusPx} ${radiusPx} 0 0 ${sweepFlag} ${end.x} ${end.y}`;
   }
 
   private arrowHead(tip: Point, headingDeg: number, sizePx: number, angleDeg: number): string {
