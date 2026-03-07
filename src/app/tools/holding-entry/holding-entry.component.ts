@@ -23,8 +23,7 @@ interface EntryDiagramModel {
   entryArrowHead: string;
   offsetGuideLine: string;
   offsetGuideArrowHead: string;
-  procedureLine: string;
-  showProcedureLine: boolean;
+  showOffsetGuide: boolean;
   northArrow: string;
 }
 
@@ -86,13 +85,7 @@ export class HoldingEntryComponent {
     const offsetGuideEnd = this.projectFromHeading(fix, offsetHeading, 98);
     const offsetGuideLine = this.line(fix, offsetGuideEnd);
     const offsetGuideArrowHead = this.arrowHead(offsetGuideEnd, offsetHeading, 8, 26);
-
-    const procedureLine = procedure === 'Teardrop'
-      ? this.line(fix, this.projectFromHeading(fix, teardropOffsetHeading, 78))
-      : procedure === 'Parallel'
-        ? ''
-        : this.line(fix, this.projectFromHeading(outboundEnd, sideHeading, patternWidth * 0.7));
-    const showProcedureLine = procedure !== 'Parallel';
+    const showOffsetGuide = procedure !== 'Direct';
 
     const northArrow = this.line({ x: 280, y: 45 }, { x: 280, y: 15 });
 
@@ -105,8 +98,7 @@ export class HoldingEntryComponent {
       entryArrowHead,
       offsetGuideLine,
       offsetGuideArrowHead,
-      procedureLine,
-      showProcedureLine,
+      showOffsetGuide,
       northArrow,
     };
   });
