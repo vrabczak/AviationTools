@@ -10,6 +10,16 @@
   margin: 0 0 var(--spacing-md);
 }
 
+.heading-after-fix {
+  margin: 0 0 var(--spacing-md);
+  font-weight: 600;
+}
+
+.heading-after-fix-value {
+  color: #f97316;
+  font-weight: 700;
+}
+
 .entry-diagram {
   width: min(100%, 360px);
   height: auto;

@@ -51,6 +51,12 @@
     <div class="result" aria-live="polite">
       <h3>Recommended Entry</h3>
       <p class="entry-name" id="entry-procedure-name">{{ selectedProcedure }}</p>
+      @if (headingAfterFix(); as heading) {
+        <p class="heading-after-fix">
+          Heading after fix:
+          <span id="heading-after-fix" class="heading-after-fix-value">{{ formatHeading(heading) }}</span>
+        </p>
+      }
 
       @if (diagram(); as chart) {
         <svg

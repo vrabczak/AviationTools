@@ -47,6 +47,22 @@ export class HoldingEntryComponent {
   readonly inboundCourse = signal<number | null>(null);
   readonly entryCourse = signal<number | null>(null);
 
+  readonly headingAfterFix = computed<number | null>(() => {
+    const procedure = this.procedure();
+    const inbound = this.inboundCourse();
+    if (!procedure || inbound === null || procedure === 'Direct') {
+      return null;
+    }
+
+    const direction = this.patternDirectionControl.value;
+    const outbound = normalizeCourse(inbound + 180);
+    if (procedure === 'Parallel') {
+      return outbound;
+    }
+
+    return normalizeCourse(outbound + (direction === 'right' ? -30 : 30));
+  });
+
   readonly diagram = computed<EntryDiagramModel | null>(() => {
     const inbound = this.inboundCourse();
     const entry = this.entryCourse();
@@ -134,6 +150,10 @@ export class HoldingEntryComponent {
     this.inboundCourse.set(inbound);
     this.entryCourse.set(entry);
     this.procedure.set(procedure);
+  }
+
+  formatHeading(headingDeg: number): string {
+    return `${headingDeg.toFixed(0).padStart(3, '0')}°`;
   }
 
   private projectFromHeading(origin: Point, headingDeg: number, distancePx: number): Point {
