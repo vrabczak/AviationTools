@@ -70,7 +70,9 @@
           <path [attr.d]="chart.offsetGuideLine" class="offset-guide-line"></path>
           <polygon [attr.points]="chart.offsetGuideArrowHead" class="offset-guide-head"></polygon>
 
-          <path [attr.d]="chart.procedureLine" class="procedure-line"></path>
+          @if (chart.showProcedureLine) {
+            <path [attr.d]="chart.procedureLine" class="procedure-line"></path>
+          }
           <path [attr.d]="chart.northArrow" class="north-arrow"></path>
 
           <polygon points="275,20 285,20 280,10" class="north-arrow-head"></polygon>

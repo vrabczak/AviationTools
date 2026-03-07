@@ -24,6 +24,7 @@ interface EntryDiagramModel {
   offsetGuideLine: string;
   offsetGuideArrowHead: string;
   procedureLine: string;
+  showProcedureLine: boolean;
   northArrow: string;
 }
 
@@ -72,23 +73,26 @@ export class HoldingEntryComponent {
     const outboundLegLine = this.line(fix, outboundEnd);
 
     const arcRadius = patternWidth / 2;
-    const nearArcPath = this.arcPath(outerNear, fix, arcRadius, direction === 'right' ? 1 : 0);
-    const farArcPath = this.arcPath(outboundEnd, outerFar, arcRadius, direction === 'right' ? 1 : 0);
+    const arcSweepFlag: 0 | 1 = direction === 'right' ? 0 : 1;
+    const nearArcPath = this.arcPath(outerNear, fix, arcRadius, arcSweepFlag);
+    const farArcPath = this.arcPath(outboundEnd, outerFar, arcRadius, arcSweepFlag);
 
     const entryStart = this.projectFromHeading(fix, normalizeCourse(entry + 180), 122);
     const entryLine = this.line(entryStart, fix);
     const entryArrowHead = this.arrowHead(fix, entry, 8, 26);
 
-    const offsetHeading = normalizeCourse(outbound + (direction === 'right' ? -30 : 30));
+    const teardropOffsetHeading = normalizeCourse(outbound + (direction === 'right' ? -30 : 30));
+    const offsetHeading = procedure === 'Parallel' ? outbound : teardropOffsetHeading;
     const offsetGuideEnd = this.projectFromHeading(fix, offsetHeading, 98);
     const offsetGuideLine = this.line(fix, offsetGuideEnd);
     const offsetGuideArrowHead = this.arrowHead(offsetGuideEnd, offsetHeading, 8, 26);
 
     const procedureLine = procedure === 'Teardrop'
-      ? this.line(fix, this.projectFromHeading(fix, offsetHeading, 78))
+      ? this.line(fix, this.projectFromHeading(fix, teardropOffsetHeading, 78))
       : procedure === 'Parallel'
-        ? this.line(fix, outboundEnd)
+        ? ''
         : this.line(fix, this.projectFromHeading(outboundEnd, sideHeading, patternWidth * 0.7));
+    const showProcedureLine = procedure !== 'Parallel';
 
     const northArrow = this.line({ x: 280, y: 45 }, { x: 280, y: 15 });
 
@@ -102,6 +106,7 @@ export class HoldingEntryComponent {
       offsetGuideLine,
       offsetGuideArrowHead,
       procedureLine,
+      showProcedureLine,
       northArrow,
     };
   });
