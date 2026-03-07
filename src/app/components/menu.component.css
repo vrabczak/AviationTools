@@ -151,12 +151,12 @@
   height: 8px;
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
-  transform: rotate(45deg);
+  transform: rotate(-45deg);
   transition: transform 0.2s ease;
 }
 
 .submenu-chevron.expanded {
-  transform: rotate(-135deg);
+  transform: rotate(45deg);
 }
 
 .menu-section h3 {
