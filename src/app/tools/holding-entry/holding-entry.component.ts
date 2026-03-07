@@ -15,12 +15,17 @@ interface Point {
 }
 
 interface EntryDiagramModel {
-  holdPath: string;
+  holdOvalCenter: Point;
+  holdOvalRotationDeg: number;
+  holdOvalRadiusX: number;
+  holdOvalRadiusY: number;
   inboundLine: string;
   outboundLine: string;
   entryLine: string;
   procedureLine: string;
-  teardropLine: string;
+  offsetGuideLine: string;
+  offsetGuideArrowHead: string;
+  showOffsetGuide: boolean;
   northArrow: string;
 }
 
@@ -64,12 +69,9 @@ export class HoldingEntryComponent {
     const sideHeading = normalizeCourse(inbound + (direction === 'right' ? 90 : -90));
     const outboundOuter = this.projectFromHeading(outboundEnd, sideHeading, width);
 
-    const holdPath = [
-      `M ${fix.x} ${fix.y}`,
-      `L ${outboundEnd.x} ${outboundEnd.y}`,
-      `Q ${outboundOuter.x} ${outboundOuter.y} ${inboundStart.x} ${inboundStart.y}`,
-      `L ${fix.x} ${fix.y}`,
-    ].join(' ');
+    const holdOvalCenter = this.projectFromHeading(fix, outbound, legLength / 2);
+    const holdOvalRadiusX = 72;
+    const holdOvalRadiusY = 34;
 
     const inboundLine = this.line(inboundStart, fix);
     const outboundLine = this.line(fix, outboundEnd);
@@ -77,25 +79,32 @@ export class HoldingEntryComponent {
     const entryStart = this.projectFromHeading(fix, normalizeCourse(entry + 180), 120);
     const entryLine = this.line(entryStart, fix);
 
-    const teardropHeading = normalizeCourse(outbound + (direction === 'right' ? -30 : 30));
-    const teardropEnd = this.projectFromHeading(fix, teardropHeading, 75);
+    const offsetHeading = normalizeCourse(outbound + (direction === 'right' ? -30 : 30));
+    const offsetGuideEnd = this.projectFromHeading(fix, offsetHeading, 95);
 
     const procedureLine = procedure === 'Teardrop'
-      ? this.line(fix, teardropEnd)
+      ? this.line(fix, this.projectFromHeading(fix, offsetHeading, 75))
       : procedure === 'Parallel'
         ? this.line(fix, outboundEnd)
         : this.line(fix, outboundOuter);
 
-    const teardropLine = this.line(fix, teardropEnd);
+    const showOffsetGuide = procedure === 'Teardrop' || procedure === 'Parallel';
+    const offsetGuideLine = this.line(fix, offsetGuideEnd);
+    const offsetGuideArrowHead = this.arrowHead(offsetGuideEnd, offsetHeading, 8, 26);
     const northArrow = this.line({ x: 280, y: 45 }, { x: 280, y: 15 });
 
     return {
-      holdPath,
+      holdOvalCenter,
+      holdOvalRotationDeg: outbound,
+      holdOvalRadiusX,
+      holdOvalRadiusY,
       inboundLine,
       outboundLine,
       entryLine,
       procedureLine,
-      teardropLine,
+      offsetGuideLine,
+      offsetGuideArrowHead,
+      showOffsetGuide,
       northArrow,
     };
   });
@@ -139,6 +148,12 @@ export class HoldingEntryComponent {
       x: Number((origin.x + Math.sin(angleRad) * distancePx).toFixed(1)),
       y: Number((origin.y - Math.cos(angleRad) * distancePx).toFixed(1)),
     };
+  }
+
+  private arrowHead(tip: Point, headingDeg: number, sizePx: number, angleDeg: number): string {
+    const left = this.projectFromHeading(tip, normalizeCourse(headingDeg + 180 - angleDeg), sizePx);
+    const right = this.projectFromHeading(tip, normalizeCourse(headingDeg + 180 + angleDeg), sizePx);
+    return `${tip.x},${tip.y} ${left.x},${left.y} ${right.x},${right.y}`;
   }
 
   private line(from: Point, to: Point): string {
