@@ -1,0 +1,84 @@
+<div class="tool-content">
+  <h2>Holding Entry</h2>
+  <p class="tool-description">
+    Determine the recommended holding entry procedure from hold inbound course, turn direction,
+    and your entry course to the fix.
+  </p>
+
+  <div class="input-group">
+    <label for="hold-inbound-course">Hold Inbound Course (deg)</label>
+    <input
+      id="hold-inbound-course"
+      type="number"
+      step="1"
+      min="0"
+      max="360"
+      placeholder="e.g., 360"
+      [formControl]="holdInboundCourseControl"
+      (keydown.enter)="calculateEntry()"
+    >
+  </div>
+
+  <div class="input-group">
+    <label for="pattern-direction">Holding Pattern Direction</label>
+    <select id="pattern-direction" [formControl]="patternDirectionControl">
+      <option value="right">Right turns (standard)</option>
+      <option value="left">Left turns (non-standard)</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label for="entry-course">Entry Course to Fix (deg)</label>
+    <input
+      id="entry-course"
+      type="number"
+      step="1"
+      min="0"
+      max="360"
+      placeholder="e.g., 120"
+      [formControl]="entryCourseControl"
+      (keydown.enter)="calculateEntry()"
+    >
+  </div>
+
+  <button class="btn-primary" (click)="calculateEntry()">Determine Entry</button>
+
+  @if (errorMessage(); as message) {
+    <p class="error-message" role="alert">{{ message }}</p>
+  }
+
+  @if (procedure(); as selectedProcedure) {
+    <div class="result" aria-live="polite">
+      <h3>Recommended Entry</h3>
+      <p class="entry-name" id="entry-procedure-name">{{ selectedProcedure }}</p>
+
+      @if (diagram(); as chart) {
+        <svg
+          class="entry-diagram"
+          viewBox="0 0 320 320"
+          role="img"
+          [attr.aria-label]="selectedProcedure + ' holding entry diagram, north up'"
+        >
+          <path [attr.d]="chart.inboundLegLine" class="hold-shape"></path>
+          <path [attr.d]="chart.farArcPath" class="hold-shape"></path>
+          <path [attr.d]="chart.outboundLegLine" class="hold-shape"></path>
+          <path [attr.d]="chart.nearArcPath" class="hold-shape"></path>
+
+          <path [attr.d]="chart.entryLine" class="entry-line"></path>
+          <polygon [attr.points]="chart.entryArrowHead" class="entry-arrow-head"></polygon>
+
+          @if (chart.showOffsetGuide) {
+            <path [attr.d]="chart.offsetGuideLine" class="offset-guide-line"></path>
+            <polygon [attr.points]="chart.offsetGuideArrowHead" class="offset-guide-head"></polygon>
+          }
+          <path [attr.d]="chart.northArrow" class="north-arrow"></path>
+
+          <polygon points="275,20 285,20 280,10" class="north-arrow-head"></polygon>
+          <circle cx="160" cy="160" r="4" class="fix-dot"></circle>
+          <text x="168" y="154" class="label">Fix</text>
+          <text x="286" y="14" class="label">N</text>
+        </svg>
+      }
+    </div>
+  }
+</div>
