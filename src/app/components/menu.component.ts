@@ -28,6 +28,7 @@ export class MenuComponent {
     'flyby-turn',
     'turn-calculator',
     'head-cross-wind',
+    'holding-entry',
     'track-ground-speed',
   ];
   private readonly conversionToolIds: readonly string[] = [
