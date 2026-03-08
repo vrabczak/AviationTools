@@ -24,6 +24,11 @@ interface EntryDiagramModel {
   offsetGuideLine: string;
   offsetGuideArrowHead: string;
   showOffsetGuide: boolean;
+  parallelTurnArcPath: string;
+  parallelTurnArcArrowHead: string;
+  parallelReturnLine: string;
+  parallelReturnArrowHead: string;
+  showParallelContinuation: boolean;
   northArrow: string;
 }
 
@@ -103,6 +108,26 @@ export class HoldingEntryComponent {
     const offsetGuideArrowHead = this.arrowHead(offsetGuideEnd, offsetHeading, 8, 26);
     const showOffsetGuide = procedure !== 'Direct';
 
+    const parallelTurnRadius = 28;
+    const parallelTurnCenterHeading = normalizeCourse(outbound + (direction === 'right' ? -90 : 90));
+    const parallelTurnCenter = this.projectFromHeading(offsetGuideEnd, parallelTurnCenterHeading, parallelTurnRadius);
+    const parallelTurnArcEnd: Point = {
+      x: Number((2 * parallelTurnCenter.x - offsetGuideEnd.x).toFixed(1)),
+      y: Number((2 * parallelTurnCenter.y - offsetGuideEnd.y).toFixed(1)),
+    };
+    const parallelArcSweepFlag: 0 | 1 = direction === 'right' ? 0 : 1;
+    const parallelTurnArcPath = this.arcPath(
+      offsetGuideEnd,
+      parallelTurnArcEnd,
+      parallelTurnRadius,
+      parallelArcSweepFlag
+    );
+    const parallelTrackToFix = this.headingBetween(parallelTurnArcEnd, fix);
+    const parallelTurnArcArrowHead = this.arrowHead(parallelTurnArcEnd, parallelTrackToFix, 8, 26);
+    const parallelReturnLine = this.line(parallelTurnArcEnd, fix);
+    const parallelReturnArrowHead = this.arrowHead(fix, parallelTrackToFix, 8, 26);
+    const showParallelContinuation = procedure === 'Parallel';
+
     const northArrow = this.line({ x: 280, y: 45 }, { x: 280, y: 15 });
 
     return {
@@ -115,6 +140,11 @@ export class HoldingEntryComponent {
       offsetGuideLine,
       offsetGuideArrowHead,
       showOffsetGuide,
+      parallelTurnArcPath,
+      parallelTurnArcArrowHead,
+      parallelReturnLine,
+      parallelReturnArrowHead,
+      showParallelContinuation,
       northArrow,
     };
   });
@@ -172,6 +202,13 @@ export class HoldingEntryComponent {
     const left = this.projectFromHeading(tip, normalizeCourse(headingDeg + 180 - angleDeg), sizePx);
     const right = this.projectFromHeading(tip, normalizeCourse(headingDeg + 180 + angleDeg), sizePx);
     return `${tip.x},${tip.y} ${left.x},${left.y} ${right.x},${right.y}`;
+  }
+
+  private headingBetween(from: Point, to: Point): number {
+    const eastComponent = to.x - from.x;
+    const northComponent = from.y - to.y;
+    const headingDeg = (Math.atan2(eastComponent, northComponent) * 180) / Math.PI;
+    return normalizeCourse(headingDeg);
   }
 
   private line(from: Point, to: Point): string {
