@@ -12,6 +12,7 @@ import { headCrossWindTool } from '../tools/head-cross-wind/head-cross-wind.comp
 import { holdingEntryTool } from '../tools/holding-entry/holding-entry.component';
 import { minimaAltitudeHeightTool } from '../tools/minima-altitude-height/minima-altitude-height.component';
 import { speedConversionTool } from '../tools/speed-conversion/speed-conversion.component';
+import { speedDistanceTimeTool } from '../tools/speed-distance-time/speed-distance-time.component';
 import { trackGroundSpeedTool } from '../tools/track-ground-speed/track-ground-speed.component';
 import { turnCalculatorTool } from '../tools/turn-calculator/turn-calculator.component';
 import { ToolDefinition } from '../tools/tool-definition';
@@ -33,6 +34,7 @@ export const tools: ToolDefinition[] = [
   distanceConversionTool,
   fuelConversionTool,
   speedConversionTool,
+  speedDistanceTimeTool,
 ];
 
 /**

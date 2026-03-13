@@ -1,0 +1,58 @@
+<div class="tool-content">
+  <h2>Speed / Distance / Time</h2>
+  <p class="tool-description">
+    Enter any two values and calculate the third. Time input uses HH:MM:SS.
+    Default units are knots and nautical miles.
+  </p>
+
+  <div class="input-group input-with-unit">
+    <label for="sdt-speed">Speed</label>
+    <div class="inline-row">
+      <input id="sdt-speed" type="number" step="any" placeholder="120" [formControl]="speedControl" (keydown.enter)="calculate()">
+      <select id="sdt-speed-unit" [formControl]="speedUnitControl" aria-label="Speed unit">
+        <option value="kt">kt</option>
+        <option value="kmh">km/h</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="input-group input-with-unit">
+    <label for="sdt-distance">Distance</label>
+    <div class="inline-row">
+      <input id="sdt-distance" type="number" step="any" placeholder="250" [formControl]="distanceControl" (keydown.enter)="calculate()">
+      <select id="sdt-distance-unit" [formControl]="distanceUnitControl" aria-label="Distance unit">
+        <option value="nm">NM</option>
+        <option value="km">km</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label for="sdt-time">Time (HH:MM:SS)</label>
+    <input id="sdt-time" type="text" inputmode="numeric" placeholder="01:30:00" [formControl]="timeControl" (keydown.enter)="calculate()">
+  </div>
+
+  <button class="btn-primary" (click)="calculate()">Calculate</button>
+
+  @if (result()) {
+    <div #resultRef class="result">
+      <h3>Result</h3>
+      <div class="result-grid">
+        <div class="result-value">
+          <span class="label">Speed</span>
+          <span id="sdt-result-speed" class="value">{{ speedDisplay() }}</span>
+        </div>
+
+        <div class="result-value">
+          <span class="label">Distance</span>
+          <span id="sdt-result-distance" class="value">{{ distanceDisplay() }}</span>
+        </div>
+
+        <div class="result-value">
+          <span class="label">Time</span>
+          <span id="sdt-result-time" class="value">{{ timeDisplay() }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,8 @@
+.input-with-unit .inline-row input {
+  flex: 1;
+}
+
+.input-with-unit .inline-row select {
+  width: 120px;
+  flex-shrink: 0;
+}

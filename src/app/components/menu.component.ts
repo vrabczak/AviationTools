@@ -30,6 +30,7 @@ export class MenuComponent {
     'head-cross-wind',
     'holding-entry',
     'track-ground-speed',
+    'speed-distance-time',
   ];
   private readonly conversionToolIds: readonly string[] = [
     'coordinates-conversion',
