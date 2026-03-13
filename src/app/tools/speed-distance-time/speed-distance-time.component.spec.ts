@@ -30,6 +30,10 @@ describe('SpeedDistanceTimeComponent', () => {
     expect(formatSecondsToTime(5415)).toBe('01:30:15');
   });
 
+  it('returns undefined for invalid HH:MM:SS input', () => {
+    expect(parseTimeToSeconds('90:99')).toBeUndefined();
+  });
+
 
   it('shows only kt and km/h speed units', () => {
     const options = Array.from(element.querySelectorAll('#sdt-speed-unit option'))

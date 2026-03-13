@@ -126,11 +126,11 @@ export class SpeedDistanceTimeComponent {
 
     const timeSeconds = parseTimeToSeconds(this.timeControl.value);
 
-    if (Number.isNaN(timeSeconds)) {
+    if (timeSeconds === undefined) {
       return null;
     }
 
-    const filledCount = [speed !== null, distance !== null, timeSeconds !== null].filter(Boolean).length;
+    const filledCount = [speed, distance, timeSeconds].filter((value) => value !== null).length;
 
     if (filledCount !== 2) {
       alert('Enter exactly two values: speed, distance, or time.');
@@ -180,7 +180,7 @@ export class SpeedDistanceTimeComponent {
 /**
  * Converts HH:MM:SS text to elapsed seconds.
  */
-export function parseTimeToSeconds(value: string): number | null {
+export function parseTimeToSeconds(value: string): number | null | undefined {
   if (!value.trim()) {
     return null;
   }
@@ -188,7 +188,7 @@ export function parseTimeToSeconds(value: string): number | null {
   const match = value.match(/^(\d+)\s*:\s*([0-5]?\d)\s*:\s*([0-5]?\d)$/);
   if (!match) {
     alert('Time must use HH:MM:SS format.');
-    return Number.NaN;
+    return undefined;
   }
 
   const hours = Number.parseInt(match[1], 10);
