@@ -34,6 +34,9 @@ describe('SpeedDistanceTimeComponent', () => {
     expect(parseTimeToSeconds('90:99')).toBeUndefined();
   });
 
+  it('returns undefined for non-string HH:MM:SS input', () => {
+    expect(parseTimeToSeconds(12345)).toBeUndefined();
+  });
 
   it('shows only kt and km/h speed units', () => {
     const options = Array.from(element.querySelectorAll('#sdt-speed-unit option'))
@@ -56,6 +59,16 @@ describe('SpeedDistanceTimeComponent', () => {
     const result = component.result();
     expect(result?.distance).toBeCloseTo(180, 2);
     expect(component.distanceDisplay()).toBe('180.00 NM');
+  });
+
+
+  it('calculates without runtime error when numeric values reach controls', () => {
+    component.speedControl.setValue(120 as unknown as string);
+    component.distanceControl.setValue(60 as unknown as string);
+
+    component.calculate();
+
+    expect(component.timeDisplay()).toBe('00:30:00');
   });
 
   it('calculates time from speed and distance via UI', () => {

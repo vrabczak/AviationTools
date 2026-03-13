@@ -140,12 +140,25 @@ export class SpeedDistanceTimeComponent {
     return { speed, distance, timeSeconds };
   }
 
-  private parseNumericField(rawValue: string, label: string): number | null | undefined {
-    if (!rawValue.trim()) {
+  private parseNumericField(rawValue: unknown, label: string): number | null | undefined {
+    if (rawValue === null || rawValue === undefined) {
       return null;
     }
 
-    const value = Number.parseFloat(rawValue);
+    if (typeof rawValue === 'number') {
+      if (Number.isNaN(rawValue) || rawValue < 0) {
+        alert(`${label} must be a valid number greater than or equal to zero.`);
+        return undefined;
+      }
+      return rawValue;
+    }
+
+    const normalized = String(rawValue).trim();
+    if (!normalized) {
+      return null;
+    }
+
+    const value = Number.parseFloat(normalized);
     if (Number.isNaN(value) || value < 0) {
       alert(`${label} must be a valid number greater than or equal to zero.`);
       return undefined;
@@ -180,12 +193,17 @@ export class SpeedDistanceTimeComponent {
 /**
  * Converts HH:MM:SS text to elapsed seconds.
  */
-export function parseTimeToSeconds(value: string): number | null | undefined {
-  if (!value.trim()) {
+export function parseTimeToSeconds(value: unknown): number | null | undefined {
+  if (value === null || value === undefined) {
     return null;
   }
 
-  const match = value.match(/^(\d+)\s*:\s*([0-5]?\d)\s*:\s*([0-5]?\d)$/);
+  const normalized = String(value).trim();
+  if (!normalized) {
+    return null;
+  }
+
+  const match = normalized.match(/^(\d+)\s*:\s*([0-5]?\d)\s*:\s*([0-5]?\d)$/);
   if (!match) {
     alert('Time must use HH:MM:SS format.');
     return undefined;
