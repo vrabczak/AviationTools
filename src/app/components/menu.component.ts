@@ -31,6 +31,7 @@ export class MenuComponent {
     'track-ground-speed',
     'turn-calculator',
     'speed-distance-time',
+    'fuel-consumption-quantity-endurance',
   ];
   private readonly conversionToolIds: readonly string[] = [
     'coordinates-conversion',

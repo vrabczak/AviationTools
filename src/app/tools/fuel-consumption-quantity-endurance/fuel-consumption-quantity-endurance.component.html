@@ -1,0 +1,67 @@
+<div class="tool-content">
+  <h2>Fuel Consumption / Quantity / Endurance</h2>
+  <p class="tool-description">
+    Enter any two values and calculate the third. Endurance input uses HH:MM:SS.
+    Defaults are liters and liters/min. For cross-unit calculations, set fuel density (default 0.8 kg/L).
+  </p>
+
+  <div class="input-group input-with-unit">
+    <label for="fcqe-consumption">Consumption</label>
+    <div class="inline-row">
+      <input id="fcqe-consumption" type="number" step="any" placeholder="28" [formControl]="consumptionControl" (keydown.enter)="calculate()">
+      <select id="fcqe-consumption-unit" [formControl]="consumptionUnitControl" aria-label="Consumption unit">
+        <option value="lpm">L/min</option>
+        <option value="lph">L/h</option>
+        <option value="kgpm">kg/min</option>
+        <option value="kgph">kg/h</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="input-group input-with-unit">
+    <label for="fcqe-quantity">Fuel Quantity</label>
+    <div class="inline-row">
+      <input id="fcqe-quantity" type="number" step="any" placeholder="1500" [formControl]="quantityControl" (keydown.enter)="calculate()">
+      <select id="fcqe-quantity-unit" [formControl]="quantityUnitControl" aria-label="Fuel quantity unit">
+        <option value="liter">L</option>
+        <option value="kg">kg</option>
+      </select>
+    </div>
+  </div>
+
+  @if (shouldShowDensityInput()) {
+    <div class="input-group">
+      <label for="fcqe-density">Fuel Density (kg/L)</label>
+      <input id="fcqe-density" type="number" step="any" min="0" placeholder="0.8" [formControl]="densityControl" (keydown.enter)="calculate()">
+    </div>
+  }
+
+  <div class="input-group">
+    <label for="fcqe-endurance">Endurance (HH:MM:SS)</label>
+    <input id="fcqe-endurance" type="text" placeholder="01:30:00" [formControl]="enduranceControl" (keydown.enter)="calculate()">
+  </div>
+
+  <button class="btn-primary" (click)="calculate()">Calculate</button>
+
+  @if (result()) {
+    <div #resultRef class="result">
+      <h3>Result</h3>
+      <div class="result-grid">
+        <div class="result-value">
+          <span class="label">Consumption</span>
+          <span id="fcqe-result-consumption" class="value">{{ consumptionDisplay() }}</span>
+        </div>
+
+        <div class="result-value">
+          <span class="label">Fuel Quantity</span>
+          <span id="fcqe-result-quantity" class="value">{{ quantityDisplay() }}</span>
+        </div>
+
+        <div class="result-value">
+          <span class="label">Endurance</span>
+          <span id="fcqe-result-endurance" class="value">{{ enduranceDisplay() }}</span>
+        </div>
+      </div>
+    </div>
+  }
+</div>

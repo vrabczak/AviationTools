@@ -7,6 +7,7 @@ import { approachTableTool } from '../tools/approach-table/approach-table.compon
 import { coordinatesConversionTool } from '../tools/coordinates-conversion/coordinates-conversion.component';
 import { distanceConversionTool } from '../tools/distance-conversion/distance-conversion.component';
 import { flybyTurnTool } from '../tools/flyby-turn/flyby-turn.component';
+import { fuelConsumptionQuantityEnduranceTool } from '../tools/fuel-consumption-quantity-endurance/fuel-consumption-quantity-endurance.component';
 import { fuelConversionTool } from '../tools/fuel-conversion/fuel-conversion.component';
 import { headCrossWindTool } from '../tools/head-cross-wind/head-cross-wind.component';
 import { holdingEntryTool } from '../tools/holding-entry/holding-entry.component';
@@ -30,6 +31,7 @@ export const tools: ToolDefinition[] = [
   trackGroundSpeedTool,
   turnCalculatorTool,
   flybyTurnTool,
+  fuelConsumptionQuantityEnduranceTool,
   coordinatesConversionTool,
   distanceConversionTool,
   fuelConversionTool,
