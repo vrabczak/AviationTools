@@ -22,14 +22,14 @@ export class MenuComponent {
    * Hardcoded submenu assignment. Update these arrays when adding or moving tools.
    */
   private readonly navigationToolIds: readonly string[] = [
-    'minima-altitude-height',
     'altitude-correction',
     'approach-table',
     'flyby-turn',
-    'turn-calculator',
     'head-cross-wind',
     'holding-entry',
+    'minima',
     'track-ground-speed',
+    'turn-calculator',
     'speed-distance-time',
   ];
   private readonly conversionToolIds: readonly string[] = [
