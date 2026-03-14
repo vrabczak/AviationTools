@@ -29,7 +29,7 @@
 
   <div class="input-group">
     <label for="sdt-time">Time (HH:MM:SS)</label>
-    <input id="sdt-time" type="text" inputmode="numeric" placeholder="01:30:00" [formControl]="timeControl" (keydown.enter)="calculate()">
+    <input id="sdt-time" type="text" placeholder="01:30:00" [formControl]="timeControl" (keydown.enter)="calculate()">
   </div>
 
   <button class="btn-primary" (click)="calculate()">Calculate</button>
