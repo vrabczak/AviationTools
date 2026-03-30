@@ -39,11 +39,16 @@ export class MenuComponent {
     'fuel-conversion',
     'speed-conversion',
   ];
+  private readonly performanceToolIds: readonly string[] = [
+    'oge-margin',
+  ];
 
-  readonly isNavigationExpanded = signal(true);
+  readonly isNavigationExpanded = signal(false);
   readonly isConversionExpanded = signal(false);
+  readonly isPerformanceExpanded = signal(false);
   readonly navigationTools = computed(() => this.getToolsByIds(this.navigationToolIds));
   readonly conversionTools = computed(() => this.getToolsByIds(this.conversionToolIds));
+  readonly performanceTools = computed(() => this.getToolsByIds(this.performanceToolIds));
 
   readonly selectTool = output<void>();
   readonly toggleTheme = output<void>();
@@ -59,6 +64,10 @@ export class MenuComponent {
 
   toggleConversion(): void {
     this.isConversionExpanded.update((expanded) => !expanded);
+  }
+
+  togglePerformance(): void {
+    this.isPerformanceExpanded.update((expanded) => !expanded);
   }
 
   private getToolsByIds(ids: readonly string[]): ToolDefinition[] {

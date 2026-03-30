@@ -1,0 +1,7 @@
+.margin-card .value {
+  font-size: 2rem;
+}
+
+.margin-card.margin-negative .value {
+  color: var(--danger);
+}

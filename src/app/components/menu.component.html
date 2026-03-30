@@ -101,6 +101,38 @@
           </ul>
         }
       </section>
+      <section class="tool-submenu">
+        <button
+          class="submenu-toggle"
+          type="button"
+          aria-controls="performance-tools-list"
+          [attr.aria-expanded]="isPerformanceExpanded()"
+          (click)="togglePerformance()"
+        >
+          <span class="submenu-title">Performance Tools</span>
+          <span class="submenu-chevron" [class.expanded]="isPerformanceExpanded()" aria-hidden="true"></span>
+        </button>
+        @if (isPerformanceExpanded()) {
+          <ul id="performance-tools-list" class="tool-list">
+            @for (tool of performanceTools(); track tool.id) {
+              <li>
+                <button
+                  class="tool-button"
+                  type="button"
+                  [attr.title]="tool.description"
+                  [routerLink]="['/tools', tool.id]"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  (click)="onSelect()"
+                >
+                  <span class="tool-name">{{ tool.name }}</span>
+                  <span class="tool-desc">{{ tool.description }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </section>
     </div>
   </nav>
   <div class="menu-footer">

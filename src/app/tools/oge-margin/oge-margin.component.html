@@ -1,0 +1,58 @@
+<div class="tool-content">
+  <h2>OGE Margin</h2>
+  <p class="tool-description">
+    Enter Gross Weight, Temperature, and Altitude to calculate OGE margin in kilograms.
+    Altitude accepts meters or feet. Supported table range is 0-3200 m and -40 to 40 C.
+    Values between table points are interpolated from the bundled OGE table.
+  </p>
+
+  <div class="input-group">
+    <label for="oge-gross-weight">Gross Weight (kg)</label>
+    <input id="oge-gross-weight" type="number" step="any" min="0" placeholder="13000" [formControl]="grossWeightControl" (keydown.enter)="calculate()">
+  </div>
+
+  <div class="input-group">
+    <label for="oge-temperature">Temperature (C)</label>
+    <input id="oge-temperature" type="number" step="any" placeholder="15" [formControl]="temperatureControl" (keydown.enter)="calculate()">
+  </div>
+
+  <div class="input-group input-with-unit">
+    <label for="oge-altitude">Altitude</label>
+    <div class="inline-row">
+      <input id="oge-altitude" type="number" step="any" min="0" placeholder="1000" [formControl]="altitudeControl" (keydown.enter)="calculate()">
+      <select id="oge-altitude-unit" [formControl]="altitudeUnitControl" aria-label="Altitude unit">
+        <option value="m">m</option>
+        <option value="ft">ft</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="btn-primary" type="button" (click)="calculate()">Calculate</button>
+
+  @if (result(); as calculation) {
+    <div #resultRef class="result" aria-live="polite">
+      <h3>Result</h3>
+      <div class="result-grid">
+        <div class="result-value margin-card" [class.margin-negative]="calculation.marginKg < 0">
+          <span class="label">Margin</span>
+          <span id="oge-margin-result" class="value">{{ marginDisplay() }}</span>
+        </div>
+
+        <div class="result-value">
+          <span class="label">OGE Limit</span>
+          <span id="oge-limit-result" class="value">{{ limitDisplay() }}</span>
+        </div>
+      </div>
+
+      <div class="result-info" [class.success]="calculation.marginKg >= 0" [class.warning]="calculation.marginKg < 0">
+        <p>
+          @if (calculation.marginKg >= 0) {
+            Positive OGE margin available at the selected conditions.
+          } @else {
+            Gross weight exceeds the interpolated OGE limit at the selected conditions.
+          }
+        </p>
+      </div>
+    </div>
+  }
+</div>
