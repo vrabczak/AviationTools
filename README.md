@@ -1,26 +1,51 @@
 # Aviation Tools
 
-Aviation Tools is a collection of quick-reference calculators for pilots, delivered as an offline-capable Progressive Web App built with Angular and TypeScript. The tools focus on fast, cockpit-friendly workflows for performance, navigation, and approach planning.
+Aviation Tools is an offline-capable Progressive Web App built with Angular and TypeScript for quick cockpit and pre-flight calculations. It bundles focused utilities for navigation, approach planning, helicopter performance checks, and unit conversions in a single mobile-friendly app.
 
 ## Disclaimer
 
-These utilities are convenience aids only. Always cross-check calculator outputs with your own manual calculations and authoritative operational data before flying.
+These tools are convenience aids only. Always verify outputs against approved flight documents, aircraft manuals, and operational data before use in flight.
 
-## Features
+## Tool Suite
 
-- **Temperature altitude correction** – adjust DA/MDA for non-ISA temperatures to maintain obstacle clearance.
-- **Approach minima helper** – tabulated guidance for DA/MDA and height conversions.
-- **Wind components** – headwind/tailwind and crosswind breakdowns from runway heading and reported winds.
-- **Groundspeed and track** – computes track/groundspeed offsets using wind triangle inputs.
-- **Standard rate turns** – turn radius and bank angle assistance for rate-one turns.
-- **Coordinate utilities** – convert between latitude/longitude and MGRS.
-- **Distance, fuel, and speed conversions** – convert among nautical, statute, metric units and common fuel/speed units.
+### Navigation tools
 
-## Getting started
+- **Altitude Correction** - calculate temperature-corrected altitude for cold-weather approach procedures.
+- **Approach Table** - generate an approach table with distances, altitudes, and heights above a target altitude.
+- **DA/MDA DH/MDH** - convert between OCA/OCH and resulting decision or minimum descent values.
+- **Head/Cross Wind** - compute headwind, tailwind, and crosswind components for a runway or heading.
+- **Holding Entry** - determine direct, parallel, or teardrop entry for a published hold.
+- **Track / Ground Speed** - solve wind triangle outputs from heading, TAS, and wind.
+- **Turn Calculator** - calculate turn radius and turn rate from speed and bank angle.
+- **Fly-By Turn** - compute turn anticipation distance and turn radius from track change.
+- **Speed / Distance / Time** - solve the missing value from speed, distance, and time.
+- **Fuel Consumption / Quantity / Endurance** - solve the missing value from fuel flow, fuel quantity, and endurance.
+
+### Conversion tools
+
+- **Coordinates Conversion** - convert between DD, DM, DMS, and 5-digit MGRS coordinates.
+- **Distance Conversion** - convert between meters, kilometers, nautical miles, feet, and statute miles.
+- **Fuel Conversion** - convert between liters, kilograms, gallons, and pounds using fuel density.
+- **Speed Conversion** - convert between knots, km/h, m/s, and ft/min.
+
+### Performance tools
+
+- **IGE Margin** - calculate in-ground-effect hover margin from gross weight, temperature, and altitude.
+- **OGE Margin** - calculate out-of-ground-effect hover margin from gross weight, temperature, and altitude.
+
+## App Features
+
+- Offline support through the Angular service worker after the first successful load.
+- Mobile-friendly layout with a categorized tool menu.
+- Light and dark theme support with local preference persistence.
+- Static deployment to GitHub Pages.
+
+## Getting Started
 
 ### Prerequisites
-- Node.js 18+
-- npm 9+
+
+- Node.js
+- npm
 
 ### Install dependencies
 
@@ -28,13 +53,13 @@ These utilities are convenience aids only. Always cross-check calculator outputs
 npm install
 ```
 
-### Run the app locally
+### Run locally
 
 ```bash
 npm start
 ```
 
-The Angular dev server prints the local URL; open it in your browser to use the tools.
+The Angular dev server prints the local URL for the app.
 
 ### Run tests
 
@@ -42,25 +67,14 @@ The Angular dev server prints the local URL; open it in your browser to use the 
 npm test
 ```
 
-## Building for production
+## Production Build
 
 ```bash
 npm run build
 ```
 
-The optimized assets are written to `dist/aviation-tools/`.
-
-## Offline support
-
-The app uses the Angular service worker to precache application assets for reliable offline use.
+The production bundle is written to `dist/aviation-tools/`.
 
 ## Deployment
 
-The project is configured for GitHub Pages via GitHub Actions, which builds the Angular production bundle and publishes `dist/aviation-tools/`.
-
-## License
-
-This project is licensed for non-commercial use.
-Governmental institutions, public sector bodies,
-non-profit organizations, and educational institutions
-are explicitly permitted to use and modify the software.
+GitHub Actions builds the production bundle and publishes the app to GitHub Pages using the repository `homepage` and production base href configuration.
