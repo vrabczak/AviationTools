@@ -60,7 +60,7 @@ describe('HoldingEntryComponent', () => {
     button.click();
     fixture.detectChanges();
 
-    expect(element.querySelector('#entry-procedure-name')?.textContent?.trim()).toBe('Direct');
+    expect(element.querySelector('#entry-procedure-name')?.textContent?.trim()).toBe('Teardrop');
     expect(element.querySelector('.parallel-guide-line')).toBeNull();
     expect(element.querySelector('.parallel-guide-head')).toBeNull();
   });

@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ToolDefinition } from '../tools/tool-definition';
 
 /**
- * Renders the active tool component or a loading state when none is selected.
+ * Renders the active tool component or an empty selection state.
  */
 @Component({
   selector: 'app-tool-container',

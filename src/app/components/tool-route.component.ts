@@ -59,10 +59,8 @@ export class ToolRouteComponent {
 
   readonly tool = computed(() => {
     const params: ParamMap | null = this.paramMap();
-    const fallbackTool = tools[0];
-    if (!params) return fallbackTool;
-    const toolId = params.get('toolId') ?? fallbackTool?.id ?? '';
-    return this.getToolById(toolId) ?? fallbackTool;
+    const toolId = params?.get('toolId');
+    return toolId ? this.getToolById(toolId) : undefined;
   });
 
   private getToolById(id: string): ToolDefinition | undefined {

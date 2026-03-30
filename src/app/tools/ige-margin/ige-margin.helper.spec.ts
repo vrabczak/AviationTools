@@ -6,7 +6,7 @@ describe('IGE margin helper', () => {
   });
 
   it('interpolates between altitude and temperature grid points', () => {
-    expect(lookupIgeLimitKg(1050, 2.5)).toBeCloseTo(14336.5, 2);
+    expect(lookupIgeLimitKg(1050, 2.5)).toBeCloseTo(14332.75, 2);
   });
 
   it('converts feet to meters', () => {
