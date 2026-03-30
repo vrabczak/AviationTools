@@ -40,6 +40,7 @@ export class MenuComponent {
     'speed-conversion',
   ];
   private readonly performanceToolIds: readonly string[] = [
+    'ige-margin',
     'oge-margin',
   ];
 

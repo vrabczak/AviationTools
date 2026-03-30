@@ -2,43 +2,43 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
-import { OgeAltitudeUnit, convertAltitudeToMeters, lookupOgeLimitKg } from './oge-margin.helper';
+import { IgeAltitudeUnit, convertIgeAltitudeToMeters, lookupIgeLimitKg } from './ige-margin.helper';
 
-interface OgeMarginResult {
+interface IgeMarginResult {
   marginKg: number;
   limitKg: number;
 }
 
 /**
- * Calculates OGE margin from gross weight, temperature, and altitude.
+ * Calculates IGE margin from gross weight, temperature, and altitude.
  */
 @Component({
-  selector: 'app-oge-margin',
+  selector: 'app-ige-margin',
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './oge-margin.component.html',
-  styleUrls: ['../tool-shared.css', './oge-margin.component.css'],
+  templateUrl: './ige-margin.component.html',
+  styleUrls: ['../tool-shared.css', './ige-margin.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OgeMarginComponent {
+export class IgeMarginComponent {
   private readonly injector = inject(Injector);
 
   readonly grossWeightControl = new FormControl('', { nonNullable: true });
   readonly temperatureControl = new FormControl('', { nonNullable: true });
   readonly altitudeControl = new FormControl('', { nonNullable: true });
-  readonly altitudeUnitControl = new FormControl<OgeAltitudeUnit>('ft', { nonNullable: true });
+  readonly altitudeUnitControl = new FormControl<IgeAltitudeUnit>('ft', { nonNullable: true });
 
-  readonly result = signal<OgeMarginResult | null>(null);
+  readonly result = signal<IgeMarginResult | null>(null);
 
   @ViewChild('resultRef') resultRef?: ElementRef<HTMLDivElement>;
 
   readonly marginDisplay = computed(() => {
     const calculation = this.result();
-    return calculation ? `${formatKilograms(calculation.marginKg)} kg` : '-';
+    return calculation ? `${formatIgeKilograms(calculation.marginKg)} kg` : '-';
   });
 
   readonly limitDisplay = computed(() => {
     const calculation = this.result();
-    return calculation ? `${formatKilograms(calculation.limitKg)} kg` : '-';
+    return calculation ? `${formatIgeKilograms(calculation.limitKg)} kg` : '-';
   });
 
   calculate(): void {
@@ -55,15 +55,15 @@ export class OgeMarginComponent {
     }
 
     try {
-      const altitudeMeters = convertAltitudeToMeters(altitude, this.altitudeUnitControl.value);
-      const limitKg = lookupOgeLimitKg(altitudeMeters, temperature);
+      const altitudeMeters = convertIgeAltitudeToMeters(altitude, this.altitudeUnitControl.value);
+      const limitKg = lookupIgeLimitKg(altitudeMeters, temperature);
       this.result.set({
         marginKg: limitKg - grossWeight,
         limitKg,
       });
       this.scrollToResult();
     } catch (error: unknown) {
-      alert(error instanceof Error ? error.message : 'Unable to calculate OGE margin.');
+      alert(error instanceof Error ? error.message : 'Unable to calculate IGE margin.');
     }
   }
 
@@ -100,16 +100,16 @@ export class OgeMarginComponent {
   }
 }
 
-function formatKilograms(value: number): string {
+function formatIgeKilograms(value: number): string {
   return Math.round(value).toFixed(0);
 }
 
 /**
  * Tool metadata used by the application registry.
  */
-export const ogeMarginTool: ToolDefinition = {
-  id: 'oge-margin',
-  name: 'OGE Margin',
-  description: 'Calculate OGE margin from gross weight, temperature, and altitude.',
-  component: OgeMarginComponent,
+export const igeMarginTool: ToolDefinition = {
+  id: 'ige-margin',
+  name: 'IGE Margin',
+  description: 'Calculate IGE margin from gross weight, temperature, and altitude.',
+  component: IgeMarginComponent,
 };

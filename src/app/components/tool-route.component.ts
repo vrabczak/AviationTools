@@ -10,6 +10,7 @@ import { flybyTurnTool } from '../tools/flyby-turn/flyby-turn.component';
 import { fuelConsumptionQuantityEnduranceTool } from '../tools/fuel-consumption-quantity-endurance/fuel-consumption-quantity-endurance.component';
 import { fuelConversionTool } from '../tools/fuel-conversion/fuel-conversion.component';
 import { headCrossWindTool } from '../tools/head-cross-wind/head-cross-wind.component';
+import { igeMarginTool } from '../tools/ige-margin/ige-margin.component';
 import { holdingEntryTool } from '../tools/holding-entry/holding-entry.component';
 import { minimaAltitudeHeightTool } from '../tools/minima-altitude-height/minima-altitude-height.component';
 import { ogeMarginTool } from '../tools/oge-margin/oge-margin.component';
@@ -34,6 +35,7 @@ export const tools: ToolDefinition[] = [
   flybyTurnTool,
   fuelConsumptionQuantityEnduranceTool,
   ogeMarginTool,
+  igeMarginTool,
   coordinatesConversionTool,
   distanceConversionTool,
   fuelConversionTool,
