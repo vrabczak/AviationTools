@@ -20,7 +20,7 @@ describe('MinimaAltitudeHeight', () => {
 
   it('uses aircraft minima when OCH is lower', () => {
     const result = component.calculateMinima(1500, 200, 250, 50);
-    expect(result.usesAircraftMinima).toBeTrue();
+    expect(result.usesAircraftMinima).toBe(true);
     expect(result.decisionAltitude).toBeGreaterThan(1500);
   });
 

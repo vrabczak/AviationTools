@@ -53,7 +53,7 @@ describe('FuelConsumptionQuantityEnduranceComponent', () => {
 
   it('hides density input when quantity and consumption use the same basis', () => {
     fixture.detectChanges();
-    expect(component.shouldShowDensityInput()).toBeFalse();
+    expect(component.shouldShowDensityInput()).toBe(false);
     expect(element.querySelector('#fcqe-density')).toBeNull();
   });
 
@@ -61,7 +61,7 @@ describe('FuelConsumptionQuantityEnduranceComponent', () => {
     component.quantityUnitControl.setValue('kg');
     fixture.detectChanges();
 
-    expect(component.shouldShowDensityInput()).toBeTrue();
+    expect(component.shouldShowDensityInput()).toBe(true);
     expect(element.querySelector('#fcqe-density')).not.toBeNull();
   });
 

@@ -30,8 +30,8 @@ describe('IGE margin helper', () => {
   });
 
   it('rejects wind velocity outside the supported direction range', () => {
-    expect(() => lookupIgeWindCorrectionKg(8, 'tailwind')).toThrowError(
-      'Wind velocity for tailwind must be between 0 m/s and 7 m/s.',
+    expect(() => lookupIgeWindCorrectionKg(11, 'tailwind')).toThrowError(
+      'Wind velocity for tailwind must be between 0 m/s and 10 m/s.',
     );
   });
 });

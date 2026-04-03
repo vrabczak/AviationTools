@@ -30,8 +30,8 @@ describe('OGE margin helper', () => {
   });
 
   it('rejects wind velocity outside the supported direction range', () => {
-    expect(() => lookupOgeWindCorrectionKg(8, 'tailwind')).toThrowError(
-      'Wind velocity for tailwind must be between 0 m/s and 7 m/s.',
+    expect(() => lookupOgeWindCorrectionKg(11, 'tailwind')).toThrowError(
+      'Wind velocity for tailwind must be between 0 m/s and 10 m/s.',
     );
   });
 });

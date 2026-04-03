@@ -21,8 +21,8 @@
     {
       "type": "node-terminal",
       "request": "launch",
-      "name": "ng test (no watch)",
-      "command": "npx.cmd ng test --watch=false"
+      "name": "npm test (Vitest, no watch)",
+      "command": "npm.cmd test -- --watch=false"
     }
   ]
 }

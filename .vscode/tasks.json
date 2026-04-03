@@ -30,13 +30,13 @@
       }
     },
     {
-      "label": "ng test (no watch)",
-      "type": "shell",
-      "command": "npx",
+      "label": "npm test (Vitest, no watch)",
+      "type": "process",
+      "command": "npm",
       "windows": {
-        "command": "npx.cmd"
+        "command": "npm.cmd"
       },
-      "args": ["ng", "test", "--watch=false"],
+      "args": ["test", "--", "--watch=false"],
       "group": "test",
       "problemMatcher": []
     }

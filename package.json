@@ -22,15 +22,10 @@
     "@angular/build": "^21.2.6",
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
-    "@types/jasmine": "^5.1.4",
     "@types/node": "^24.10.1",
-    "jasmine-core": "^5.1.2",
-    "karma": "^6.4.3",
-    "karma-coverage": "^2.2.1",
-    "karma-chrome-launcher": "^3.2.0",
-    "karma-jasmine": "^5.1.0",
-    "karma-jasmine-html-reporter": "^2.1.0",
-    "typescript": "^5.7.0"
+    "jsdom": "^29.0.1",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.2"
   },
   "dependencies": {
     "@angular/common": "^21.0.0",
