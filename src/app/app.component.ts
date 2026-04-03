@@ -4,6 +4,7 @@ import { MenuComponent } from './components/menu.component';
 import { RouterOutlet } from '@angular/router';
 import { ToolDefinition } from './tools/tool-definition';
 import { tools } from './components/tool-route.component';
+import { PwaUpdateService } from './services/pwa-update.service';
 
 /**
  * Root application component managing theme, menu state, and active tool selection.
@@ -22,8 +23,10 @@ export class AppComponent {
 
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly pwaUpdateService = inject(PwaUpdateService);
 
   constructor() {
+    void this.pwaUpdateService;
     if (typeof window !== 'undefined') {
       const updateAppHeight = (): void => {
         const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
