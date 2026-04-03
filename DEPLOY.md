@@ -9,10 +9,10 @@ The workflow is defined in `.github/workflows/deploy.yml`.
 It currently:
 
 1. Checks out the repository
-2. Sets up Node.js 20
+2. Sets up Node.js 24
 3. Runs `npm ci`
 4. Runs `npm run build:prod`
-5. Publishes `dist/aviation-tools` to the `gh-pages` branch
+5. Publishes `dist/aviation-tools/browser` to the `gh-pages` branch
 
 The workflow triggers on:
 
@@ -58,10 +58,10 @@ npm ci
 npm run build:prod
 ```
 
-Expected production output:
+Expected deployable output:
 
 ```text
-dist/aviation-tools
+dist/aviation-tools/browser
 ```
 
 ## Typical Release
