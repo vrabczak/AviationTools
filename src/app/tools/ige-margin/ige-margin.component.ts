@@ -186,6 +186,6 @@ function formatIgeKnots(valueMps: number): string {
 export const igeMarginTool: ToolDefinition = {
   id: 'ige-margin',
   name: 'IGE Margin',
-  description: 'Calculate IGE margin from gross weight, temperature, and altitude.',
+  description: 'Calculate IGE margin from gross weight, temperature, altitude and wind.',
   component: IgeMarginComponent,
 };
