@@ -5,3 +5,11 @@
 .margin-card.margin-negative .value {
   color: var(--danger);
 }
+
+.wind-correction-card.wind-correction-positive .value {
+  color: var(--success);
+}
+
+.wind-correction-card.wind-correction-negative .value {
+  color: var(--warning);
+}

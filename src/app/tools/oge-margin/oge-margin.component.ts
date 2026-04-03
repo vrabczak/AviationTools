@@ -2,11 +2,16 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, Injector, ViewChild, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ToolDefinition } from '../tool-definition';
-import { OgeAltitudeUnit, convertAltitudeToMeters, lookupOgeLimitKg } from './oge-margin.helper';
+import { OgeAltitudeUnit, convertAltitudeToMeters, getOgeWindCorrectionMaxVelocityMps, lookupOgeLimitKg, lookupOgeWindCorrectionKg } from './oge-margin.helper';
+import { OgeWindDirection } from './oge-margin.wind-correction.data';
 
 interface OgeMarginResult {
   marginKg: number;
   limitKg: number;
+  correctedLimitKg: number;
+  correctedMarginKg: number;
+  windApplied: boolean;
+  windCorrectionKg: number;
 }
 
 /**
@@ -21,11 +26,18 @@ interface OgeMarginResult {
 })
 export class OgeMarginComponent {
   private readonly injector = inject(Injector);
+  private readonly windVelocityLimitsKt = {
+    headwind: formatKnots(getOgeWindCorrectionMaxVelocityMps('headwind')),
+    crosswind: formatKnots(getOgeWindCorrectionMaxVelocityMps('crosswind')),
+    tailwind: formatKnots(getOgeWindCorrectionMaxVelocityMps('tailwind')),
+  } satisfies Record<OgeWindDirection, string>;
 
   readonly grossWeightControl = new FormControl('', { nonNullable: true });
   readonly temperatureControl = new FormControl('', { nonNullable: true });
   readonly altitudeControl = new FormControl('', { nonNullable: true });
   readonly altitudeUnitControl = new FormControl<OgeAltitudeUnit>('ft', { nonNullable: true });
+  readonly windVelocityControl = new FormControl('', { nonNullable: true });
+  readonly windDirectionControl = new FormControl<OgeWindDirection | ''>('', { nonNullable: true });
 
   readonly result = signal<OgeMarginResult | null>(null);
 
@@ -41,12 +53,28 @@ export class OgeMarginComponent {
     return calculation ? `${formatKilograms(calculation.limitKg)} kg` : '-';
   });
 
+  readonly correctedLimitDisplay = computed(() => {
+    const calculation = this.result();
+    return calculation ? `${formatKilograms(calculation.correctedLimitKg)} kg` : '-';
+  });
+
+  readonly correctedMarginDisplay = computed(() => {
+    const calculation = this.result();
+    return calculation ? `${formatKilograms(calculation.correctedMarginKg)} kg` : '-';
+  });
+
+  readonly windCorrectionDisplay = computed(() => {
+    const calculation = this.result();
+    return calculation ? `${formatSignedKilograms(calculation.windCorrectionKg)} kg` : '-';
+  });
+
   calculate(): void {
     const grossWeight = this.parseNumericField(this.grossWeightControl.value, 'Gross weight', false);
     const temperature = this.parseNumericField(this.temperatureControl.value, 'Temperature', true);
     const altitude = this.parseNumericField(this.altitudeControl.value, 'Altitude', false);
+    const windVelocity = this.parseNumericField(this.windVelocityControl.value, 'Wind velocity', false);
 
-    if (grossWeight === undefined || temperature === undefined || altitude === undefined) {
+    if (grossWeight === undefined || temperature === undefined || altitude === undefined || windVelocity === undefined) {
       return;
     }
     if (grossWeight === null || temperature === null || altitude === null) {
@@ -54,12 +82,27 @@ export class OgeMarginComponent {
       return;
     }
 
+    const windDirection = this.windDirectionControl.value;
+    const windApplied = windVelocity !== null || windDirection !== '';
+    if ((windVelocity === null) !== (windDirection === '')) {
+      alert('Enter both Wind velocity and Wind direction, or leave both blank.');
+      return;
+    }
+
     try {
       const altitudeMeters = convertAltitudeToMeters(altitude, this.altitudeUnitControl.value);
       const limitKg = lookupOgeLimitKg(altitudeMeters, temperature);
+      const windCorrectionKg = windApplied && windVelocity !== null && windDirection !== ''
+        ? this.lookupWindCorrectionFromKnots(windVelocity, windDirection)
+        : 0;
+      const correctedLimitKg = limitKg + windCorrectionKg;
       this.result.set({
         marginKg: limitKg - grossWeight,
         limitKg,
+        correctedLimitKg,
+        correctedMarginKg: correctedLimitKg - grossWeight,
+        windApplied,
+        windCorrectionKg,
       });
       this.scrollToResult();
     } catch (error: unknown) {
@@ -98,10 +141,43 @@ export class OgeMarginComponent {
       }
     }, { injector: this.injector });
   }
+
+  private lookupWindCorrectionFromKnots(windVelocityKt: number, direction: OgeWindDirection): number {
+    const maxWindVelocityMps = getOgeWindCorrectionMaxVelocityMps(direction);
+    const maxWindVelocityKt = metersPerSecondToKnots(maxWindVelocityMps);
+    if (windVelocityKt > maxWindVelocityKt) {
+      throw new Error(`Wind velocity for ${direction} must be between 0 kt and ${this.windVelocityLimitsKt[direction]} kt.`);
+    }
+
+    return lookupOgeWindCorrectionKg(knotsToMetersPerSecond(windVelocityKt), direction);
+  }
 }
 
 function formatKilograms(value: number): string {
   return Math.round(value).toFixed(0);
+}
+
+function formatSignedKilograms(value: number): string {
+  const roundedValue = Math.round(value);
+  if (roundedValue > 0) {
+    return `+${roundedValue}`;
+  }
+  if (roundedValue < 0) {
+    return `${roundedValue}`;
+  }
+  return '0';
+}
+
+function knotsToMetersPerSecond(valueKt: number): number {
+  return valueKt * 0.514444;
+}
+
+function metersPerSecondToKnots(valueMps: number): number {
+  return valueMps / 0.514444;
+}
+
+function formatKnots(valueMps: number): string {
+  return (Math.round(metersPerSecondToKnots(valueMps) * 10) / 10).toFixed(1);
 }
 
 /**
@@ -110,6 +186,6 @@ function formatKilograms(value: number): string {
 export const ogeMarginTool: ToolDefinition = {
   id: 'oge-margin',
   name: 'OGE Margin',
-  description: 'Calculate OGE margin from gross weight, temperature, and altitude.',
+  description: 'Calculate OGE margin from gross weight, temperature, altitude and wind.',
   component: OgeMarginComponent,
 };

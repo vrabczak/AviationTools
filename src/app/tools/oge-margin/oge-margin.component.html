@@ -2,8 +2,8 @@
   <h2>OGE Margin</h2>
   <p class="tool-description">
     Enter Gross Weight, Temperature, and Altitude to calculate OGE margin in kilograms.
-    Altitude accepts meters or feet. Supported table range is 0-3200 m and -40 to 40 C.
-    Values between table points are interpolated from the bundled OGE table.
+    Altitude accepts meters or feet. Supported table range is 0-10490 ft and -40 to 40 °C.
+    Optional wind correction supports 0-23 kt headwind, 0-19 kt crosswind, and 0-13 kt tailwind.
   </p>
 
   <div class="input-group">
@@ -12,7 +12,7 @@
   </div>
 
   <div class="input-group">
-    <label for="oge-temperature">Temperature (C)</label>
+    <label for="oge-temperature">Temperature (°C)</label>
     <input id="oge-temperature" type="number" step="any" placeholder="15" [formControl]="temperatureControl" (keydown.enter)="calculate()">
   </div>
 
@@ -25,6 +25,22 @@
         <option value="ft">ft</option>
       </select>
     </div>
+  </div>
+
+  <div class="input-group">
+    <label for="oge-wind-velocity">Wind Velocity (kt, optional)</label>
+    <input id="oge-wind-velocity" type="number" step="any" min="0" placeholder="12" [formControl]="windVelocityControl" (keydown.enter)="calculate()">
+  </div>
+
+  <div class="input-group">
+    <label for="oge-wind-direction">Wind Direction (optional)</label>
+    <select id="oge-wind-direction" [formControl]="windDirectionControl">
+      <option value="">No wind correction</option>
+      <option value="headwind">Headwind</option>
+      <option value="crosswind">Crosswind</option>
+      <option value="tailwind">Tailwind</option>
+    </select>
+    <small>Enter both optional wind fields to apply the OGE wind-correction table.</small>
   </div>
 
   <button class="btn-primary" type="button" (click)="calculate()">Calculate</button>
@@ -42,14 +58,39 @@
           <span class="label">OGE Limit</span>
           <span id="oge-limit-result" class="value">{{ limitDisplay() }}</span>
         </div>
+
+        @if (calculation.windApplied) {
+          <div class="result-value wind-correction-card" [class.wind-correction-positive]="calculation.windCorrectionKg > 0" [class.wind-correction-negative]="calculation.windCorrectionKg < 0">
+            <span class="label">Wind Correction</span>
+            <span id="oge-wind-correction-result" class="value">{{ windCorrectionDisplay() }}</span>
+          </div>
+
+          <div class="result-value">
+            <span class="label">Corrected OGE Limit</span>
+            <span id="oge-corrected-limit-result" class="value">{{ correctedLimitDisplay() }}</span>
+          </div>
+
+          <div class="result-value margin-card" [class.margin-negative]="calculation.correctedMarginKg < 0">
+            <span class="label">Margin After Wind Correction</span>
+            <span id="oge-corrected-margin-result" class="value">{{ correctedMarginDisplay() }}</span>
+          </div>
+        }
       </div>
 
-      <div class="result-info" [class.success]="calculation.marginKg >= 0" [class.warning]="calculation.marginKg < 0">
+      <div class="result-info" [class.success]="calculation.correctedMarginKg >= 0" [class.warning]="calculation.correctedMarginKg < 0">
         <p>
-          @if (calculation.marginKg >= 0) {
-            Positive OGE margin available at the selected conditions.
+          @if (calculation.correctedMarginKg >= 0) {
+            @if (calculation.windApplied) {
+              Positive OGE margin available after applying the selected wind correction.
+            } @else {
+              Positive OGE margin available at the selected conditions.
+            }
           } @else {
-            Gross weight exceeds the interpolated OGE limit at the selected conditions.
+            @if (calculation.windApplied) {
+              Gross weight exceeds the wind-corrected OGE limit at the selected conditions.
+            } @else {
+              Gross weight exceeds the interpolated OGE limit at the selected conditions.
+            }
           }
         </p>
       </div>

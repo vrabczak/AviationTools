@@ -1,4 +1,5 @@
 import { OGE_TABLE } from './oge-margin.data';
+import { OGE_WIND_CORRECTION_TABLE, OgeWindDirection } from './oge-margin.wind-correction.data';
 
 export type OgeAltitudeUnit = 'm' | 'ft';
 
@@ -9,6 +10,11 @@ const MIN_ALTITUDE_METERS = ALTITUDES_METERS[0];
 const MAX_ALTITUDE_METERS = ALTITUDES_METERS[ALTITUDES_METERS.length - 1];
 const MIN_TEMPERATURE_C = OGE_TABLE.temperaturesC[0];
 const MAX_TEMPERATURE_C = OGE_TABLE.temperaturesC[OGE_TABLE.temperaturesC.length - 1];
+const OGE_WIND_CORRECTION_ROWS = {
+  headwind: buildWindCorrectionRows('headwindKg'),
+  crosswind: buildWindCorrectionRows('crosswindKg'),
+  tailwind: buildWindCorrectionRows('tailwindKg'),
+} satisfies Record<OgeWindDirection, readonly WindCorrectionRow[]>;
 
 /**
  * Converts altitude input to meters for the OGE lookup table.
@@ -70,10 +76,69 @@ export function lookupOgeLimitKg(altitudeMeters: number, temperatureC: number): 
   );
 }
 
+/**
+ * Looks up OGE wind correction using the bundled correction table.
+ * @param windVelocityMps Wind velocity in meters per second.
+ * @param direction Wind direction relative to the helicopter heading.
+ * @returns Interpolated OGE correction in kilograms.
+ * @throws Error when the requested velocity is outside the supported range for the selected direction.
+ */
+export function lookupOgeWindCorrectionKg(windVelocityMps: number, direction: OgeWindDirection): number {
+  validateFinite(windVelocityMps, 'Wind velocity');
+
+  if (windVelocityMps < 0) {
+    throw new Error('Wind velocity must be greater than or equal to zero.');
+  }
+
+  const rows = OGE_WIND_CORRECTION_ROWS[direction];
+  const maxWindVelocityMps = rows[rows.length - 1]?.velocityMps ?? 0;
+
+  if (windVelocityMps > maxWindVelocityMps) {
+    throw new Error(`Wind velocity for ${direction} must be between 0 m/s and ${maxWindVelocityMps} m/s.`);
+  }
+
+  const bounds = findBounds(
+    rows.map((row) => row.velocityMps),
+    windVelocityMps,
+  );
+  const lowerRow = rows[bounds.lowerIndex];
+  const upperRow = rows[bounds.upperIndex];
+
+  return interpolateLinear(
+    windVelocityMps,
+    lowerRow.velocityMps,
+    upperRow.velocityMps,
+    lowerRow.correctionKg,
+    upperRow.correctionKg,
+  );
+}
+
+/**
+ * Returns the maximum supported wind velocity for the selected correction direction.
+ * @param direction Wind direction relative to the helicopter heading.
+ * @returns Maximum supported wind velocity in meters per second.
+ */
+export function getOgeWindCorrectionMaxVelocityMps(direction: OgeWindDirection): number {
+  const rows = OGE_WIND_CORRECTION_ROWS[direction];
+  return rows[rows.length - 1]?.velocityMps ?? 0;
+}
+
 function validateFinite(value: number, label: string): void {
   if (!Number.isFinite(value)) {
     throw new Error(`${label} must be a finite number.`);
   }
+}
+
+function buildWindCorrectionRows(column: 'headwindKg' | 'crosswindKg' | 'tailwindKg'): readonly WindCorrectionRow[] {
+  return [
+    { velocityMps: 0, correctionKg: 0 },
+    ...OGE_WIND_CORRECTION_TABLE.rows
+      .map((row) => ({
+        velocityMps: row.velocityMps,
+        correctionKg: row[column],
+      }))
+      .filter((row): row is WindCorrectionRow => row.correctionKg !== null),
+  ];
 }
 
 function findBounds(values: readonly number[], target: number): { lowerIndex: number; upperIndex: number } {
@@ -98,4 +163,9 @@ function interpolateLinear(x: number, x0: number, x1: number, y0: number, y1: nu
     return y0;
   }
   return y0 + (((x - x0) * (y1 - y0)) / (x1 - x0));
+}
+
+interface WindCorrectionRow {
+  velocityMps: number;
+  correctionKg: number;
 }
