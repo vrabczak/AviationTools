@@ -1,304 +1,127 @@
-# GitHub Pages Deployment Guide
+# GitHub Pages Deployment
 
-## Automatic Deployment with GitHub Actions ✨
+This project deploys to GitHub Pages with GitHub Actions.
 
-The app automatically deploys to GitHub Pages whenever you push to the `main` branch.
+## Current Deployment Flow
 
-## Initial Setup
+The workflow is defined in `.github/workflows/deploy.yml`.
 
-### 1. Create GitHub Repository
+It currently:
 
-1. Go to [GitHub](https://github.com) and create a new repository
-2. Name it `AviationTools` (or your preferred name)
-3. Set visibility (Public or Private)
-4. Don't initialize with README
+1. Checks out the repository
+2. Sets up Node.js 20
+3. Runs `npm ci`
+4. Runs `npm run build:prod`
+5. Publishes `dist/aviation-tools` to the `gh-pages` branch
 
-### 2. Update Configuration
+The workflow triggers on:
 
-**Update `package.json`** - Replace `yourusername` with your GitHub username:
+- Push to `main`
+- Push to `work`
+- Manual run from the GitHub Actions UI
+
+## Repo Settings
+
+In GitHub, configure:
+
+1. `Settings -> Pages`
+2. Source: `Deploy from a branch`
+3. Branch: `gh-pages` / `root`
+
+Also configure:
+
+1. `Settings -> Actions -> General`
+2. Workflow permissions: `Read and write permissions`
+
+## Required Project Values
+
+If the repository name is `AviationTools`, these values should stay aligned:
+
+In `package.json`:
+
 ```json
-"homepage": "https://YOUR-USERNAME.github.io/AviationTools"
-```
-
-**Update `package.json` build script** - Ensure the `build:prod` base href matches your repo name:
-```json
+"homepage": "https://YOUR-USERNAME.github.io/AviationTools",
 "build:prod": "ng build --configuration production --base-href /AviationTools/"
 ```
 
-### 3. Push to GitHub
+If you rename the repository, update both:
+
+- `homepage`
+- `build:prod` base href
+
+## Local Verification
+
+Use these commands before pushing:
 
 ```bash
-# Initialize git (if not already done)
-git init
-
-# Add all files
-git add .
-
-# Commit
-git commit -m "Initial commit - Aviation Tools PWA"
-
-# Add remote (replace YOUR-USERNAME)
-git remote add origin https://github.com/YOUR-USERNAME/AviationTools.git
-
-# Push to main branch
-git branch -M main
-git push -u origin main
-```
-
-### 4. Enable GitHub Pages
-
-1. Go to your repository on GitHub
-2. Click **Settings** → **Pages** (left sidebar)
-3. Under **Build and deployment**:
-   - Source: **Deploy from a branch**
-   - Branch: **gh-pages** / (root)
-4. Click **Save**
-
-### 5. Wait for Deployment
-
-- GitHub Actions will automatically run
-- Check progress: **Actions** tab in your repo
-- First deployment takes 1-2 minutes
-- App will be live at: `https://YOUR-USERNAME.github.io/AviationTools`
-
-## How It Works
-
-### Automatic Deployment Workflow
-
-```
-┌─────────────┐
-│  Push code  │
-│  to main    │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────────────┐
-│  GitHub Actions starts  │
-│  (.github/workflows/)   │
-└──────┬──────────────────┘
-       │
-       ▼
-┌─────────────────────┐
-│  Install Node.js 20 │
-│  Install packages   │
-└──────┬──────────────┘
-       │
-       ▼
-┌─────────────────────┐
-│  Build production   │
-│  npm run build:prod │
-└──────┬──────────────┘
-       │
-       ▼
-┌─────────────────────┐
-│  Deploy to          │
-│  gh-pages branch    │
-└──────┬──────────────┘
-       │
-       ▼
-┌─────────────────────┐
-│  Live on GitHub     │
-│  Pages! 🎉          │
-└─────────────────────┘
-```
-
-### Workflow Triggers
-
-- **Push to main**: Automatic deployment
-- **Manual**: Actions tab → Deploy to GitHub Pages → Run workflow
-
-## Making Updates
-
-### Simple Workflow
-
-```bash
-# 1. Make your changes to the code
-# 2. Test locally
-npm start
-
-# 3. Commit and push
-git add .
-git commit -m "Add new feature"
-git push
-
-# 4. Wait 1-2 minutes - automatic deployment!
-```
-
-That's it! No need to run a manual deploy command.
-
-## Manual Deployment (Alternative)
-
-If you prefer manual deployment without GitHub Actions, build with `npm run build:prod` and publish `dist/aviation-tools/`.
-
-## Repository Settings
-
-### Required Permissions
-
-**Settings** → **Actions** → **General**:
-- Workflow permissions: **Read and write permissions**
-- Allow GitHub Actions to create and approve pull requests: **Enabled**
-
-### Branch Protection (Optional)
-
-Protect the `main` branch:
-- Require pull request reviews
-- Require status checks to pass
-- Require branches to be up to date
-
-## Monitoring Deployments
-
-### Check Deployment Status
-
-1. Go to **Actions** tab
-2. Click on latest workflow run
-3. View build logs and deployment status
-4. Green checkmark = successful deployment ✅
-
-### Common Workflow Statuses
-
-- 🟡 **In Progress**: Building and deploying
-- ✅ **Success**: Deployed successfully
-- ❌ **Failed**: Check logs for errors
-
-## Troubleshooting
-
-### Build Fails in GitHub Actions
-
-**Check the Actions tab for error details:**
-
-1. Click on failed workflow
-2. Expand failed step
-3. Read error message
-
-**Common fixes:**
-- Ensure `package.json` has correct dependencies
-- Check TypeScript errors locally: `npm run build`
-- Verify Node.js version compatibility
-
-### Deployment Succeeds but Page is Blank
-
-1. Check `build:prod` base href matches repo name
-2. Verify `homepage` in `package.json` is correct
-3. Check browser console for errors
-4. Ensure GitHub Pages source is `gh-pages` branch
-
-### GitHub Pages Not Updating
-
-1. Check Actions tab - workflow succeeded?
-2. Hard refresh browser: `Ctrl+F5` (Windows) or `Cmd+Shift+R` (Mac)
-3. Clear browser cache
-4. Wait 1-2 minutes for CDN propagation
-
-### Permission Denied Error
-
-**Settings** → **Actions** → **General**:
-- Set workflow permissions to "Read and write permissions"
-
-## Environment Variables
-
-### Custom Configuration
-
-Add secrets or environment variables:
-
-1. **Settings** → **Secrets and variables** → **Actions**
-2. Click **New repository secret**
-3. Add variable name and value
-4. Reference in workflow: `${{ secrets.SECRET_NAME }}`
-
-## Multiple Environments
-
-### Deploy to Different Environments
-
-**Staging**: Deploy `develop` branch to staging
-**Production**: Deploy `main` branch to production
-
-Create separate workflows for each environment.
-
-## Offline Support
-
-The deployed app works offline:
-- ✅ All assets bundled
-- ✅ CSS inlined
-- ✅ Images base64 encoded
-- ✅ PWA manifest included
-- ✅ Works from bookmarks
-- ✅ Installable on devices
-
-## Testing Deployment
-
-### iPad Mini Testing
-
-1. Open Safari on iPad Mini
-2. Navigate to GitHub Pages URL
-3. Test both orientations (portrait/landscape)
-4. Add to Home Screen
-5. Test offline mode (airplane mode)
-
-### Checklist
-
-- ✅ App loads correctly
-- ✅ All tools function properly
-- ✅ Altitude Correction calculates correctly
-- ✅ Turn Calculator works
-- ✅ Responsive design on iPad Mini
-- ✅ Works on mobile phones
-- ✅ Works on desktop
-- ✅ No console errors
-- ✅ Offline functionality
-
-## Performance
-
-### Bundle Size
-
-Optimize for fast loading:
-- Production build is minified
-- Images are inlined (small size)
-- CSS is bundled
-- Single request for JS
-
-### Lighthouse Score Goals
-
-- Performance: 90+
-- Accessibility: 95+
-- Best Practices: 90+
-- SEO: 90+
-- PWA: Installable
-
-## Your Deployment URL
-
-Once deployed, your app will be available at:
-
-```
-https://YOUR-USERNAME.github.io/AviationTools
-```
-
-**Replace `YOUR-USERNAME` with your actual GitHub username.**
-
----
-
-## Quick Reference
-
-### Deployment Commands
-
-```bash
-# Push and auto-deploy
-git push
-
-# Local development
-npm start
-
-# Production build
+npm ci
 npm run build:prod
 ```
 
-### Important Files
+Expected production output:
 
-- `.github/workflows/deploy.yml` - GitHub Actions workflow
-- `package.json` - Homepage URL and scripts
-- `angular.json` - Build configuration
-- `src/manifest.json` - PWA manifest
-- `src/.nojekyll` - Disable Jekyll on GitHub Pages
+```text
+dist/aviation-tools
+```
 
----
+## Typical Release
 
-**🎉 Ready to deploy!** Push your code and watch the magic happen! ✈️
+```bash
+git add .
+git commit -m "Update deployment"
+git push
+```
+
+After the push:
+
+1. Open the `Actions` tab
+2. Check the latest `Deploy to GitHub Pages` run
+3. Wait for the `gh-pages` branch update
+
+## Troubleshooting
+
+### `npm ci` fails
+
+This usually means `package-lock.json` is out of sync with `package.json`.
+
+Fix:
+
+```bash
+Remove-Item -Recurse -Force .\node_modules
+Remove-Item -Force .\package-lock.json
+npm install
+```
+
+Commit the updated `package-lock.json` before pushing.
+
+### Build succeeds locally but Pages is blank
+
+Check:
+
+- `homepage` matches the GitHub Pages URL
+- `build:prod` uses the correct `--base-href`
+- GitHub Pages is serving the `gh-pages` branch
+
+### Workflow fails on permissions
+
+Check:
+
+- Repository Actions permissions are set to `Read and write permissions`
+- The workflow still has `contents: write`
+
+## Important Files
+
+- `.github/workflows/deploy.yml`
+- `package.json`
+- `angular.json`
+- `ngsw-config.json`
+- `src/manifest.json`
+- `src/.nojekyll`
+
+## Deployment URL
+
+When configured for GitHub Pages, the app is served at:
+
+```text
+https://YOUR-USERNAME.github.io/AviationTools
+```
