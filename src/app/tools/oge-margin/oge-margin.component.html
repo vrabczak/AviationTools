@@ -8,18 +8,18 @@
 
   <div class="input-group">
     <label for="oge-gross-weight">Gross Weight (kg)</label>
-    <input id="oge-gross-weight" type="number" step="any" min="0" placeholder="13000" [formControl]="grossWeightControl" (keydown.enter)="calculate()">
+    <input id="oge-gross-weight" type="number" step="any" min="0" placeholder="e.g., 13000" [formControl]="grossWeightControl" (keydown.enter)="calculate()">
   </div>
 
   <div class="input-group">
     <label for="oge-temperature">Temperature (°C)</label>
-    <input id="oge-temperature" type="number" step="any" placeholder="15" [formControl]="temperatureControl" (keydown.enter)="calculate()">
+    <input id="oge-temperature" type="number" step="any" placeholder="e.g., 15" [formControl]="temperatureControl" (keydown.enter)="calculate()">
   </div>
 
   <div class="input-group input-with-unit">
     <label for="oge-altitude">Altitude</label>
     <div class="inline-row">
-      <input id="oge-altitude" type="number" step="any" min="0" placeholder="1000" [formControl]="altitudeControl" (keydown.enter)="calculate()">
+      <input id="oge-altitude" type="number" step="any" min="0" placeholder="e.g., 3000" [formControl]="altitudeControl" (keydown.enter)="calculate()">
       <select id="oge-altitude-unit" [formControl]="altitudeUnitControl" aria-label="Altitude unit">
         <option value="m">m</option>
         <option value="ft">ft</option>
@@ -29,7 +29,7 @@
 
   <div class="input-group">
     <label for="oge-wind-velocity">Wind Velocity (kt, optional)</label>
-    <input id="oge-wind-velocity" type="number" step="any" min="0" placeholder="12" [formControl]="windVelocityControl" (keydown.enter)="calculate()">
+    <input id="oge-wind-velocity" type="number" step="any" min="0" placeholder="e.g., 12" [formControl]="windVelocityControl" (keydown.enter)="calculate()">
   </div>
 
   <div class="input-group">

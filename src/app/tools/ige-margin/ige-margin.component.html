@@ -8,18 +8,18 @@
 
   <div class="input-group">
     <label for="ige-gross-weight">Gross Weight (kg)</label>
-    <input id="ige-gross-weight" type="number" step="any" min="0" placeholder="13000" [formControl]="grossWeightControl" (keydown.enter)="calculate()">
+    <input id="ige-gross-weight" type="number" step="any" min="0" placeholder="e.g., 13000" [formControl]="grossWeightControl" (keydown.enter)="calculate()">
   </div>
 
   <div class="input-group">
     <label for="ige-temperature">Temperature (°C)</label>
-    <input id="ige-temperature" type="number" step="any" placeholder="15" [formControl]="temperatureControl" (keydown.enter)="calculate()">
+    <input id="ige-temperature" type="number" step="any" placeholder="e.g., 15" [formControl]="temperatureControl" (keydown.enter)="calculate()">
   </div>
 
   <div class="input-group input-with-unit">
     <label for="ige-altitude">Altitude</label>
     <div class="inline-row">
-      <input id="ige-altitude" type="number" step="any" min="0" placeholder="3000" [formControl]="altitudeControl" (keydown.enter)="calculate()">
+      <input id="ige-altitude" type="number" step="any" min="0" placeholder="e.g., 3000" [formControl]="altitudeControl" (keydown.enter)="calculate()">
       <select id="ige-altitude-unit" [formControl]="altitudeUnitControl" aria-label="Altitude unit">
         <option value="ft">ft</option>
         <option value="m">m</option>
@@ -29,7 +29,7 @@
 
   <div class="input-group">
     <label for="ige-wind-velocity">Wind Velocity (kt, optional)</label>
-    <input id="ige-wind-velocity" type="number" step="any" min="0" placeholder="12" [formControl]="windVelocityControl" (keydown.enter)="calculate()">
+    <input id="ige-wind-velocity" type="number" step="any" min="0" placeholder="e.g., 12" [formControl]="windVelocityControl" (keydown.enter)="calculate()">
   </div>
 
   <div class="input-group">

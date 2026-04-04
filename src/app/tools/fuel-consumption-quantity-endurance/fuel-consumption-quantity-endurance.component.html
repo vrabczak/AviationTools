@@ -8,7 +8,7 @@
   <div class="input-group input-with-unit">
     <label for="fcqe-consumption">Consumption</label>
     <div class="inline-row">
-      <input id="fcqe-consumption" type="number" step="any" placeholder="28" [formControl]="consumptionControl" (keydown.enter)="calculate()">
+      <input id="fcqe-consumption" type="number" step="any" placeholder="e.g., 28" [formControl]="consumptionControl" (keydown.enter)="calculate()">
       <select id="fcqe-consumption-unit" [formControl]="consumptionUnitControl" aria-label="Consumption unit">
         <option value="lpm">L/min</option>
         <option value="lph">L/h</option>
@@ -21,7 +21,7 @@
   <div class="input-group input-with-unit">
     <label for="fcqe-quantity">Fuel Quantity</label>
     <div class="inline-row">
-      <input id="fcqe-quantity" type="number" step="any" placeholder="1500" [formControl]="quantityControl" (keydown.enter)="calculate()">
+      <input id="fcqe-quantity" type="number" step="any" placeholder="e.g., 1500" [formControl]="quantityControl" (keydown.enter)="calculate()">
       <select id="fcqe-quantity-unit" [formControl]="quantityUnitControl" aria-label="Fuel quantity unit">
         <option value="liter">L</option>
         <option value="kg">kg</option>
@@ -38,7 +38,7 @@
 
   <div class="input-group">
     <label for="fcqe-endurance">Endurance (HH:MM:SS)</label>
-    <input id="fcqe-endurance" type="text" placeholder="01:30:00" [formControl]="enduranceControl" (keydown.enter)="calculate()">
+    <input id="fcqe-endurance" type="text" placeholder="e.g., 01:30:00" [formControl]="enduranceControl" (keydown.enter)="calculate()">
   </div>
 
   <button class="btn-primary" (click)="calculate()">Calculate</button>

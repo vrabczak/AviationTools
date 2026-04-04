@@ -21,7 +21,7 @@
       <input
         type="text"
         id="mgrs-input"
-        placeholder="33UVR59664936"
+        placeholder="e.g., 33UVR59664936"
         [formControl]="mgrsInputControl"
         (keydown.enter)="convert()"
       >
@@ -33,7 +33,7 @@
       <input
         type="text"
         id="lat-input"
-        [placeholder]="placeholders[formatControl.value].lat"
+        [placeholder]="'e.g., ' + placeholders[formatControl.value].lat"
         [formControl]="latInputControl"
         (keydown.enter)="convert()"
       >
@@ -43,7 +43,7 @@
       <input
         type="text"
         id="lon-input"
-        [placeholder]="placeholders[formatControl.value].lon"
+        [placeholder]="'e.g., ' + placeholders[formatControl.value].lon"
         [formControl]="lonInputControl"
         (keydown.enter)="convert()"
       >
