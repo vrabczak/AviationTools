@@ -1,0 +1,9 @@
+.validation-error {
+  margin: var(--spacing-md) 0 0;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.result-value {
+  margin-bottom: 0;
+}

@@ -1,0 +1,48 @@
+<div class="tool-content">
+  <h2>Slope / Gradient Conversion</h2>
+  <p class="tool-description">
+    Convert between a slope angle in degrees and gradient as a percentage. Positive values climb; negative values descend.
+  </p>
+
+  <div class="input-group">
+    <label for="slope-gradient-unit">Input type</label>
+    <select id="slope-gradient-unit" [formControl]="unitControl" (change)="onUnitChange()">
+      <option value="slope">Slope angle (degrees)</option>
+      <option value="gradient">Gradient (percent)</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <label for="slope-gradient-value">{{ inputLabel() }}</label>
+    <input
+      id="slope-gradient-value"
+      type="number"
+      step="any"
+      placeholder="e.g., 3"
+      [formControl]="valueControl"
+      [attr.aria-describedby]="errorMessage() ? 'slope-gradient-error' : 'slope-gradient-help'"
+      [attr.aria-invalid]="errorMessage() ? 'true' : null"
+      (keydown.enter)="convert()"
+    >
+    <small id="slope-gradient-help">Use a negative value for a descending slope or gradient.</small>
+  </div>
+
+  <button class="btn-primary" type="button" (click)="convert()">Convert</button>
+
+  @if (errorMessage()) {
+    <p id="slope-gradient-error" class="validation-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (result() !== null) {
+    <div class="result" aria-live="polite">
+      <h3>Converted Value</h3>
+      <div class="result-value">
+        <span class="label">{{ resultLabel() }}</span>
+        <span id="slope-gradient-result" class="value">{{ formattedResult() }}</span>
+      </div>
+      <div class="result-info">
+        <p>Gradient (%) = tan(slope angle) × 100.</p>
+      </div>
+    </div>
+  }
+</div>

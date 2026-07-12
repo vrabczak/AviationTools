@@ -14,6 +14,8 @@ import { igeMarginTool } from '../tools/ige-margin/ige-margin.component';
 import { holdingEntryTool } from '../tools/holding-entry/holding-entry.component';
 import { minimaAltitudeHeightTool } from '../tools/minima-altitude-height/minima-altitude-height.component';
 import { ogeMarginTool } from '../tools/oge-margin/oge-margin.component';
+import { qnhQfeConversionTool } from '../tools/qnh-qfe-conversion/qnh-qfe-conversion.component';
+import { slopeGradientTool } from '../tools/slope-gradient/slope-gradient.component';
 import { speedConversionTool } from '../tools/speed-conversion/speed-conversion.component';
 import { speedDistanceTimeTool } from '../tools/speed-distance-time/speed-distance-time.component';
 import { trackGroundSpeedTool } from '../tools/track-ground-speed/track-ground-speed.component';
@@ -39,6 +41,8 @@ export const tools: ToolDefinition[] = [
   coordinatesConversionTool,
   distanceConversionTool,
   fuelConversionTool,
+  qnhQfeConversionTool,
+  slopeGradientTool,
   speedConversionTool,
   speedDistanceTimeTool,
 ];

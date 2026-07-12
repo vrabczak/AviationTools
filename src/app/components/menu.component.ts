@@ -37,6 +37,8 @@ export class MenuComponent {
     'coordinates-conversion',
     'distance-conversion',
     'fuel-conversion',
+    'qnh-qfe-conversion',
+    'slope-gradient',
     'speed-conversion',
   ];
   private readonly performanceToolIds: readonly string[] = [

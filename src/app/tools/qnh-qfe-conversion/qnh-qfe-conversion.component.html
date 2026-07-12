@@ -1,0 +1,94 @@
+<div class="tool-content">
+  <h2>QNH / QFE Conversion</h2>
+  <p class="tool-description">
+    Convert an altimeter pressure setting between sea-level QNH and aerodrome QFE using the
+    airport elevation and the ISA barometric relationship.
+  </p>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <label for="pressure-type">Input pressure</label>
+      <select id="pressure-type" [formControl]="pressureTypeControl">
+        <option value="qnh">QNH</option>
+        <option value="qfe">QFE</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="pressure-unit">Pressure unit</label>
+      <select id="pressure-unit" [formControl]="pressureUnitControl">
+        <option value="hpa">Hectopascals (hPa)</option>
+        <option value="inhg">Inches of mercury (inHg)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label for="pressure-value">Pressure value</label>
+    <input
+      id="pressure-value"
+      type="number"
+      inputmode="decimal"
+      min="0.01"
+      step="any"
+      placeholder="e.g., 1013.25"
+      [formControl]="pressureControl"
+      (keydown.enter)="convert()"
+      [attr.aria-describedby]="error() ? 'conversion-error' : null"
+    >
+  </div>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <label for="airport-elevation">Airport elevation</label>
+      <input
+        id="airport-elevation"
+        type="number"
+        inputmode="decimal"
+        step="any"
+        placeholder="e.g., 1500"
+        [formControl]="altitudeControl"
+        (keydown.enter)="convert()"
+        [attr.aria-describedby]="error() ? 'conversion-error' : 'elevation-help'"
+      >
+      <small id="elevation-help">Elevation above or below mean sea level.</small>
+    </div>
+
+    <div class="input-group">
+      <label for="altitude-unit">Elevation unit</label>
+      <select id="altitude-unit" [formControl]="altitudeUnitControl">
+        <option value="ft">Feet (ft)</option>
+        <option value="m">Metres (m)</option>
+      </select>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p id="conversion-error" class="error-message" role="alert">{{ error() }}</p>
+  }
+
+  <button class="btn-primary" type="button" (click)="convert()">
+    Convert to {{ outputType().toUpperCase() }}
+  </button>
+
+  @if (result(); as currentResult) {
+    <div class="result" aria-live="polite">
+      <h3>{{ currentResult.type.toUpperCase() }}</h3>
+      <div class="result-grid">
+        <div class="result-value">
+          <span class="label">Hectopascals</span>
+          <span id="result-hpa" class="value">{{ currentResult.hpa.toFixed(1) }}</span>
+          <span class="unit">hPa</span>
+        </div>
+        <div class="result-value">
+          <span class="label">Inches of mercury</span>
+          <span id="result-inhg" class="value">{{ currentResult.inhg.toFixed(2) }}</span>
+          <span class="unit">inHg</span>
+        </div>
+      </div>
+      <div class="result-info">
+        <p>Cross-check pressure settings against current aerodrome or ATC information before use.</p>
+      </div>
+    </div>
+  }
+</div>
