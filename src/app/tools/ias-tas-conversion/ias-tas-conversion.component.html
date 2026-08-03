@@ -16,10 +16,11 @@
         step="any"
         placeholder="e.g., 100"
         [formControl]="flightLevelControl"
+        (input)="onFlightLevelChange()"
         (keydown.enter)="calculate()"
         [attr.aria-describedby]="error() ? 'ias-tas-error' : 'flight-level-help'"
       >
-      <small id="flight-level-help">Enter 100 for FL100.</small>
+      <small id="flight-level-help">Enter 100 for FL100. OAT is prefilled with the ISA value.</small>
     </div>
 
     <div class="input-group">
@@ -32,8 +33,9 @@
         placeholder="e.g., -5"
         [formControl]="oatControl"
         (keydown.enter)="calculate()"
-        [attr.aria-describedby]="error() ? 'ias-tas-error' : null"
+        [attr.aria-describedby]="error() ? 'ias-tas-error' : 'oat-help'"
       >
+      <small id="oat-help">The ISA value can be replaced with the actual OAT without changing FL.</small>
     </div>
   </div>
 
