@@ -14,6 +14,16 @@ export function flightLevelToMeters(flightLevel: number): number {
   return flightLevel * 100 * FEET_TO_METERS;
 }
 
+/** Returns ISA temperature in degrees Celsius at the supplied pressure altitude. */
+export function standardTemperatureAtFlightLevel(flightLevel: number): number {
+  const altitudeMeters = flightLevelToMeters(flightLevel);
+  const temperatureKelvin = altitudeMeters <= TROPOPAUSE_ALTITUDE_M
+    ? SEA_LEVEL_TEMPERATURE_K - TROPOSPHERE_LAPSE_RATE_K_PER_M * altitudeMeters
+    : SEA_LEVEL_TEMPERATURE_K - TROPOSPHERE_LAPSE_RATE_K_PER_M * TROPOPAUSE_ALTITUDE_M;
+
+  return temperatureKelvin - 273.15;
+}
+
 /** Returns ISA static pressure in pascals at the supplied pressure altitude. */
 export function standardPressureAtFlightLevel(flightLevel: number): number {
   const altitudeMeters = flightLevelToMeters(flightLevel);
