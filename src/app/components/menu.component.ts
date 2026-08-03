@@ -37,6 +37,7 @@ export class MenuComponent {
     'coordinates-conversion',
     'distance-conversion',
     'fuel-conversion',
+    'ias-tas-conversion',
     'qnh-qfe-conversion',
     'slope-gradient',
     'speed-conversion',
