@@ -5,6 +5,7 @@ import {
   calculateTas,
   densityRatioAtFlightLevel,
   standardPressureAtFlightLevel,
+  standardTemperatureAtFlightLevel,
 } from './ias-tas-conversion.helper';
 
 export interface IasTasResult {
@@ -27,6 +28,18 @@ export class IasTasConversionComponent {
   readonly iasControl = new FormControl('', { nonNullable: true });
   readonly result = signal<IasTasResult | null>(null);
   readonly error = signal('');
+
+  onFlightLevelChange(): void {
+    const rawFlightLevel = String(this.flightLevelControl.value).trim();
+    const flightLevel = Number(rawFlightLevel);
+
+    if (!rawFlightLevel || !Number.isFinite(flightLevel) || flightLevel < 0 || flightLevel > 650) {
+      return;
+    }
+
+    const standardOat = standardTemperatureAtFlightLevel(flightLevel);
+    this.oatControl.setValue(this.formatTemperature(standardOat));
+  }
 
   calculate(): void {
     const flightLevel = Number(this.flightLevelControl.value);
@@ -56,6 +69,10 @@ export class IasTasConversionComponent {
     } catch (error) {
       this.showError(error instanceof Error ? error.message : 'Unable to calculate TAS.');
     }
+  }
+
+  private formatTemperature(value: number): string {
+    return Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1);
   }
 
   private showError(message: string): void {
