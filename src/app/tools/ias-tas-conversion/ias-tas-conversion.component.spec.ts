@@ -1,5 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { calculateTas, standardPressureAtFlightLevel } from './ias-tas-conversion.helper';
+import {
+  calculateTas,
+  standardPressureAtFlightLevel,
+  standardTemperatureAtFlightLevel,
+} from './ias-tas-conversion.helper';
 import { IasTasConversionComponent, iasTasConversionTool } from './ias-tas-conversion.component';
 
 describe('IasTasConversion', () => {
@@ -17,6 +21,28 @@ describe('IasTasConversion', () => {
 
   it('returns IAS at ISA sea level', () => {
     expect(calculateTas(100, 0, 15)).toBeCloseTo(100, 8);
+  });
+
+  it('returns ISA temperature for a flight level', () => {
+    expect(standardTemperatureAtFlightLevel(0)).toBeCloseTo(15, 8);
+    expect(standardTemperatureAtFlightLevel(100)).toBeCloseTo(-4.812, 3);
+    expect(standardTemperatureAtFlightLevel(400)).toBeCloseTo(-56.5, 8);
+  });
+
+  it('automatically fills OAT from flight level', () => {
+    component.flightLevelControl.setValue('100');
+    component.onFlightLevelChange();
+
+    expect(component.oatControl.value).toBe('-4.8');
+  });
+
+  it('does not change flight level when OAT is changed manually', () => {
+    component.flightLevelControl.setValue('100');
+    component.onFlightLevelChange();
+    component.oatControl.setValue('-20');
+
+    expect(component.flightLevelControl.value).toBe('100');
+    expect(component.oatControl.value).toBe('-20');
   });
 
   it('calculates TAS at FL100 and minus 5 degrees Celsius', () => {
