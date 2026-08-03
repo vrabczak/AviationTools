@@ -1,0 +1,89 @@
+<div class="tool-content">
+  <h2>IAS to TAS</h2>
+  <p class="tool-description">
+    Estimate true airspeed from indicated airspeed, flight level, and outside air temperature.
+  </p>
+
+  <div class="input-grid">
+    <div class="input-group">
+      <label for="flight-level">Flight level</label>
+      <input
+        id="flight-level"
+        type="number"
+        inputmode="decimal"
+        min="0"
+        max="650"
+        step="any"
+        placeholder="e.g., 100"
+        [formControl]="flightLevelControl"
+        (keydown.enter)="calculate()"
+        [attr.aria-describedby]="error() ? 'ias-tas-error' : 'flight-level-help'"
+      >
+      <small id="flight-level-help">Enter 100 for FL100.</small>
+    </div>
+
+    <div class="input-group">
+      <label for="oat">OAT (°C)</label>
+      <input
+        id="oat"
+        type="number"
+        inputmode="decimal"
+        step="any"
+        placeholder="e.g., -5"
+        [formControl]="oatControl"
+        (keydown.enter)="calculate()"
+        [attr.aria-describedby]="error() ? 'ias-tas-error' : null"
+      >
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label for="ias">IAS (kt)</label>
+    <input
+      id="ias"
+      type="number"
+      inputmode="decimal"
+      min="0.01"
+      step="any"
+      placeholder="e.g., 120"
+      [formControl]="iasControl"
+      (keydown.enter)="calculate()"
+      [attr.aria-describedby]="error() ? 'ias-tas-error' : 'ias-help'"
+    >
+    <small id="ias-help">The result is returned in knots.</small>
+  </div>
+
+  @if (error()) {
+    <p id="ias-tas-error" class="error-message" role="alert">{{ error() }}</p>
+  }
+
+  <button class="btn-primary" type="button" (click)="calculate()">Calculate TAS</button>
+
+  @if (result(); as currentResult) {
+    <div class="result" aria-live="polite">
+      <h3>True Airspeed</h3>
+      <div class="result-grid">
+        <div class="result-value">
+          <span class="label">TAS</span>
+          <span id="result-tas" class="value">{{ currentResult.tas.toFixed(1) }}</span>
+          <span class="unit">kt</span>
+        </div>
+        <div class="result-value">
+          <span class="label">Standard pressure at FL</span>
+          <span id="result-pressure" class="value">{{ currentResult.pressureHpa.toFixed(1) }}</span>
+          <span class="unit">hPa</span>
+        </div>
+        <div class="result-value">
+          <span class="label">Density ratio (σ)</span>
+          <span id="result-density-ratio" class="value">{{ currentResult.densityRatio.toFixed(3) }}</span>
+        </div>
+      </div>
+      <div class="result-info">
+        <p>
+          Approximation assumes IAS ≈ EAS. Instrument, position, and compressibility errors are not included;
+          use approved aircraft data for operational performance calculations.
+        </p>
+      </div>
+    </div>
+  }
+</div>
